@@ -3,6 +3,7 @@ import "./globals.css";
 import { helveticaNeue, dirtyline } from "@/lib/fonts";
 import { Header } from "@/components/Header";
 import { Toaster, toast } from "sonner";
+import { ConvexClientProvider } from "./provider";
 
 export const metadata: Metadata = {
   title: "Velvet Anarchy",
@@ -20,7 +21,7 @@ export default function RootLayout({
         className={`${helveticaNeue.variable} ${dirtyline.variable}  font-medium antialiased`}
       >
         <Header />
-        {children}
+        <ConvexClientProvider>{children}</ConvexClientProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

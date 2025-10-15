@@ -4,6 +4,7 @@ import { v } from "convex/values";
 export default defineSchema({
   products: defineTable({
     name: v.string(),
+    slug: v.string(),
     detail: v.string(),
     images: v.array(v.string()),
     price: v.number(),
