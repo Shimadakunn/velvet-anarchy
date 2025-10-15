@@ -12,7 +12,6 @@ export default defineSchema({
     reviews: v.number(),
     sold: v.number(),
     stock: v.number(),
-    variants: v.array(v.id("variants")),
   }).index("byName", ["name"]),
 
   variants: defineTable({

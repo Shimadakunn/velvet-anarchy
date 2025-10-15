@@ -9,6 +9,7 @@
  */
 
 import type * as products from "../products.js";
+import type * as variants from "../variants.js";
 
 import type {
   ApiFromModules,
@@ -26,6 +27,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   products: typeof products;
+  variants: typeof variants;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
