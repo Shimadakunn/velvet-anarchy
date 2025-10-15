@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const list = query({
@@ -8,11 +8,53 @@ export const list = query({
   },
 });
 
-export const get = query({
+export const getBySlug = query({
   args: {
-    slug: v.id("products"),
+    slug: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.slug);
+    const product = await ctx.db
+      .query("products")
+      .withIndex("bySlug", (q) => q.eq("slug", args.slug))
+      .first();
+    return product;
+  },
+});
+
+export const create = mutation({
+  args: {
+    name: v.string(),
+    slug: v.string(),
+    detail: v.string(),
+    images: v.array(v.string()),
+    price: v.number(),
+    rating: v.number(),
+    reviews: v.number(),
+    sold: v.number(),
+    stock: v.number(),
+    variants: v.array(
+      v.object({
+        type: v.union(v.literal("size"), v.literal("color")),
+        value: v.string(),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    // Extract variants from args
+    const { variants, ...productData } = args;
+
+    // Insert the product
+    const productId = await ctx.db.insert("products", productData);
+
+    // Insert all variants
+    for (const variant of variants) {
+      await ctx.db.insert("variants", {
+        productId,
+        type: variant.type,
+        value: variant.value,
+      });
+    }
+
+    return productId;
   },
 });

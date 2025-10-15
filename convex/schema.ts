@@ -12,7 +12,9 @@ export default defineSchema({
     reviews: v.number(),
     sold: v.number(),
     stock: v.number(),
-  }).index("byName", ["name"]),
+  })
+    .index("byName", ["name"])
+    .index("bySlug", ["slug"]),
 
   variants: defineTable({
     productId: v.id("products"),

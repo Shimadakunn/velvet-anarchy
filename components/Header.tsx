@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useIsMobile } from "@/lib/isMobile";
@@ -16,13 +16,13 @@ function DesktopHeader() {
     <header className="w-full py-4 border-b border-gray-300 ">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-6">
-          <h1 className="text-4xl font-Dirty mt-2 tracking-tighter">
-            VeLvEt AnaRCHy
+          <h1 className="text-4xl font-Dirty mt-2 tracking-tighter cursor-pointer">
+            <Link href="/">VeLvEt AnaRCHy</Link>
           </h1>
           <nav>
             <ul className="flex items-center gap-4">
               <li className=" font-semibold cursor-pointer hover:underline underline-offset-4">
-                Home
+                <Link href="/">Home</Link>
               </li>
               <li className="font-semibold cursor-pointer hover:underline underline-offset-4">
                 Shop
