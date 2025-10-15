@@ -1,9 +1,9 @@
 "use client";
 import { useIsMobile } from "@/lib/isMobile";
 import { Star } from "lucide-react";
+import { Product } from "@/lib/type";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export default function Rating({ product }: { product: any }) {
+export default function Rating({ product }: { product: Product }) {
   const isMobile = useIsMobile();
   const fullStars = Math.floor(product.rating);
   const hasHalfStar = product.rating % 1 >= 0.5;

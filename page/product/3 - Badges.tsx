@@ -1,7 +1,7 @@
 import { CheckCheck, Flame, Package } from "lucide-react";
+import { Product } from "@/lib/type";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export default function Badges({ product }: { product: any }) {
+export default function Badges({ product }: { product: Product }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div className="px-2 py-1 bg-pink-100 text-pink-500 text-xs font-semibold rounded-full inline-block">

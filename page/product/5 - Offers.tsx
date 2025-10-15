@@ -1,34 +1,134 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
-import { variants } from "@/const";
+import { Product, Variant, VariantType, variantTypes } from "@/lib/type";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export default function Offers({ product }: { product: any }) {
-  const colors = variants
-    .filter((v) => v.type === "color")
-    .map((v) => v.value);
-  const sizes = variants
-    .filter((v) => v.type === "size")
-    .map((v) => v.value);
+type ItemKey = "buy1" | "item1" | "item2";
+
+export default function Offers({
+  product,
+  variants,
+}: {
+  product: Product;
+  variants: Variant[];
+}) {
+  // Group variants by type dynamically
+  const variantsByType = useMemo(() => {
+    const grouped: Record<VariantType, string[]> = {} as Record<
+      VariantType,
+      string[]
+    >;
+
+    variantTypes.forEach((type) => {
+      grouped[type] = variants
+        .filter((v) => v.type === type)
+        .map((v) => v.value);
+    });
+
+    return grouped;
+  }, [variants]);
+
+  // Create initial selections dynamically
+  const getInitialSelection = (): Record<VariantType, string> => {
+    const selection: Record<VariantType, string> = {} as Record<
+      VariantType,
+      string
+    >;
+
+    variantTypes.forEach((type) => {
+      selection[type] = variantsByType[type]?.[0] || "";
+    });
+
+    return selection;
+  };
 
   const [selectedOffer, setSelectedOffer] = useState<"buy1" | "buy2">("buy2");
-  const [selections, setSelections] = useState({
-    buy1: { color: colors[0] || "Blue", size: sizes[0] || "ONE SIZE" },
-    item1: { color: colors[0] || "Blue", size: sizes[0] || "ONE SIZE" },
-    item2: { color: colors[0] || "Blue", size: sizes[0] || "ONE SIZE" },
+  const [selections, setSelections] = useState<
+    Record<ItemKey, Record<VariantType, string>>
+  >({
+    buy1: getInitialSelection(),
+    item1: getInitialSelection(),
+    item2: getInitialSelection(),
   });
 
   const handleSelectionChange = (
-    item: "buy1" | "item1" | "item2",
-    type: "color" | "size",
+    item: ItemKey,
+    type: VariantType,
     value: string
   ) => {
     setSelections((prev) => ({
       ...prev,
       [item]: { ...prev[item], [type]: value },
     }));
+  };
+
+  // Render variant selectors for an item
+  const renderVariantSelectors = (itemKey: ItemKey, showLabel = true) => {
+    return (
+      <div className={showLabel ? "space-y-3 pt-3 border-t border-gray-200" : "flex items-center gap-2 flex-1"}>
+        {showLabel && (
+          <div className="flex items-center gap-2 text-sm">
+            <span className="font-semibold">
+              {variantTypes.map((type) => type.charAt(0).toUpperCase() + type.slice(1)).join(", ")}
+            </span>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 flex-1">
+          {variantTypes.map((type) => {
+            const options = variantsByType[type] || [];
+            if (options.length === 0) return null;
+
+            return (
+              <div key={type} className="relative flex-1">
+                <select
+                  value={selections[itemKey][type] || ""}
+                  onChange={(e) =>
+                    handleSelectionChange(itemKey, type, e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
+                >
+                  {options.map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <ChevronRight className="w-4 h-4 rotate-90" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // Render multiple item selectors for Buy 2 option
+  const renderMultipleItems = () => {
+    return (
+      <div className="space-y-3 pt-3 border-t border-gray-200">
+        <div className="flex items-center gap-2 text-sm">
+          <span className="font-semibold">
+            {variantTypes.map((type) => type.charAt(0).toUpperCase() + type.slice(1)).join(", ")}
+          </span>
+        </div>
+
+        {/* Item 1 */}
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-sm">#1</span>
+          {renderVariantSelectors("item1", false)}
+        </div>
+
+        {/* Item 2 */}
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-sm">#2</span>
+          {renderVariantSelectors("item2", false)}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -74,53 +174,8 @@ export default function Offers({ product }: { product: any }) {
           </div>
         </div>
 
-        {/* Color and Size Selectors for Buy 1 */}
-        {selectedOffer === "buy1" && (
-          <div className="space-y-3 pt-3 border-t border-gray-200">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-semibold">Color, Size</span>
-            </div>
-
-            <div className="flex items-center gap-2 flex-1">
-              <div className="relative flex-1">
-                <select
-                  value={selections.buy1.color}
-                  onChange={(e) =>
-                    handleSelectionChange("buy1", "color", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-                >
-                  {colors.map((color) => (
-                    <option key={color} value={color}>
-                      {color}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <ChevronRight className="w-4 h-4 rotate-90" />
-                </div>
-              </div>
-              <div className="relative flex-1">
-                <select
-                  value={selections.buy1.size}
-                  onChange={(e) =>
-                    handleSelectionChange("buy1", "size", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-                >
-                  {sizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <ChevronRight className="w-4 h-4 rotate-90" />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Variant Selectors for Buy 1 */}
+        {selectedOffer === "buy1" && renderVariantSelectors("buy1")}
       </div>
 
       {/* Buy 2 Get 10% OFF Option */}
@@ -171,105 +226,17 @@ export default function Offers({ product }: { product: any }) {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold">€{(product.price * 2 * 0.9).toFixed(2)}</p>
-            <p className="text-sm text-gray-500 line-through">€{(product.price * 2).toFixed(2)}</p>
+            <p className="text-2xl font-bold">
+              €{(product.price * 2 * 0.9).toFixed(2)}
+            </p>
+            <p className="text-sm text-gray-500 line-through">
+              €{(product.price * 2).toFixed(2)}
+            </p>
           </div>
         </div>
 
-        {/* Color and Size Selectors */}
-        {selectedOffer === "buy2" && (
-          <div className="space-y-3 pt-3 border-t border-gray-200">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-semibold">Color, Size</span>
-            </div>
-
-            {/* Item 1 */}
-            <div className="flex items-center gap-3">
-              <span className="font-semibold text-sm">#1</span>
-              <div className="flex items-center gap-2 flex-1">
-                <div className="relative flex-1">
-                  <select
-                    value={selections.item1.color}
-                    onChange={(e) =>
-                      handleSelectionChange("item1", "color", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-                  >
-                    {colors.map((color) => (
-                      <option key={color} value={color}>
-                        {color}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <ChevronRight className="w-4 h-4 rotate-90" />
-                  </div>
-                </div>
-                <div className="relative flex-1">
-                  <select
-                    value={selections.item1.size}
-                    onChange={(e) =>
-                      handleSelectionChange("item1", "size", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-                  >
-                    {sizes.map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <ChevronRight className="w-4 h-4 rotate-90" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Item 2 */}
-            <div className="flex items-center gap-3">
-              <span className="font-semibold text-sm">#2</span>
-              <div className="flex items-center gap-2 flex-1">
-                <div className="relative flex-1">
-                  <select
-                    value={selections.item2.color}
-                    onChange={(e) =>
-                      handleSelectionChange("item2", "color", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-                  >
-                    {colors.map((color) => (
-                      <option key={color} value={color}>
-                        {color}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <ChevronRight className="w-4 h-4 rotate-90" />
-                  </div>
-                </div>
-                <div className="relative flex-1">
-                  <select
-                    value={selections.item2.size}
-                    onChange={(e) =>
-                      handleSelectionChange("item2", "size", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-                  >
-                    {sizes.map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <ChevronRight className="w-4 h-4 rotate-90" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Variant Selectors for Buy 2 */}
+        {selectedOffer === "buy2" && renderMultipleItems()}
       </div>
     </div>
   );

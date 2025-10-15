@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import { Info, Minus, PlaneTakeoff, Plus, RotateCcw } from "lucide-react";
+import { Product } from "@/lib/type";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export default function Accordion({ product }: { product: any }) {
+export default function Accordion({ product }: { product: Product }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleSection = (index: number) => {

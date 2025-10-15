@@ -7,16 +7,22 @@ import { Id } from "@/convex/_generated/dataModel";
 import Carroussel from "@/components/Carroussel";
 import Product from "@/page/product";
 import { useStorageUrls } from "@/hooks/useStorageUrls";
+import { Product as ProductType, Variant } from "@/lib/type";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
 
   // Fetch product by slug
-  const product = useQuery(api.products.getBySlug, { slug });
+  const product: ProductType | undefined | null = useQuery(
+    api.products.getBySlug,
+    {
+      slug,
+    }
+  );
 
   // Fetch variants if product exists
-  const variants = useQuery(
+  const variants: Variant[] | undefined = useQuery(
     api.variants.get,
     product ? { id: product._id as Id<"products"> } : "skip"
   );
@@ -47,11 +53,13 @@ export default function ProductDetailPage() {
     );
   }
 
-  // Show product with variants
-  const productWithVariants = {
-    ...product,
-    variants: variants || [],
-  };
+  if (!variants) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading variants...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-start space-y-6 md:space-x-6 px-4 md:px-0 py-16">
@@ -65,7 +73,7 @@ export default function ProductDetailPage() {
         )}
       </div>
       <div className="w-full md:w-5/10">
-        <Product product={productWithVariants} />
+        <Product product={product} variants={variants} />
       </div>
     </div>
   );

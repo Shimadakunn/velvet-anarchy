@@ -5,9 +5,15 @@ import Size from "./4 - Size";
 import Offers from "./5 - Offers";
 import Buy from "./6 - Buy";
 import Accordion from "./7 - Accordion";
+import { Product as ProductType, Variant } from "@/lib/type";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export default function Product({ product }: { product: any }) {
+export default function Product({
+  product,
+  variants,
+}: {
+  product: ProductType;
+  variants: Variant[];
+}) {
   return (
     <div className="min-h-screen">
       <Rating product={product} />
@@ -15,9 +21,9 @@ export default function Product({ product }: { product: any }) {
       <Name product={product} />
       <Badges product={product} />
       <div className="mb-8" />
-      <Size />
+      <Size product={product} />
       <div className="mb-8" />
-      <Offers product={product} />
+      <Offers product={product} variants={variants} />
       <div className="mb-4" />
       <Buy />
       <div className="mb-8" />
