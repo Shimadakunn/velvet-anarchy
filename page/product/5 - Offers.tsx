@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { Product, Variant, VariantType, variantTypes } from "@/lib/type";
@@ -9,9 +9,27 @@ type ItemKey = "buy1" | "item1" | "item2";
 export default function Offers({
   product,
   variants,
+  selectedVariants,
+  onVariantChange,
+  selectedOffer,
+  onOfferChange,
+  buy2Selections,
+  onBuy2SelectionsChange,
 }: {
   product: Product;
   variants: Variant[];
+  selectedVariants: Record<VariantType, string>;
+  onVariantChange: (variants: Record<VariantType, string>) => void;
+  selectedOffer: "buy1" | "buy2";
+  onOfferChange: (offer: "buy1" | "buy2") => void;
+  buy2Selections: {
+    item1: Record<VariantType, string>;
+    item2: Record<VariantType, string>;
+  };
+  onBuy2SelectionsChange: (selections: {
+    item1: Record<VariantType, string>;
+    item2: Record<VariantType, string>;
+  }) => void;
 }) {
   // Group variants by type dynamically
   const variantsByType = useMemo(() => {
@@ -29,42 +47,33 @@ export default function Offers({
     return grouped;
   }, [variants]);
 
-  // Create initial selections dynamically
-  const getInitialSelection = (): Record<VariantType, string> => {
-    const selection: Record<VariantType, string> = {} as Record<
-      VariantType,
-      string
-    >;
-
-    variantTypes.forEach((type) => {
-      selection[type] = variantsByType[type]?.[0] || "";
-    });
-
-    return selection;
-  };
-
-  const [selectedOffer, setSelectedOffer] = useState<"buy1" | "buy2">("buy2");
-  const [selections, setSelections] = useState<
-    Record<ItemKey, Record<VariantType, string>>
-  >({
-    buy1: getInitialSelection(),
-    item1: getInitialSelection(),
-    item2: getInitialSelection(),
-  });
-
   const handleSelectionChange = (
     item: ItemKey,
     type: VariantType,
     value: string
   ) => {
-    setSelections((prev) => ({
-      ...prev,
-      [item]: { ...prev[item], [type]: value },
-    }));
+    if (item === "buy1") {
+      // Update parent state for Buy 1 option
+      onVariantChange({ ...selectedVariants, [type]: value });
+    } else {
+      // Update parent state for Buy 2 option
+      onBuy2SelectionsChange({
+        ...buy2Selections,
+        [item]: { ...buy2Selections[item], [type]: value },
+      });
+    }
   };
 
   // Render variant selectors for an item
   const renderVariantSelectors = (itemKey: ItemKey, showLabel = true) => {
+    // Get the correct selection source based on item
+    const getCurrentSelection = () => {
+      if (itemKey === "buy1") return selectedVariants;
+      return buy2Selections[itemKey as "item1" | "item2"];
+    };
+
+    const currentSelection = getCurrentSelection();
+
     return (
       <div className={showLabel ? "space-y-3 pt-3 border-t border-gray-200" : "flex items-center gap-2 flex-1"}>
         {showLabel && (
@@ -83,7 +92,7 @@ export default function Offers({
             return (
               <div key={type} className="relative flex-1">
                 <select
-                  value={selections[itemKey][type] || ""}
+                  value={currentSelection[type] || ""}
                   onChange={(e) =>
                     handleSelectionChange(itemKey, type, e.target.value)
                   }
@@ -135,7 +144,7 @@ export default function Offers({
     <div className="w-full space-y-2">
       {/* Buy 1 Option */}
       <div
-        onClick={() => setSelectedOffer("buy1")}
+        onClick={() => onOfferChange("buy1")}
         className={`relative p-4 border rounded-2xl cursor-pointer transition-all ${
           selectedOffer === "buy1"
             ? "border-black bg-gray-50 border-2"
@@ -180,7 +189,7 @@ export default function Offers({
 
       {/* Buy 2 Get 10% OFF Option */}
       <div
-        onClick={() => setSelectedOffer("buy2")}
+        onClick={() => onOfferChange("buy2")}
         className={`relative p-4 border rounded-2xl cursor-pointer transition-all ${
           selectedOffer === "buy2"
             ? "border-black bg-gray-50 border-2"

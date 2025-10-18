@@ -62,7 +62,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-start space-y-6 md:space-x-6 px-4 md:px-0 py-16">
+    <div className="mx-auto max-w-5xl flex flex-col md:flex-row items-start space-y-6 md:space-x-6 py-8">
       <div className="w-full md:w-5/10">
         {imageUrls && imageUrls.length > 0 ? (
           <Carroussel images={imageUrls} />
@@ -72,7 +72,7 @@ export default function ProductDetailPage() {
           </div>
         )}
       </div>
-      <div className="w-full md:w-5/10">
+      <div className="w-full md:w-5/10 px-4 md:px-0">
         <Product product={product} variants={variants} />
       </div>
     </div>

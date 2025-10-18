@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { ShoppingCart, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/lib/isMobile";
+import { useCartStore } from "@/store/cartStore";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -12,6 +13,15 @@ export function Header() {
 }
 
 function DesktopHeader() {
+  const { toggleCart, getTotalItems } = useCartStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const totalItems = mounted ? getTotalItems() : 0;
+
   return (
     <header className="w-full py-4 border-b border-gray-300 ">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -37,7 +47,18 @@ function DesktopHeader() {
           </nav>
         </div>
 
-        <ShoppingCart size={26} strokeWidth={2.25} />
+        <button
+          onClick={toggleCart}
+          className="relative cursor-pointer hover:opacity-70 transition-opacity"
+          aria-label="Shopping cart"
+        >
+          <ShoppingCart size={26} strokeWidth={2.25} />
+          {mounted && totalItems > 0 && (
+            <span className="absolute -top-2 -right-2 bg-black text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {totalItems}
+            </span>
+          )}
+        </button>
       </div>
     </header>
   );
@@ -45,6 +66,14 @@ function DesktopHeader() {
 
 function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { toggleCart, getTotalItems } = useCartStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const totalItems = mounted ? getTotalItems() : 0;
 
   return (
     <>
@@ -57,11 +86,22 @@ function MobileHeader() {
 
           {/* Center: Brand Name */}
           <h1 className="text-2xl font-Dirty mt-2 tracking-tighter absolute left-1/2 transform -translate-x-1/2">
-            VeLvEt AnaRCHy
+            <Link href="/">VeLvEt AnaRCHy</Link>
           </h1>
 
           {/* Right: Shopping Cart */}
-          <ShoppingCart size={24} strokeWidth={2.25} />
+          <button
+            onClick={toggleCart}
+            className="relative cursor-pointer"
+            aria-label="Shopping cart"
+          >
+            <ShoppingCart size={24} strokeWidth={2.25} />
+            {mounted && totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-black text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </button>
         </div>
       </header>
 

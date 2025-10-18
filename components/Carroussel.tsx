@@ -106,12 +106,12 @@ export default function Carroussel({ images }: { images: string[] }) {
 
   return (
     <div className="w-full">
-      <div className="flex ">
+      <div className="flex relative">
         {/* Navigation Prev Arrows */}
         <button
           onClick={goToPrevious}
           disabled={currentIndex === 0}
-          className="p-2"
+          className=" absolute left-0 top-1/2 -translate-y-1/2 p-2 z-10"
           aria-label="Previous slide"
         >
           <ArrowIcon size={4} direction="left" disabled={currentIndex === 0} />
@@ -149,7 +149,7 @@ export default function Carroussel({ images }: { images: string[] }) {
         <button
           onClick={goToNext}
           disabled={currentIndex === images.length - 1}
-          className="p-2"
+          className="absolute right-0 top-1/2 -translate-y-1/2 p-2 z-10"
           aria-label="Next slide"
         >
           <ArrowIcon

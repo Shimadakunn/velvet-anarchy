@@ -2,13 +2,95 @@
 import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useCartStore } from "@/store/cartStore";
+import { Product, VariantType } from "@/lib/type";
 
-export default function Buy() {
+export default function Buy({
+  product,
+  selectedVariants,
+  selectedOffer,
+  buy2Selections,
+}: {
+  product: Product;
+  selectedVariants: Record<VariantType, string>;
+  selectedOffer: "buy1" | "buy2";
+  buy2Selections: {
+    item1: Record<VariantType, string>;
+    item2: Record<VariantType, string>;
+  };
+}) {
+  const addItem = useCartStore((state) => state.addItem);
+
+  const handleAddToCart = () => {
+    if (!product._id || !product.slug) {
+      toast.error("Invalid product data");
+      return;
+    }
+
+    if (selectedOffer === "buy1") {
+      // Validate that all variants have been selected for buy1
+      const hasEmptyVariant = Object.values(selectedVariants).some(
+        (value) => !value
+      );
+
+      if (hasEmptyVariant) {
+        toast.error("Please select all options");
+        return;
+      }
+
+      addItem({
+        productId: product._id,
+        productName: product.name,
+        productSlug: product.slug,
+        productImage: product.images[0] || "",
+        price: product.price,
+        variants: selectedVariants,
+      });
+
+      toast.success("Added to cart!");
+    } else {
+      // Buy 2 option - add both items
+      const hasEmptyVariantItem1 = Object.values(buy2Selections.item1).some(
+        (value) => !value
+      );
+      const hasEmptyVariantItem2 = Object.values(buy2Selections.item2).some(
+        (value) => !value
+      );
+
+      if (hasEmptyVariantItem1 || hasEmptyVariantItem2) {
+        toast.error("Please select all options for both items");
+        return;
+      }
+
+      // Add first item with 10% discount
+      addItem({
+        productId: product._id,
+        productName: product.name,
+        productSlug: product.slug,
+        productImage: product.images[0] || "",
+        price: product.price * 0.9,
+        variants: buy2Selections.item1,
+      });
+
+      // Add second item with 10% discount
+      addItem({
+        productId: product._id,
+        productName: product.name,
+        productSlug: product.slug,
+        productImage: product.images[0] || "",
+        price: product.price * 0.9,
+        variants: buy2Selections.item2,
+      });
+
+      toast.success("Added 2 items to cart!");
+    }
+  };
+
   return (
     <Button
       effect="ringHover"
       className="w-full relative bg-foreground text-background py-4 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
-      onClick={() => toast.success("Added to cart!")}
+      onClick={handleAddToCart}
     >
       <div className="flex flex-col space-y-[-6px]">
         <h1 className="text-3xl font-black font-Dirty">Add to CaRt</h1>

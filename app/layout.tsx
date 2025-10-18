@@ -4,6 +4,7 @@ import { helveticaNeue, dirtyline } from "@/lib/fonts";
 import { Header } from "@/components/Header";
 import { Toaster } from "sonner";
 import { ConvexClientProvider } from "./provider";
+import Cart from "@/components/Cart";
 
 export const metadata: Metadata = {
   title: "Velvet Anarchy",
@@ -21,7 +22,10 @@ export default function RootLayout({
         className={`${helveticaNeue.variable} ${dirtyline.variable}  font-medium antialiased`}
       >
         <Header />
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          {children}
+          <Cart />
+        </ConvexClientProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

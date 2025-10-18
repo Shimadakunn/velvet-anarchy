@@ -34,6 +34,7 @@ export default function AddProductPage() {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [newVariantType, setNewVariantType] = useState<VariantType>("color");
   const [newVariantValue, setNewVariantValue] = useState("");
+  const [newVariantImage, setNewVariantImage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Generate slug from name
@@ -129,6 +130,7 @@ export default function AddProductPage() {
       const variantsData = variants.map((v) => ({
         type: v.type,
         value: v.value,
+        image: v.image,
       }));
 
       // Call the mutation
@@ -175,10 +177,12 @@ export default function AddProductPage() {
     const newVariant: Variant = {
       type: newVariantType,
       value: newVariantValue,
+      image: newVariantImage || undefined,
     };
 
     setVariants([...variants, newVariant]);
     setNewVariantValue("");
+    setNewVariantImage("");
   };
 
   // Remove variant
@@ -359,7 +363,7 @@ export default function AddProductPage() {
           <div className="mb-4 pt-2 border-t">
             <h3 className="text-lg font-semibold">Variants</h3>
 
-            <div className="flex">
+            <div className="flex gap-2">
               {/* Add Variant Form */}
               <div className="flex gap-2 mr-4">
                 <select
@@ -383,6 +387,19 @@ export default function AddProductPage() {
                   className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter variant value"
                 />
+                <select
+                  value={newVariantImage}
+                  onChange={(e) => setNewVariantImage(e.target.value)}
+                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={product.images.length === 0}
+                >
+                  <option value="">No image</option>
+                  {product.images.map((img, index) => (
+                    <option key={img} value={img}>
+                      Image {index + 1}
+                    </option>
+                  ))}
+                </select>
                 <button
                   onClick={addVariant}
                   className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
@@ -398,11 +415,20 @@ export default function AddProductPage() {
                     key={variant.type + variant.value}
                     className="flex items-center justify-between bg-foreground/30 p-2 rounded-md mr-2"
                   >
-                    <div>
-                      <span className="text-sm text-gray-700">
-                        {variant.type}:
-                      </span>{" "}
-                      {variant.value}
+                    <div className="flex items-center gap-2">
+                      {variant.image && (
+                        <StorageImage
+                          storageId={variant.image}
+                          alt={variant.value}
+                          className="w-8 h-8 object-cover rounded"
+                        />
+                      )}
+                      <div>
+                        <span className="text-sm text-gray-700">
+                          {variant.type}:
+                        </span>{" "}
+                        {variant.value}
+                      </div>
                     </div>
                     <button
                       onClick={() => removeVariant(variant.type, variant.value)}
@@ -414,20 +440,6 @@ export default function AddProductPage() {
                 ))}
             </div>
           </div>
-
-          {/* Display Generated Objects */}
-          {/* <div className="mt-6 pt-6 border-t">
-            <h3 className="text-lg font-semibold mb-3">Generated Objects</h3>
-            <div className="bg-gray-100 rounded-md p-4 overflow-x-auto">
-              <pre className="text-xs">
-                {JSON.stringify(
-                  { product: productWithVariants, variants },
-                  null,
-                  2
-                )}
-              </pre>
-            </div>
-          </div> */}
 
           {/* Add Product Button */}
           <div className="flex justify-end">
@@ -450,7 +462,7 @@ export default function AddProductPage() {
                   <Carroussel images={previewUrls} />
                 </div>
                 <div className="w-full md:w-1/2">
-                  <Product product={productWithVariants} />
+                  <Product product={product} variants={variants} />
                 </div>
               </div>
             ) : (

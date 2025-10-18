@@ -12,14 +12,13 @@ export default defineSchema({
     reviews: v.number(),
     sold: v.number(),
     stock: v.number(),
-  })
-    .index("byName", ["name"])
-    .index("bySlug", ["slug"]),
+  }).index("bySlug", ["slug"]),
 
   variants: defineTable({
     productId: v.id("products"),
     type: v.union(v.literal("size"), v.literal("color")),
     value: v.string(),
+    image: v.optional(v.string()),
   }).index("byProduct", ["productId"]),
 
   orders: defineTable({
