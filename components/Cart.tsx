@@ -8,6 +8,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { Lock } from "lucide-react";
 
 export default function Cart() {
   const {
@@ -97,20 +99,22 @@ export default function Cart() {
             {/* Total */}
             <div className="flex justify-between items-center text-lg font-bold">
               <span>Total</span>
-              <span>€{getTotalPrice().toFixed(2)}</span>
+              <span className="text-2xl font-black">
+                €{getTotalPrice().toFixed(2)}
+              </span>
             </div>
+
+            <Button
+              effect="ringHover"
+              className="w-full relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
+            >
+              <Lock style={{ width: "20px", height: "20px" }} strokeWidth={3} />
+              <h1 className="text-2xl font-extrabold">Secure Checkout</h1>
+            </Button>
 
             {/* Checkout Button */}
             <button className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
               Proceed to Checkout
-            </button>
-
-            {/* Continue Shopping */}
-            <button
-              onClick={closeCart}
-              className="w-full border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-            >
-              Continue Shopping
             </button>
           </div>
         )}

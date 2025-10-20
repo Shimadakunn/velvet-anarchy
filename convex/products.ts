@@ -60,3 +60,54 @@ export const create = mutation({
     return productId;
   },
 });
+
+export const update = mutation({
+  args: {
+    id: v.id("products"),
+    name: v.string(),
+    slug: v.string(),
+    detail: v.string(),
+    images: v.array(v.string()),
+    price: v.number(),
+    rating: v.number(),
+    reviews: v.number(),
+    sold: v.number(),
+    stock: v.number(),
+    variants: v.array(
+      v.object({
+        type: v.union(v.literal("size"), v.literal("color")),
+        value: v.string(),
+        image: v.optional(v.string()),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    // Extract variants and id from args
+    const { id, variants, ...productData } = args;
+
+    // Update the product
+    await ctx.db.patch(id, productData);
+
+    // Delete existing variants
+    const existingVariants = await ctx.db
+      .query("variants")
+      .withIndex("byProduct", (q) => q.eq("productId", id))
+      .collect();
+
+    for (const variant of existingVariants) {
+      await ctx.db.delete(variant._id);
+    }
+
+    // Insert new variants
+    for (const variant of variants) {
+      await ctx.db.insert("variants", {
+        productId: id,
+        type: variant.type,
+        value: variant.value,
+        image: variant.image,
+      });
+    }
+
+    return id;
+  },
+});
