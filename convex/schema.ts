@@ -22,8 +22,35 @@ export default defineSchema({
   }).index("byProduct", ["productId"]),
 
   orders: defineTable({
-    productId: v.id("products"),
-    quantity: v.number(),
-    totalPrice: v.number(),
-  }).index("byProduct", ["productId"]),
+    orderId: v.string(), // Unique order identifier
+    paypalOrderId: v.string(), // PayPal transaction ID
+    customerEmail: v.string(),
+    customerName: v.string(),
+    items: v.array(
+      v.object({
+        productId: v.string(),
+        productName: v.string(),
+        productImage: v.string(),
+        price: v.number(),
+        quantity: v.number(),
+        variants: v.object({
+          color: v.string(),
+          size: v.string(),
+        }),
+      })
+    ),
+    subtotal: v.number(),
+    shipping: v.number(),
+    tax: v.number(),
+    total: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("completed"),
+      v.literal("cancelled"),
+      v.literal("refunded")
+    ),
+  })
+    .index("byOrderId", ["orderId"])
+    .index("byEmail", ["customerEmail"])
+    .index("byPaypalOrderId", ["paypalOrderId"]),
 });

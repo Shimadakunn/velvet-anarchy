@@ -3,7 +3,7 @@ import "./globals.css";
 import { helveticaNeue, dirtyline } from "@/lib/fonts";
 import { Header } from "@/components/Header";
 import { Toaster } from "sonner";
-import { ConvexClientProvider } from "./provider";
+import { Provider } from "./provider";
 import Cart from "@/components/Cart";
 
 export const metadata: Metadata = {
@@ -22,10 +22,10 @@ export default function RootLayout({
         className={`${helveticaNeue.variable} ${dirtyline.variable}  font-medium antialiased`}
       >
         <Header />
-        <ConvexClientProvider>
+        <Provider>
           {children}
           <Cart />
-        </ConvexClientProvider>
+        </Provider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

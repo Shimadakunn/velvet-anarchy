@@ -104,18 +104,17 @@ export default function Cart() {
               </span>
             </div>
 
-            <Button
-              effect="ringHover"
-              className="w-full relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
-            >
-              <Lock style={{ width: "20px", height: "20px" }} strokeWidth={3} />
-              <h1 className="text-2xl font-extrabold">Secure Checkout</h1>
-            </Button>
-
             {/* Checkout Button */}
-            <button className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
-              Proceed to Checkout
-            </button>
+            <Link href="/checkout">
+              <Button
+                effect="ringHover"
+                className="w-full relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
+                onClick={closeCart}
+              >
+                <Lock style={{ width: "20px", height: "20px" }} strokeWidth={3} />
+                <h1 className="text-2xl font-extrabold">Secure Checkout</h1>
+              </Button>
+            </Link>
           </div>
         )}
       </div>
