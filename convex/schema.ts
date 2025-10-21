@@ -22,8 +22,7 @@ export default defineSchema({
   }).index("byProduct", ["productId"]),
 
   orders: defineTable({
-    orderId: v.string(), // Unique order identifier
-    paypalOrderId: v.string(), // PayPal transaction ID
+    orderId: v.string(), // Unique order identifier (PayPal transaction ID)
     customerEmail: v.string(),
     customerName: v.string(),
     items: v.array(
@@ -45,12 +44,20 @@ export default defineSchema({
     total: v.number(),
     status: v.union(
       v.literal("pending"),
+      v.literal("shipping"),
       v.literal("completed"),
       v.literal("cancelled"),
       v.literal("refunded")
     ),
+    shippingStatus: v.union(
+      v.literal("pending"),
+      v.literal("processing"),
+      v.literal("shipped"),
+      v.literal("in_transit"),
+      v.literal("out_for_delivery"),
+      v.literal("delivered")
+    ),
   })
     .index("byOrderId", ["orderId"])
-    .index("byEmail", ["customerEmail"])
-    .index("byPaypalOrderId", ["paypalOrderId"]),
+    .index("byEmail", ["customerEmail"]),
 });

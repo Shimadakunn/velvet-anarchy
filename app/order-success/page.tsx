@@ -88,8 +88,8 @@ export default function OrderSuccessPage() {
   const orderId = searchParams.get("orderId");
 
   const order = useQuery(
-    api.orders.getByPaypalOrderId,
-    orderId ? { paypalOrderId: orderId } : "skip"
+    api.orders.getByOrderId,
+    orderId ? { orderId: orderId } : "skip"
   );
 
   if (!orderId) {

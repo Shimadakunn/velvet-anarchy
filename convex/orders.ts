@@ -5,7 +5,6 @@ import { mutation, query } from "./_generated/server";
 export const create = mutation({
   args: {
     orderId: v.string(),
-    paypalOrderId: v.string(),
     customerEmail: v.string(),
     customerName: v.string(),
     items: v.array(
@@ -27,15 +26,23 @@ export const create = mutation({
     total: v.number(),
     status: v.union(
       v.literal("pending"),
+      v.literal("shipping"),
       v.literal("completed"),
       v.literal("cancelled"),
       v.literal("refunded")
+    ),
+    shippingStatus: v.union(
+      v.literal("pending"),
+      v.literal("processing"),
+      v.literal("shipped"),
+      v.literal("in_transit"),
+      v.literal("out_for_delivery"),
+      v.literal("delivered")
     ),
   },
   handler: async (ctx, args) => {
     const orderId = await ctx.db.insert("orders", {
       orderId: args.orderId,
-      paypalOrderId: args.paypalOrderId,
       customerEmail: args.customerEmail,
       customerName: args.customerName,
       items: args.items,
@@ -44,24 +51,13 @@ export const create = mutation({
       tax: args.tax,
       total: args.total,
       status: args.status,
+      shippingStatus: args.shippingStatus,
     });
 
     return orderId;
   },
 });
 
-// Get order by PayPal order ID
-export const getByPaypalOrderId = query({
-  args: { paypalOrderId: v.string() },
-  handler: async (ctx, args) => {
-    const order = await ctx.db
-      .query("orders")
-      .withIndex("byPaypalOrderId", (q) => q.eq("paypalOrderId", args.paypalOrderId))
-      .first();
-
-    return order;
-  },
-});
 
 // Get order by custom order ID
 export const getByOrderId = query({
@@ -104,6 +100,7 @@ export const updateStatus = mutation({
     orderId: v.string(),
     status: v.union(
       v.literal("pending"),
+      v.literal("shipping"),
       v.literal("completed"),
       v.literal("cancelled"),
       v.literal("refunded")
@@ -121,6 +118,37 @@ export const updateStatus = mutation({
 
     await ctx.db.patch(order._id, {
       status: args.status,
+    });
+
+    return order._id;
+  },
+});
+
+// Update shipping status
+export const updateShippingStatus = mutation({
+  args: {
+    orderId: v.string(),
+    shippingStatus: v.union(
+      v.literal("pending"),
+      v.literal("processing"),
+      v.literal("shipped"),
+      v.literal("in_transit"),
+      v.literal("out_for_delivery"),
+      v.literal("delivered")
+    ),
+  },
+  handler: async (ctx, args) => {
+    const order = await ctx.db
+      .query("orders")
+      .withIndex("byOrderId", (q) => q.eq("orderId", args.orderId))
+      .first();
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    await ctx.db.patch(order._id, {
+      shippingStatus: args.shippingStatus,
     });
 
     return order._id;

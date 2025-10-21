@@ -137,8 +137,8 @@ export default function CheckoutPage() {
         shipping,
         tax,
         total,
-        status: "completed",
-        paypalOrderId: details.id,
+        status: "pending",
+        shippingStatus: "pending",
       });
 
       // Clear cart
