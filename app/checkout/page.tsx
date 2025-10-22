@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useCartStore, CartItem } from "@/store/cartStore";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +10,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ArrowLeft } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
 
 // Component to display individual checkout item with variant image support
 function CheckoutItem({ item }: { item: CartItem }) {
@@ -87,6 +88,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCartStore();
   const createOrder = useMutation(api.orders.create);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   const subtotal = getTotalPrice();
   const shipping = subtotal > 100 ? 0 : 10; // Free shipping over $100
@@ -117,6 +119,9 @@ export default function CheckoutPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePayPalApprove = async (_data: any, actions: any) => {
     try {
+      // Show processing overlay
+      setIsProcessing(true);
+
       // Capture the payment
       const details = await actions.order.capture();
 
@@ -193,6 +198,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error("Error processing payment:", error);
       toast.error("Failed to process payment. Please try again.");
+      setIsProcessing(false);
     }
   };
 
@@ -370,6 +376,63 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Processing Overlay */}
+      {isProcessing && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[500] flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
+            <div className="text-center">
+              {/* Animated Icon */}
+              <div className="mb-6 relative">
+                <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+                  <Loader2 className="w-10 h-10 text-green-600 animate-spin" />
+                </div>
+                <div className="absolute inset-0 w-20 h-20 mx-auto">
+                  <div className="w-full h-full border-4 border-green-200 rounded-full animate-ping opacity-20" />
+                </div>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                Processing Your Order
+              </h2>
+
+              {/* Description */}
+              <p className="text-gray-600 mb-6">
+                Please wait while we save your order and prepare your
+                confirmation. This will only take a moment...
+              </p>
+
+              {/* Progress Steps */}
+              <div className="space-y-3 text-left">
+                <div className="flex items-center gap-3 text-sm">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  <span className="text-gray-700">
+                    Payment captured successfully
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <Loader2 className="w-5 h-5 text-green-600 animate-spin flex-shrink-0" />
+                  <span className="text-gray-700">Saving order details...</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm opacity-50">
+                  <div className="w-5 h-5 border-2 border-gray-300 rounded-full flex-shrink-0" />
+                  <span className="text-gray-500">
+                    Sending confirmation email
+                  </span>
+                </div>
+              </div>
+
+              {/* Warning */}
+              <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-xs text-yellow-800">
+                  Please do not close this window or press the back button.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
