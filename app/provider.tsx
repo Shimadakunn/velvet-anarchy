@@ -10,8 +10,7 @@ export function Provider({ children }: { children: ReactNode }) {
   return (
     <PayPalScriptProvider
       options={{
-        clientId:
-          "AVLF9p2pStHoFLiL1PYPzHJi10LsEzFVtRFhkhFmzavSsmga0z2IF7lVatjeO5caxp3j-CQUpVj91DtY",
+        clientId: process.env.PAYPAL_CLIENT_ID || "",
       }}
     >
       <ConvexProvider client={convex}>{children}</ConvexProvider>

@@ -96,7 +96,9 @@ export default function OrderSuccessPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Order</h1>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            Invalid Order
+          </h1>
           <p className="text-gray-600 mb-6">No order ID was provided.</p>
           <Link
             href="/"
@@ -129,20 +131,23 @@ export default function OrderSuccessPage() {
           <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
           <p className="text-gray-600 mb-6">
-            Thank you for your purchase. Your order has been successfully placed.
+            Thank you for your purchase. Your order has been successfully
+            placed.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-sm">
             <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
               <Package className="w-4 h-4 text-gray-600" />
               <span className="text-gray-700">
-                Order ID: <span className="font-mono font-semibold">{order.orderId}</span>
+                Order ID:{" "}
+                <span className="font-mono font-semibold">{order.orderId}</span>
               </span>
             </div>
             <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
               <Mail className="w-4 h-4 text-gray-600" />
               <span className="text-gray-700">
-                Confirmation sent to <span className="font-semibold">{order.customerEmail}</span>
+                Confirmation sent to{" "}
+                <span className="font-semibold">{order.customerEmail}</span>
               </span>
             </div>
           </div>
@@ -179,7 +184,9 @@ export default function OrderSuccessPage() {
               <div className="flex justify-between text-gray-700">
                 <span>Shipping</span>
                 <span>
-                  {order.shipping === 0 ? "FREE" : `$${order.shipping.toFixed(2)}`}
+                  {order.shipping === 0
+                    ? "FREE"
+                    : `$${order.shipping.toFixed(2)}`}
                 </span>
               </div>
               <div className="flex justify-between text-gray-700">
@@ -196,10 +203,12 @@ export default function OrderSuccessPage() {
 
         {/* Next Steps */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-          <h3 className="font-semibold mb-2 text-blue-900">What's Next?</h3>
+          <h3 className="font-semibold mb-2 text-blue-900">What is Next?</h3>
           <ul className="space-y-2 text-blue-800 text-sm">
             <li>✓ You will receive an order confirmation email shortly</li>
-            <li>✓ We'll send you shipping updates as your order is processed</li>
+            <li>
+              ✓ We will send you shipping updates as your order is processed
+            </li>
             <li>✓ Your order will be delivered within 5-7 business days</li>
           </ul>
         </div>

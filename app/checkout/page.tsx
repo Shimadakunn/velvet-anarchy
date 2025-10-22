@@ -141,6 +141,34 @@ export default function CheckoutPage() {
         shippingStatus: "pending",
       });
 
+      // Send confirmation email
+      try {
+        await fetch("/api/send-confirmation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerEmail: details.payer.email_address,
+            customerName: `${details.payer.name.given_name} ${details.payer.name.surname}`,
+            orderId: details.id,
+            items: items.map((item) => ({
+              productName: item.productName,
+              price: item.price,
+              quantity: item.quantity,
+              variants: item.variants,
+            })),
+            subtotal,
+            shipping,
+            tax,
+            total,
+          }),
+        });
+      } catch (emailError) {
+        console.error("Error sending confirmation email:", emailError);
+        // Don't fail the order if email fails
+      }
+
       // Clear cart
       clearCart();
 
