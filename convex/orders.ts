@@ -39,6 +39,15 @@ export const create = mutation({
       v.literal("out_for_delivery"),
       v.literal("delivered")
     ),
+    shippingAddress: v.object({
+      name: v.string(),
+      addressLine1: v.string(),
+      addressLine2: v.optional(v.string()),
+      city: v.string(),
+      state: v.string(),
+      postalCode: v.string(),
+      country: v.string(),
+    }),
   },
   handler: async (ctx, args) => {
     const orderId = await ctx.db.insert("orders", {
@@ -52,6 +61,7 @@ export const create = mutation({
       total: args.total,
       status: args.status,
       shippingStatus: args.shippingStatus,
+      shippingAddress: args.shippingAddress,
     });
 
     return orderId;

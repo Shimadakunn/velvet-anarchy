@@ -391,6 +391,30 @@ function OrderCard({
       {/* Expanded Details */}
       {isExpanded && (
         <div className="border-t border-gray-200 p-4 bg-gray-50">
+          {/* Shipping Address */}
+          {order.shippingAddress && (
+            <div className="mb-4">
+              <div className="bg-white rounded-lg p-4 border border-gray-200">
+                <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-gray-600" />
+                  Shipping Address
+                </h4>
+                <div className="text-sm text-gray-700 space-y-1">
+                  <p className="font-medium">{order.shippingAddress.name}</p>
+                  <p>{order.shippingAddress.addressLine1}</p>
+                  {order.shippingAddress.addressLine2 && (
+                    <p>{order.shippingAddress.addressLine2}</p>
+                  )}
+                  <p>
+                    {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                    {order.shippingAddress.postalCode}
+                  </p>
+                  <p className="uppercase">{order.shippingAddress.country}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Items List */}
           <div className="mb-4">
             <h4 className="text-sm font-semibold mb-3">Order Items</h4>

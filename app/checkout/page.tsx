@@ -120,6 +120,18 @@ export default function CheckoutPage() {
       // Capture the payment
       const details = await actions.order.capture();
 
+      // Extract shipping address from PayPal
+      const paypalShipping = details.purchase_units[0].shipping;
+      const shippingAddress = {
+        name: paypalShipping.name.full_name,
+        addressLine1: paypalShipping.address.address_line_1 || "",
+        addressLine2: paypalShipping.address.address_line_2,
+        city: paypalShipping.address.admin_area_2 || "",
+        state: paypalShipping.address.admin_area_1 || "",
+        postalCode: paypalShipping.address.postal_code || "",
+        country: paypalShipping.address.country_code || "",
+      };
+
       // Create order in database
       await createOrder({
         orderId: details.id,
@@ -139,6 +151,7 @@ export default function CheckoutPage() {
         total,
         status: "pending",
         shippingStatus: "pending",
+        shippingAddress,
       });
 
       // Send confirmation email

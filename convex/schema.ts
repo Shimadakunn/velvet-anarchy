@@ -57,6 +57,17 @@ export default defineSchema({
       v.literal("out_for_delivery"),
       v.literal("delivered")
     ),
+    shippingAddress: v.optional(
+      v.object({
+        name: v.string(),
+        addressLine1: v.string(),
+        addressLine2: v.optional(v.string()),
+        city: v.string(),
+        state: v.string(),
+        postalCode: v.string(),
+        country: v.string(),
+      })
+    ),
   })
     .index("byOrderId", ["orderId"])
     .index("byEmail", ["customerEmail"]),

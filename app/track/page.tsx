@@ -415,6 +415,30 @@ export default function TrackOrderPage() {
                   <ShippingProgress shippingStatus={order.shippingStatus} />
                 </div>
 
+                {/* Shipping Address */}
+                {order.shippingAddress && (
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                      <Truck className="w-5 h-5 text-gray-600" />
+                      Shipping Address
+                    </h3>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="text-sm text-gray-700 space-y-1">
+                        <p className="font-medium">{order.shippingAddress.name}</p>
+                        <p>{order.shippingAddress.addressLine1}</p>
+                        {order.shippingAddress.addressLine2 && (
+                          <p>{order.shippingAddress.addressLine2}</p>
+                        )}
+                        <p>
+                          {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                          {order.shippingAddress.postalCode}
+                        </p>
+                        <p className="uppercase">{order.shippingAddress.country}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Order Items */}
                 <div className="bg-white rounded-lg shadow-sm p-6">
                   <h3 className="text-xl font-semibold mb-4">Order Items</h3>

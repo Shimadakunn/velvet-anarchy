@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, Package, Mail, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Package, Mail, ArrowLeft, Truck } from "lucide-react";
 
 // Component to display individual order item with variant image support
 function OrderItem({
@@ -163,6 +163,30 @@ export default function OrderSuccessPage() {
             <p className="text-gray-700">{order.customerName}</p>
             <p className="text-gray-600">{order.customerEmail}</p>
           </div>
+
+          {/* Shipping Address */}
+          {order.shippingAddress && (
+            <div className="mb-6 pb-6 border-b border-gray-200">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <Truck className="w-5 h-5 text-gray-600" />
+                  Shipping Address
+                </h3>
+                <div className="text-sm text-gray-700 space-y-1">
+                  <p className="font-medium">{order.shippingAddress.name}</p>
+                  <p>{order.shippingAddress.addressLine1}</p>
+                  {order.shippingAddress.addressLine2 && (
+                    <p>{order.shippingAddress.addressLine2}</p>
+                  )}
+                  <p>
+                    {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                    {order.shippingAddress.postalCode}
+                  </p>
+                  <p className="uppercase">{order.shippingAddress.country}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Items */}
           <div className="mb-6">
