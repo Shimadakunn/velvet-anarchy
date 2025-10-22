@@ -34,6 +34,9 @@ function DesktopHeader() {
               <li className=" font-semibold cursor-pointer hover:underline underline-offset-4">
                 <Link href="/">Home</Link>
               </li>
+              <li className=" font-semibold cursor-pointer hover:underline underline-offset-4">
+                <Link href="/track">Track Order</Link>
+              </li>
               <li className="font-semibold cursor-pointer hover:underline underline-offset-4">
                 Shop
               </li>
@@ -136,7 +139,10 @@ function MobileHeader() {
           <nav className="flex-1 p-4">
             <ul className="flex flex-col gap-4">
               <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
-                Home
+                <Link href="/">Home</Link>
+              </li>
+              <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
+                <Link href="/track">Track Order</Link>
               </li>
               <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
                 Shop
