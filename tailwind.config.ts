@@ -11,10 +11,15 @@ const config = {
         "50%": { "background-position": "100% 50%" },
         "100%": { "background-position": "0% 50%" },
       },
+      marquee: {
+        "0%": { transform: "translateX(100%)" },
+        "100%": { transform: "translateX(-100%)" },
+      },
     },
     animation: {
       shine: "shine 3s ease-out infinite",
       "gradient-flow": "gradientFlow 10s ease 0s infinite normal none running",
+      marquee: "marquee 15s linear infinite",
     },
   },
 };

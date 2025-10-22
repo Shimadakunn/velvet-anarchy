@@ -8,7 +8,12 @@ import Size from "./4 - Size";
 import Offers from "./5 - Offers";
 import Buy from "./6 - Buy";
 import Accordion from "./7 - Accordion";
-import { Product as ProductType, Variant, VariantType, variantTypes } from "@/lib/type";
+import {
+  Product as ProductType,
+  Variant,
+  VariantType,
+  variantTypes,
+} from "@/lib/type";
 
 export default function Product({
   product,
@@ -55,9 +60,8 @@ export default function Product({
     return initial;
   };
 
-  const [selectedVariants, setSelectedVariants] = useState<
-    Record<VariantType, string>
-  >(getInitialVariants());
+  const [selectedVariants, setSelectedVariants] =
+    useState<Record<VariantType, string>>(getInitialVariants());
 
   const [selectedOffer, setSelectedOffer] = useState<"buy1" | "buy2">("buy1");
 
@@ -70,7 +74,7 @@ export default function Product({
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="">
       <Rating product={product} />
       <div className="mb-4" />
       <Name product={product} />
