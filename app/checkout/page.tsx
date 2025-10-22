@@ -159,41 +159,13 @@ export default function CheckoutPage() {
         shippingAddress,
       });
 
-      // Send confirmation email
-      try {
-        await fetch("/api/send-confirmation", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerEmail: details.payer.email_address,
-            customerName: `${details.payer.name.given_name} ${details.payer.name.surname}`,
-            orderId: details.id,
-            items: items.map((item) => ({
-              productName: item.productName,
-              price: item.price,
-              quantity: item.quantity,
-              variants: item.variants,
-            })),
-            subtotal,
-            shipping,
-            tax,
-            total,
-          }),
-        });
-      } catch (emailError) {
-        console.error("Error sending confirmation email:", emailError);
-        // Don't fail the order if email fails
-      }
-
       // Clear cart
       clearCart();
 
       // Show success message
       toast.success("Payment successful! Order has been placed.");
 
-      // Redirect to success page
+      // Redirect to success page (emails will be sent from there)
       router.push(`/order-success?orderId=${details.id}`);
     } catch (error) {
       console.error("Error processing payment:", error);
@@ -399,8 +371,8 @@ export default function CheckoutPage() {
 
               {/* Description */}
               <p className="text-gray-600 mb-6">
-                Please wait while we save your order and prepare your
-                confirmation. This will only take a moment...
+                Please wait while we save your order. This will only take a
+                moment...
               </p>
 
               {/* Progress Steps */}
@@ -414,12 +386,6 @@ export default function CheckoutPage() {
                 <div className="flex items-center gap-3 text-sm">
                   <Loader2 className="w-5 h-5 text-green-600 animate-spin flex-shrink-0" />
                   <span className="text-gray-700">Saving order details...</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm opacity-50">
-                  <div className="w-5 h-5 border-2 border-gray-300 rounded-full flex-shrink-0" />
-                  <span className="text-gray-500">
-                    Sending confirmation email
-                  </span>
                 </div>
               </div>
 

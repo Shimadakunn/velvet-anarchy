@@ -7,6 +7,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, Package, Mail, ArrowLeft, Truck } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 // Component to display individual order item with variant image support
 function OrderItem({
@@ -86,11 +87,76 @@ function OrderItem({
 export default function OrderSuccessPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+  const emailsSentRef = useRef(false);
 
   const order = useQuery(
     api.orders.getByOrderId,
     orderId ? { orderId: orderId } : "skip"
   );
+
+  // Send confirmation and admin notification emails when order is loaded
+  useEffect(() => {
+    // Only send emails once and only when order data is available
+    if (order && !emailsSentRef.current) {
+      emailsSentRef.current = true;
+
+      // Send both emails in parallel
+      Promise.all([
+        // Send confirmation email to customer
+        fetch("/api/send-confirmation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerEmail: order.customerEmail,
+            customerName: order.customerName,
+            orderId: order.orderId,
+            items: order.items.map((item) => ({
+              productName: item.productName,
+              price: item.price,
+              quantity: item.quantity,
+              variants: item.variants,
+            })),
+            subtotal: order.subtotal,
+            shipping: order.shipping,
+            tax: order.tax,
+            total: order.total,
+          }),
+        }).catch((error) => {
+          console.error("Error sending confirmation email:", error);
+        }),
+
+        // Send admin notification email
+        fetch("/api/send-admin-notification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerEmail: order.customerEmail,
+            customerName: order.customerName,
+            orderId: order.orderId,
+            items: order.items.map((item) => ({
+              productName: item.productName,
+              price: item.price,
+              quantity: item.quantity,
+              variants: item.variants,
+            })),
+            subtotal: order.subtotal,
+            shipping: order.shipping,
+            tax: order.tax,
+            total: order.total,
+            shippingAddress: order.shippingAddress,
+          }),
+        }).catch((error) => {
+          console.error("Error sending admin notification email:", error);
+        }),
+      ]).then(() => {
+        console.log("Emails sent successfully");
+      });
+    }
+  }, [order]);
 
   if (!orderId) {
     return (
