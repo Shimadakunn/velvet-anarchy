@@ -45,16 +45,13 @@ function DesktopHeader() {
                   <Link href="/">Home</Link>
                 </li>
                 <li className=" font-semibold cursor-pointer hover:underline underline-offset-4">
-                  <Link href="/track">Track Order</Link>
+                  <Link href="/track">Order Tracking</Link>
                 </li>
                 <li className="font-semibold cursor-pointer hover:underline underline-offset-4">
-                  Shop
+                  <Link href="/about">About</Link>
                 </li>
                 <li className="font-semibold cursor-pointer hover:underline underline-offset-4">
-                  About
-                </li>
-                <li className="font-semibold cursor-pointer hover:underline underline-offset-4">
-                  Contact
+                  <Link href="/contact">Contact</Link>
                 </li>
               </ul>
             </nav>
@@ -156,16 +153,13 @@ function MobileHeader() {
                 <Link href="/">Home</Link>
               </li>
               <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
-                <Link href="/track">Track Order</Link>
+                <Link href="/track">Order Tracking</Link>
               </li>
               <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
-                Shop
+                <Link href="/about">About</Link>
               </li>
               <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
-                About
-              </li>
-              <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
-                Contact
+                <Link href="/contact">Contact</Link>
               </li>
             </ul>
           </nav>

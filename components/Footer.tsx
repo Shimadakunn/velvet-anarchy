@@ -62,24 +62,36 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <span className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors cursor-pointer">
+                <Link
+                  href="/about"
+                  className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors"
+                >
                   About Us
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors cursor-pointer">
+                <Link
+                  href="/contact"
+                  className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors"
+                >
                   Contact
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors cursor-pointer">
+                <Link
+                  href="/privacy-policy"
+                  className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors"
+                >
                   Privacy Policy
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors cursor-pointer">
+                <Link
+                  href="/terms-of-service"
+                  className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors"
+                >
                   Terms of Service
-                </span>
+                </Link>
               </li>
             </ul>
           </div>
@@ -137,15 +149,24 @@ export function Footer() {
             © {currentYear} Velvet Anarchy. All rights reserved.
           </p>
           <div className="flex gap-4">
-            <span className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer">
+            <Link
+              href="/shipping-policy"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
               Shipping Policy
-            </span>
-            <span className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer">
+            </Link>
+            <Link
+              href="/returns"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
               Returns
-            </span>
-            <span className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer">
+            </Link>
+            <Link
+              href="/faq"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
               FAQ
-            </span>
+            </Link>
           </div>
         </div>
       </div>
