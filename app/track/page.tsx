@@ -116,49 +116,51 @@ function ShippingProgress({
 
   return (
     <div className="py-8">
-      <div className="flex items-center justify-between relative">
-        {/* Progress Line */}
-        <div className="absolute left-0 top-5 w-full h-1 bg-gray-200">
-          <div
-            className="h-full bg-green-500 transition-all duration-500"
-            style={{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }}
-          />
-        </div>
-
-        {/* Steps */}
-        {steps.map((step, index) => {
-          const Icon = step.icon;
-          const isActive = index <= currentIndex;
-          const isCurrent = index === currentIndex;
-
-          return (
+      <div className="relative md:px-4">
+        <div className="flex items-start justify-between relative">
+          {/* Progress Line - positioned to go through center of circles */}
+          <div className="absolute left-5 right-5 top-[20px] h-1 bg-gray-200">
             <div
-              key={step.id}
-              className="flex flex-col items-center relative z-10"
-            >
+              className="h-full bg-green-500 transition-all duration-500"
+              style={{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }}
+            />
+          </div>
+
+          {/* Steps */}
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            const isActive = index <= currentIndex;
+            const isCurrent = index === currentIndex;
+
+            return (
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all ${
-                  isActive
-                    ? isCurrent
-                      ? "bg-green-500 ring-4 ring-green-100"
-                      : "bg-green-500"
-                    : "bg-gray-200"
-                }`}
+                key={step.id}
+                className="flex flex-col items-center relative z-10"
               >
-                <Icon
-                  className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-400"}`}
-                />
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all ${
+                    isActive
+                      ? isCurrent
+                        ? "bg-green-500 ring-4 ring-green-100"
+                        : "bg-green-500"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-400"}`}
+                  />
+                </div>
+                <span
+                  className={`text-[8px] md:text-xs font-medium text-center leading-tight mt-1 max-w-[50px] md:max-w-none md:whitespace-nowrap ${
+                    isActive ? "text-gray-900" : "text-gray-500"
+                  }`}
+                >
+                  {step.label}
+                </span>
               </div>
-              <span
-                className={`text-xs font-medium text-center max-w-[80px] ${
-                  isActive ? "text-gray-900" : "text-gray-500"
-                }`}
-              >
-                {step.label}
-              </span>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -174,7 +176,11 @@ export default function TrackOrderPage() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
   };
 
-  const searchType = activeSearch ? (isEmail(activeSearch) ? "email" : "orderId") : null;
+  const searchType = activeSearch
+    ? isEmail(activeSearch)
+      ? "email"
+      : "orderId"
+    : null;
 
   const orderById = useQuery(
     api.orders.getByOrderId,
@@ -194,7 +200,8 @@ export default function TrackOrderPage() {
   };
 
   // Determine what to display
-  const orders = searchType === "email" ? ordersByEmail : (orderById ? [orderById] : null);
+  const orders =
+    searchType === "email" ? ordersByEmail : orderById ? [orderById] : null;
   const hasSearched = !!activeSearch;
 
   // Stop loading when query completes
@@ -253,19 +260,25 @@ export default function TrackOrderPage() {
     <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <MapPin className="w-16 h-16 text-gray-700" />
+        <div className="text-center md:mb-8 mb-4">
+          <div className="flex justify-center md:mb-4 mb-2">
+            <MapPin className="md:w-16 md:h-16 w-12 h-12 text-gray-700" />
           </div>
-          <h1 className="text-4xl font-bold mb-3">Track Your Order</h1>
-          <p className="text-gray-600 text-lg">
-            Enter your order ID or email to view your order status and shipping details
+          <h1 className="md:text-4xl text-3xl font-bold md:mb-3 mb-1">
+            Track Your Order
+          </h1>
+          <p className="text-gray-600 md:text-lg text-base">
+            Enter your order ID or email to view your order status and shipping
+            details
           </p>
         </div>
 
         {/* Search Form */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <form onSubmit={handleSearch} className="flex gap-3">
+          <form
+            onSubmit={handleSearch}
+            className="flex flex-col md:flex-row gap-3"
+          >
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
@@ -286,7 +299,8 @@ export default function TrackOrderPage() {
             </button>
           </form>
           <p className="text-xs text-gray-500 mt-3 text-center">
-            We&apos;ll automatically detect whether you entered an order ID or email address
+            We&apos;ll automatically detect whether you entered an order ID or
+            email address
           </p>
         </div>
 
@@ -330,17 +344,20 @@ export default function TrackOrderPage() {
         )}
 
         {/* Results Header for Email Search */}
-        {!isSearching && searchType === "email" && orders && orders.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold">
-              {orders.length} {orders.length === 1 ? "Order" : "Orders"} Found
-            </h2>
-            <p className="text-gray-600">
-              Showing all orders for{" "}
-              <span className="font-semibold">{activeSearch}</span>
-            </p>
-          </div>
-        )}
+        {!isSearching &&
+          searchType === "email" &&
+          orders &&
+          orders.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold">
+                {orders.length} {orders.length === 1 ? "Order" : "Orders"} Found
+              </h2>
+              <p className="text-gray-600">
+                Showing all orders for{" "}
+                <span className="font-semibold">{activeSearch}</span>
+              </p>
+            </div>
+          )}
 
         {/* Order Details */}
         {!isSearching && orders && orders.length > 0 && (
@@ -409,7 +426,7 @@ export default function TrackOrderPage() {
 
                 {/* Shipping Progress */}
                 <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="text-xl font-semibold mb-4">
+                  <h3 className="text-xl font-semibold md:mb-4">
                     Shipping Status
                   </h3>
                   <ShippingProgress shippingStatus={order.shippingStatus} />
@@ -424,16 +441,21 @@ export default function TrackOrderPage() {
                     </h3>
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="text-sm text-gray-700 space-y-1">
-                        <p className="font-medium">{order.shippingAddress.name}</p>
+                        <p className="font-medium">
+                          {order.shippingAddress.name}
+                        </p>
                         <p>{order.shippingAddress.addressLine1}</p>
                         {order.shippingAddress.addressLine2 && (
                           <p>{order.shippingAddress.addressLine2}</p>
                         )}
                         <p>
-                          {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                          {order.shippingAddress.city},{" "}
+                          {order.shippingAddress.state}{" "}
                           {order.shippingAddress.postalCode}
                         </p>
-                        <p className="uppercase">{order.shippingAddress.country}</p>
+                        <p className="uppercase">
+                          {order.shippingAddress.country}
+                        </p>
                       </div>
                     </div>
                   </div>
