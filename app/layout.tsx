@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { helveticaNeue, dirtyline } from "@/lib/fonts";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Toaster } from "sonner";
 import { Provider } from "./provider";
 import Cart from "@/components/Cart";
@@ -19,13 +20,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${helveticaNeue.variable} ${dirtyline.variable}  font-medium antialiased`}
+        className={`${helveticaNeue.variable} ${dirtyline.variable}  font-medium antialiased min-h-screen flex flex-col`}
       >
         <Header />
         <Provider>
-          {children}
+          <div className="flex-1">
+            {children}
+          </div>
           <Cart />
         </Provider>
+        <Footer />
         <Toaster richColors position="top-right" />
       </body>
     </html>
