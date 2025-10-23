@@ -7,8 +7,9 @@ import { Id } from "@/convex/_generated/dataModel";
 import Carroussel from "@/components/Carroussel";
 import Product from "@/page/product";
 import { useStorageUrls } from "@/hooks/useStorageUrls";
-import { Product as ProductType, Variant } from "@/lib/type";
+import { Product as ProductType, Variant, Review } from "@/lib/type";
 import TrustBadges from "@/components/TrustBadges";
+import Reviews from "@/components/Reviews";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -26,6 +27,12 @@ export default function ProductDetailPage() {
   const variants: Variant[] | undefined = useQuery(
     api.variants.get,
     product ? { id: product._id as Id<"products"> } : "skip"
+  );
+
+  // Fetch reviews if product exists
+  const reviews: Review[] | undefined = useQuery(
+    api.reviews.get,
+    product ? { productId: product._id as Id<"products"> } : "skip"
   );
 
   // Get image URLs from storage
@@ -79,6 +86,11 @@ export default function ProductDetailPage() {
         </div>
       </div>
       <TrustBadges />
+      {reviews && reviews.length > 0 && (
+        <div className="mx-auto max-w-5xl px-4 md:px-0 pb-8">
+          <Reviews reviews={reviews} />
+        </div>
+      )}
     </>
   );
 }

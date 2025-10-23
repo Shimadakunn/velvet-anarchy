@@ -71,4 +71,14 @@ export default defineSchema({
   })
     .index("byOrderId", ["orderId"])
     .index("byEmail", ["customerEmail"]),
+
+  reviews: defineTable({
+    productId: v.id("products"),
+    userName: v.string(),
+    userImage: v.optional(v.string()),
+    rating: v.number(),
+    comment: v.string(),
+    date: v.string(),
+    reviewImages: v.optional(v.array(v.string())),
+  }).index("byProduct", ["productId"]),
 });

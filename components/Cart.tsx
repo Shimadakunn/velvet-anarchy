@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
-import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { X, Minus, Plus, Trash2, BadgeCheck } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Lock } from "lucide-react";
+import PaymentBadges from "./PaymentBadges";
 
 export default function Cart() {
   const {
@@ -95,26 +96,42 @@ export default function Cart() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-gray-300 p-4 space-y-4">
+          <div className="border-t border-gray-300 p-4">
             {/* Total */}
-            <div className="flex justify-between items-center text-lg font-bold">
+            <div className="flex justify-between items-center text-2xl font-black mb-2">
               <span>Total</span>
-              <span className="text-2xl font-black">
-                €{getTotalPrice().toFixed(2)}
-              </span>
+              <span>€{getTotalPrice().toFixed(2)}</span>
             </div>
 
-            {/* Checkout Button */}
             <Link href="/checkout">
               <Button
                 effect="ringHover"
-                className="w-full relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
+                className="w-full my-2 relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
                 onClick={closeCart}
               >
-                <Lock style={{ width: "20px", height: "20px" }} strokeWidth={3} />
-                <h1 className="text-2xl font-extrabold">Secure Checkout</h1>
+                <Lock
+                  style={{ width: "16px", height: "16px" }}
+                  strokeWidth={2.5}
+                />
+                <h1 className="text-xl font-semibold">Proceed to Checkout</h1>
               </Button>
             </Link>
+
+            {/* Payment Badges */}
+            <PaymentBadges className="my-2 px-4" />
+            {/* Security Notice */}
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-2 py-2 bg-gray-50 rounded-lg border border-gray-200">
+              <span className="flex items-center gap-1">
+                Payments are powered by{" "}
+                <Image
+                  src="/paypal.svg"
+                  alt="PayPal"
+                  width={16}
+                  height={16}
+                  className="w-14 h-auto"
+                />
+              </span>
+            </div>
           </div>
         )}
       </div>

@@ -8,16 +8,19 @@ import {
   Variant,
   VariantType,
   variantTypes,
+  Review,
 } from "@/lib/type";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import StorageImage from "@/components/StorageImage";
 import { useStorageUrls } from "@/hooks/useStorageUrls";
 import { Trash2 } from "lucide-react";
+import Reviews from "@/components/Reviews";
 
 export default function AddProductPage() {
   const createProduct = useMutation(api.products.create);
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const createReview = useMutation(api.reviews.create);
 
   const [product, setProduct] = useState<ProductType>({
     name: "",
@@ -36,6 +39,23 @@ export default function AddProductPage() {
   const [newVariantValue, setNewVariantValue] = useState("");
   const [newVariantImage, setNewVariantImage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Review state
+  const [reviews, setReviews] = useState<
+    Omit<Review, "_id" | "productId" | "_creationTime">[]
+  >([]);
+  const [newReviewUserName, setNewReviewUserName] = useState("");
+  const [newReviewUserImage, setNewReviewUserImage] = useState<string>("");
+  const [newReviewRating, setNewReviewRating] = useState(5);
+  const [newReviewComment, setNewReviewComment] = useState("");
+  const [newReviewDate, setNewReviewDate] = useState(
+    new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  );
+  const [newReviewImages, setNewReviewImages] = useState<string[]>([]);
 
   // Generate slug from name
   const generateSlug = (name: string) => {
@@ -90,6 +110,70 @@ export default function AddProductPage() {
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
+  };
+
+  // Handle user image upload for review
+  const handleReviewUserImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      if (!result.ok) {
+        throw new Error(`Failed to upload ${file.name}`);
+      }
+
+      const { storageId } = await result.json();
+      setNewReviewUserImage(storageId);
+    } catch (error) {
+      console.error("Error uploading user image:", error);
+      alert("Failed to upload user image. Please try again.");
+    }
+  };
+
+  // Handle review images upload (customer's product photos)
+  const handleReviewImagesUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+
+        if (!result.ok) {
+          throw new Error(`Failed to upload ${file.name}`);
+        }
+
+        const { storageId } = await result.json();
+        return storageId;
+      });
+
+      const storageIds = await Promise.all(uploadPromises);
+      setNewReviewImages([...newReviewImages, ...storageIds]);
+    } catch (error) {
+      console.error("Error uploading review images:", error);
+      alert("Failed to upload review images. Please try again.");
+    }
+  };
+
+  // Remove review image
+  const removeReviewImage = (index: number) => {
+    setNewReviewImages(newReviewImages.filter((_, i) => i !== index));
   };
 
   // Handle product field changes
@@ -147,6 +231,19 @@ export default function AddProductPage() {
         variants: variantsData,
       });
 
+      // Create reviews for the product
+      for (const review of reviews) {
+        await createReview({
+          productId,
+          userName: review.userName,
+          userImage: review.userImage,
+          rating: review.rating,
+          comment: review.comment,
+          date: review.date,
+          reviewImages: review.reviewImages,
+        });
+      }
+
       alert(`Product added successfully! ID: ${productId}`);
 
       // Reset form
@@ -162,6 +259,7 @@ export default function AddProductPage() {
         stock: 0,
       });
       setVariants([]);
+      setReviews([]);
     } catch (error) {
       console.error("Error adding product:", error);
       alert("Failed to add product. Please try again.");
@@ -188,6 +286,39 @@ export default function AddProductPage() {
   // Remove variant
   const removeVariant = (type: VariantType, value: string) => {
     setVariants(variants.filter((v) => v.type !== type || v.value !== value));
+  };
+
+  // Add review
+  const addReview = () => {
+    if (!newReviewUserName.trim() || !newReviewComment.trim()) return;
+
+    const newReview = {
+      userName: newReviewUserName,
+      userImage: newReviewUserImage || undefined,
+      rating: newReviewRating,
+      comment: newReviewComment,
+      date: newReviewDate,
+      reviewImages: newReviewImages.length > 0 ? newReviewImages : undefined,
+    };
+
+    setReviews([...reviews, newReview]);
+    setNewReviewUserName("");
+    setNewReviewUserImage("");
+    setNewReviewRating(5);
+    setNewReviewComment("");
+    setNewReviewDate(
+      new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    );
+    setNewReviewImages([]);
+  };
+
+  // Remove review
+  const removeReview = (index: number) => {
+    setReviews(reviews.filter((_, i) => i !== index));
   };
 
   // Get URLs for preview
@@ -441,6 +572,179 @@ export default function AddProductPage() {
             </div>
           </div>
 
+          {/* Reviews Section */}
+          <div className="mb-4 pt-2 border-t">
+            <h3 className="text-lg font-semibold mb-2">Customer Reviews</h3>
+
+            {/* Add Review Form */}
+            <div className="space-y-3 mb-4">
+              <div className="grid grid-cols-3 gap-3">
+                <input
+                  type="text"
+                  value={newReviewUserName}
+                  onChange={(e) => setNewReviewUserName(e.target.value)}
+                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="User name"
+                />
+                <input
+                  type="number"
+                  value={newReviewRating}
+                  onChange={(e) =>
+                    setNewReviewRating(
+                      Math.max(0, Math.min(5, parseFloat(e.target.value) || 0))
+                    )
+                  }
+                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Rating (0-5)"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                />
+                <input
+                  type="text"
+                  value={newReviewDate}
+                  onChange={(e) => setNewReviewDate(e.target.value)}
+                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Date (e.g., January 1, 2024)"
+                />
+              </div>
+              <textarea
+                value={newReviewComment}
+                onChange={(e) => setNewReviewComment(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Review comment"
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    User Profile Image
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleReviewUserImageUpload}
+                    className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                  />
+                  {newReviewUserImage && (
+                    <div className="mt-2 relative inline-block">
+                      <StorageImage
+                        storageId={newReviewUserImage}
+                        alt="User preview"
+                        className="w-16 h-16 rounded-full object-cover"
+                      />
+                      <button
+                        onClick={() => setNewReviewUserImage("")}
+                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Customer Product Photos (Product received by customer)
+                  </label>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleReviewImagesUpload}
+                    className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                  />
+                  {newReviewImages.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {newReviewImages.map((img, index) => (
+                        <div key={index} className="relative">
+                          <StorageImage
+                            storageId={img}
+                            alt={`Review preview ${index + 1}`}
+                            className="w-16 h-16 object-cover rounded"
+                          />
+                          <button
+                            onClick={() => removeReviewImage(index)}
+                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={addReview}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              >
+                Add Review
+              </button>
+            </div>
+
+            {/* Reviews List */}
+            {reviews.length > 0 && (
+              <div className="space-x-3 flex">
+                {reviews.map((review, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-50 p-3 rounded-md relative flex-1"
+                  >
+                    <button
+                      onClick={() => removeReview(index)}
+                      className="absolute top-2 right-2 text-red-500 hover:text-red-700 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <div className="flex items-start gap-3">
+                      {review.userImage ? (
+                        <StorageImage
+                          storageId={review.userImage}
+                          alt={review.userName}
+                          className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                          <span className="text-gray-600 font-semibold">
+                            {review.userName.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="flex justify-between w-full">
+                          <span className="font-semibold">
+                            {review.userName}
+                          </span>
+                          <span className="text-sm text-gray-500 px-4">
+                            {review.rating}/5
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-1">
+                          {review.date}
+                        </p>
+                        <div className="flex justify-between">
+                          <p className="text-gray-700 mb-2">{review.comment}</p>
+                          {review.reviewImages &&
+                            review.reviewImages.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {review.reviewImages.map((img, imgIndex) => (
+                                  <StorageImage
+                                    key={imgIndex}
+                                    storageId={img}
+                                    alt={`Review image ${imgIndex + 1}`}
+                                    className="w-16 h-16 object-cover rounded border"
+                                  />
+                                ))}
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Add Product Button */}
           <div className="flex justify-end">
             <button
@@ -457,14 +761,22 @@ export default function AddProductPage() {
         <div className="bg-white rounded-lg shadow-md p-6">
           {product.images.length > 0 ? (
             previewUrls ? (
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="w-full md:w-1/2">
-                  <Carroussel images={previewUrls} />
+              <>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="w-full md:w-1/2">
+                    <Carroussel images={previewUrls} />
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    <Product product={product} variants={variants} />
+                  </div>
                 </div>
-                <div className="w-full md:w-1/2">
-                  <Product product={product} variants={variants} />
-                </div>
-              </div>
+                {/* Reviews Preview */}
+                {reviews.length > 0 && (
+                  <div className="mt-8">
+                    <Reviews reviews={reviews} />
+                  </div>
+                )}
+              </>
             ) : (
               <div className="flex items-center justify-center h-64 bg-gray-100 rounded-md">
                 <p className="text-gray-500">Loading preview...</p>

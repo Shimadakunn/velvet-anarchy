@@ -26,3 +26,15 @@ export type Variant = {
 export type VariantType = "size" | "color";
 
 export const variantTypes: VariantType[] = ["color", "size"];
+
+export type Review = {
+  _id?: Id<"reviews">;
+  productId?: Id<"products">;
+  userName: string;
+  userImage?: string;
+  rating: number;
+  comment: string;
+  date: string;
+  reviewImages?: string[]; // Images of the product received by the customer
+  _creationTime?: number;
+};
