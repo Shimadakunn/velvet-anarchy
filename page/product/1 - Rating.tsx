@@ -11,7 +11,7 @@ export default function Rating({ product }: { product: Product }) {
   const starSize = isMobile ? 4 : 5;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       <div className="flex items-center">
         {[...Array(fullStars)].map((_, i) => (
           <Star
@@ -38,9 +38,7 @@ export default function Rating({ product }: { product: Product }) {
           />
         ))}
       </div>
-      <span className="text-sm md:text-md font-semibold text-gray-600">
-        {product.rating}/5 ({product.reviews.toLocaleString()} Reviews)
-      </span>
+      <span className="font-black">{product.rating}/5</span>
     </div>
   );
 }

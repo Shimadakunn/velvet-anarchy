@@ -56,7 +56,6 @@ export default function ModifyProductPage() {
     images: [],
     price: 0,
     rating: 0,
-    reviews: 0,
     sold: 0,
     stock: 0,
   });
@@ -98,7 +97,6 @@ export default function ModifyProductPage() {
         images: existingProduct.images,
         price: existingProduct.price,
         rating: existingProduct.rating,
-        reviews: existingProduct.reviews,
         sold: existingProduct.sold,
         stock: existingProduct.stock,
       });
@@ -279,7 +277,6 @@ export default function ModifyProductPage() {
         images: product.images,
         price: product.price,
         rating: product.rating,
-        reviews: product.reviews,
         sold: product.sold,
         stock: product.stock,
         variants: variantsData,
@@ -450,8 +447,8 @@ export default function ModifyProductPage() {
             </div>
           </div>
 
-          {/* Rating, Reviews, Sold, Stock in a row */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-5 mb-4">
+          {/* Rating, Sold, Stock in a row */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
             <div>
               <label className="block text-sm font-medium mb-2">Price</label>
               <input
@@ -481,21 +478,6 @@ export default function ModifyProductPage() {
                 min="0"
                 max="5"
                 step="0.1"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Number of Reviews
-              </label>
-              <input
-                type="number"
-                value={product.reviews || ""}
-                onChange={(e) =>
-                  handleFieldChange("reviews", parseInt(e.target.value) || 0)
-                }
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0"
-                min="0"
               />
             </div>
             <div>

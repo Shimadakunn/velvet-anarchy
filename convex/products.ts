@@ -29,7 +29,6 @@ export const create = mutation({
     images: v.array(v.string()),
     price: v.number(),
     rating: v.number(),
-    reviews: v.number(),
     sold: v.number(),
     stock: v.number(),
     variants: v.array(
@@ -70,7 +69,6 @@ export const update = mutation({
     images: v.array(v.string()),
     price: v.number(),
     rating: v.number(),
-    reviews: v.number(),
     sold: v.number(),
     stock: v.number(),
     variants: v.array(
