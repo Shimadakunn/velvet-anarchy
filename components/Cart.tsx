@@ -173,6 +173,7 @@ function CartItemComponent({
 
   const formatVariants = () => {
     return Object.entries(item.variants)
+      .filter(([, value]) => value) // Filter out empty/undefined values
       .map(([, value]) => `${value}`)
       .join(" / ");
   };

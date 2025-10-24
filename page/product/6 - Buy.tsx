@@ -1,17 +1,20 @@
 "use client";
+import { useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/cartStore";
-import { Product, VariantType } from "@/lib/type";
+import { Product, Variant, VariantType } from "@/lib/type";
 
 export default function Buy({
   product,
+  variants,
   selectedVariants,
   selectedOffer,
   buy2Selections,
 }: {
   product: Product;
+  variants: Variant[];
   selectedVariants: Record<VariantType, string>;
   selectedOffer: "buy1" | "buy2";
   buy2Selections: {
@@ -21,6 +24,15 @@ export default function Buy({
 }) {
   const addItem = useCartStore((state) => state.addItem);
 
+  // Get available variant types for this product
+  const availableVariantTypes = useMemo(() => {
+    const types = new Set<VariantType>();
+    variants.forEach((variant) => {
+      types.add(variant.type);
+    });
+    return Array.from(types);
+  }, [variants]);
+
   const handleAddToCart = () => {
     if (!product._id || !product.slug) {
       toast.error("Invalid product data");
@@ -28,9 +40,9 @@ export default function Buy({
     }
 
     if (selectedOffer === "buy1") {
-      // Validate that all variants have been selected for buy1
-      const hasEmptyVariant = Object.values(selectedVariants).some(
-        (value) => !value
+      // Validate that all available variants have been selected for buy1
+      const hasEmptyVariant = availableVariantTypes.some(
+        (type) => !selectedVariants[type]
       );
 
       if (hasEmptyVariant) {
@@ -50,11 +62,11 @@ export default function Buy({
       toast.success("Added to cart!");
     } else {
       // Buy 2 option - add both items
-      const hasEmptyVariantItem1 = Object.values(buy2Selections.item1).some(
-        (value) => !value
+      const hasEmptyVariantItem1 = availableVariantTypes.some(
+        (type) => !buy2Selections.item1[type]
       );
-      const hasEmptyVariantItem2 = Object.values(buy2Selections.item2).some(
-        (value) => !value
+      const hasEmptyVariantItem2 = availableVariantTypes.some(
+        (type) => !buy2Selections.item2[type]
       );
 
       if (hasEmptyVariantItem1 || hasEmptyVariantItem2) {

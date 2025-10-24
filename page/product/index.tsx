@@ -95,6 +95,7 @@ export default function Product({
       <div className="mb-4" />
       <Buy
         product={product}
+        variants={variants}
         selectedVariants={selectedVariants}
         selectedOffer={selectedOffer}
         buy2Selections={buy2Selections}

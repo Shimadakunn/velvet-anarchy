@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Instagram, Facebook, Twitter, Mail } from "lucide-react";
+import PaymentBadges from "./PaymentBadges";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -148,6 +149,9 @@ export function Footer() {
           <p className="text-sm text-gray-500">
             © {currentYear} Velvet Anarchy. All rights reserved.
           </p>
+          <div className="">
+            <PaymentBadges className="space-x-4" />
+          </div>
           <div className="flex gap-4">
             <Link
               href="/shipping-policy"

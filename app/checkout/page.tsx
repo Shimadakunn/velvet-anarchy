@@ -69,6 +69,7 @@ function CheckoutItem({ item }: { item: CartItem }) {
         </Link>
         <p className="text-xs text-gray-500 mt-1">
           {Object.entries(item.variants)
+            .filter(([, v]) => v) // Filter out empty/undefined values
             .map(([, v]) => v)
             .join(" / ")}
         </p>
@@ -234,6 +235,7 @@ export default function CheckoutPage() {
                           items: items.map((item) => ({
                             name: item.productName,
                             description: `${Object.entries(item.variants)
+                              .filter(([, v]) => v) // Filter out empty/undefined values
                               .map(([k, v]) => `${k}: ${v}`)
                               .join(", ")}`,
                             unit_amount: {

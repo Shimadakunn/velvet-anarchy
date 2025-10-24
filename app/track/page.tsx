@@ -70,14 +70,12 @@ function OrderItem({
 
       <div className="flex-1">
         <h4 className="font-semibold text-sm">{item.productName}</h4>
-        <div className="flex gap-3 mt-1 text-xs text-gray-600">
-          <span>
-            Color: <span className="font-medium">{item.variants.color}</span>
-          </span>
-          <span>
-            Size: <span className="font-medium">{item.variants.size}</span>
-          </span>
-        </div>
+        <p className="text-xs text-gray-600 mt-1">
+          {Object.entries(item.variants)
+            .filter(([, value]) => value) // Filter out empty/undefined values
+            .map(([, value]) => value)
+            .join(" / ")}
+        </p>
         <p className="text-xs text-gray-500 mt-1">Qty: {item.quantity}</p>
       </div>
 

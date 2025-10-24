@@ -74,12 +74,17 @@ export default function Offers({
 
     const currentSelection = getCurrentSelection();
 
+    // Get only available variant types (those with options)
+    const availableTypes = variantTypes.filter(
+      (type) => variantsByType[type] && variantsByType[type].length > 0
+    );
+
     return (
       <div className={showLabel ? "space-y-3 pt-3 border-t border-gray-200" : "flex items-center gap-2 flex-1"}>
-        {showLabel && (
+        {showLabel && availableTypes.length > 0 && (
           <div className="flex items-center gap-2 text-sm">
             <span className="font-semibold">
-              {variantTypes.map((type) => type.charAt(0).toUpperCase() + type.slice(1)).join(", ")}
+              {availableTypes.map((type) => type.charAt(0).toUpperCase() + type.slice(1)).join(", ")}
             </span>
           </div>
         )}
@@ -117,13 +122,20 @@ export default function Offers({
 
   // Render multiple item selectors for Buy 2 option
   const renderMultipleItems = () => {
+    // Get only available variant types (those with options)
+    const availableTypes = variantTypes.filter(
+      (type) => variantsByType[type] && variantsByType[type].length > 0
+    );
+
     return (
       <div className="space-y-3 pt-3 border-t border-gray-200">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="font-semibold">
-            {variantTypes.map((type) => type.charAt(0).toUpperCase() + type.slice(1)).join(", ")}
-          </span>
-        </div>
+        {availableTypes.length > 0 && (
+          <div className="flex items-center gap-2 text-sm">
+            <span className="font-semibold">
+              {availableTypes.map((type) => type.charAt(0).toUpperCase() + type.slice(1)).join(", ")}
+            </span>
+          </div>
+        )}
 
         {/* Item 1 */}
         <div className="flex items-center gap-3">

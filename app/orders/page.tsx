@@ -166,7 +166,10 @@ function OrderItem({
       <div className="flex-1 min-w-0">
         <h4 className="font-medium text-sm">{item.productName}</h4>
         <p className="text-xs text-gray-600 mt-0.5">
-          {item.variants.color} / {item.variants.size}
+          {Object.entries(item.variants)
+            .filter(([, value]) => value) // Filter out empty/undefined values
+            .map(([, value]) => value)
+            .join(" / ")}
         </p>
         <p className="text-xs text-gray-500 mt-0.5">
           ${item.price.toFixed(2)} x {item.quantity}
