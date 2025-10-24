@@ -13,10 +13,7 @@ interface OrderItem {
   productName: string;
   price: number;
   quantity: number;
-  variants: {
-    color: string;
-    size: string;
-  };
+  variants: Record<string, string>;
 }
 
 interface ConfirmationMailProps {
@@ -28,6 +25,13 @@ interface ConfirmationMailProps {
   tax: number;
   total: number;
 }
+
+const formatVariants = (variants: Record<string, string>) => {
+  return Object.entries(variants)
+    .filter(([, value]) => value) // Filter out empty/undefined values
+    .map(([, value]) => `${value}`)
+    .join(" / ");
+};
 
 export function ConfirmationMail({
   customerName,
@@ -130,7 +134,7 @@ export function ConfirmationMail({
                 <Text
                   style={{ fontSize: "14px", color: "#666", margin: "5px 0" }}
                 >
-                  {item.variants.color} / {item.variants.size}
+                  {formatVariants(item.variants)}
                 </Text>
                 <Text
                   style={{ fontSize: "14px", color: "#666", margin: "5px 0" }}

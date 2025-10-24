@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: "Acme <onboarding@resend.dev>",
+      from: "Velvet Anarchy <onboarding@resend.dev>",
       to: [customerEmail],
       subject: `Order Confirmation - #${orderId}`,
       react: (

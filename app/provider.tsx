@@ -11,6 +11,8 @@ export function Provider({ children }: { children: ReactNode }) {
     <PayPalScriptProvider
       options={{
         clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+        // components: "applepay,buttons,funding-eligibility,marks",
+        currency: "EUR",
       }}
     >
       <ConvexProvider client={convex}>{children}</ConvexProvider>

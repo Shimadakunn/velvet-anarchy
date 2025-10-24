@@ -78,7 +78,7 @@ function CheckoutItem({ item }: { item: CartItem }) {
       {/* Price */}
       <div className="text-right flex-shrink-0">
         <p className="font-semibold text-sm">
-          ${(item.price * item.quantity).toFixed(2)}
+          €{(item.price * item.quantity).toFixed(2)}
         </p>
       </div>
     </div>
@@ -215,19 +215,19 @@ export default function CheckoutPage() {
                       purchase_units: [
                         {
                           amount: {
-                            currency_code: "USD",
+                            currency_code: "EUR",
                             value: total.toFixed(2),
                             breakdown: {
                               item_total: {
-                                currency_code: "USD",
+                                currency_code: "EUR",
                                 value: subtotal.toFixed(2),
                               },
                               shipping: {
-                                currency_code: "USD",
+                                currency_code: "EUR",
                                 value: shipping.toFixed(2),
                               },
                               tax_total: {
-                                currency_code: "USD",
+                                currency_code: "EUR",
                                 value: tax.toFixed(2),
                               },
                             },
@@ -239,7 +239,7 @@ export default function CheckoutPage() {
                               .map(([k, v]) => `${k}: ${v}`)
                               .join(", ")}`,
                             unit_amount: {
-                              currency_code: "USD",
+                              currency_code: "EUR",
                               value: item.price.toFixed(2),
                             },
                             quantity: item.quantity.toString(),
@@ -306,7 +306,7 @@ export default function CheckoutPage() {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-sm text-gray-700">
                   <span>Subtotal · {items.length} items</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>€{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-700">
                   <div className="flex items-center gap-1">
@@ -326,12 +326,12 @@ export default function CheckoutPage() {
                     </svg>
                   </div>
                   <span>
-                    {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "FREE" : `€${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 {shipping === 0 && (
                   <p className="text-xs text-green-600">
-                    🎉 Free shipping on orders over $100
+                    🎉 Free shipping on orders over €100
                   </p>
                 )}
               </div>
@@ -340,9 +340,9 @@ export default function CheckoutPage() {
               <div className="flex justify-between items-center pt-4 border-t border-gray-200">
                 <span className="text-lg font-bold">Total</span>
                 <div className="text-right">
-                  <span className="text-xs text-gray-500 mr-2">USD</span>
+                  <span className="text-xs text-gray-500 mr-2">EUR</span>
                   <span className="text-2xl font-bold">
-                    ${total.toFixed(2)}
+                    €{total.toFixed(2)}
                   </span>
                 </div>
               </div>

@@ -13,7 +13,6 @@ import {
   Mail,
   User,
   Calendar,
-  DollarSign,
   ShoppingBag,
   CheckCircle,
   XCircle,
@@ -172,13 +171,13 @@ function OrderItem({
             .join(" / ")}
         </p>
         <p className="text-xs text-gray-500 mt-0.5">
-          ${item.price.toFixed(2)} x {item.quantity}
+          €{item.price.toFixed(2)} x {item.quantity}
         </p>
       </div>
 
       <div className="text-right">
         <p className="font-semibold text-sm">
-          ${(item.price * item.quantity).toFixed(2)}
+          €{(item.price * item.quantity).toFixed(2)}
         </p>
       </div>
     </div>
@@ -215,6 +214,15 @@ function OrderCard({
       | "in_transit"
       | "out_for_delivery"
       | "delivered";
+    shippingAddress?: {
+      name: string;
+      addressLine1: string;
+      addressLine2?: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
   };
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -256,7 +264,9 @@ function OrderCard({
         shippingStatus: newStatus,
       });
       setSelectedShippingStatus(newStatus);
-      toast.success(`Shipping status updated to ${newStatus.replace("_", " ")}`);
+      toast.success(
+        `Shipping status updated to ${newStatus.replace("_", " ")}`
+      );
     } catch (error) {
       console.error("Failed to update shipping status:", error);
       toast.error("Failed to update shipping status");
@@ -316,8 +326,7 @@ function OrderCard({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-gray-700" />
-            <span className="text-lg font-bold">{order.total.toFixed(2)}</span>
+            <span className="text-lg font-bold">€{order.total.toFixed(2)}</span>
           </div>
         </div>
 
@@ -433,21 +442,23 @@ function OrderCard({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-gray-700">
                 <span>Subtotal</span>
-                <span>${order.subtotal.toFixed(2)}</span>
+                <span>€{order.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-700">
                 <span>Shipping</span>
                 <span>
-                  {order.shipping === 0 ? "FREE" : `$${order.shipping.toFixed(2)}`}
+                  {order.shipping === 0
+                    ? "FREE"
+                    : `€${order.shipping.toFixed(2)}`}
                 </span>
               </div>
               <div className="flex justify-between text-gray-700">
                 <span>Tax</span>
-                <span>${order.tax.toFixed(2)}</span>
+                <span>€{order.tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-300">
                 <span>Total</span>
-                <span>${order.total.toFixed(2)}</span>
+                <span>€{order.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -552,7 +563,7 @@ export default function AdminOrdersPage() {
             <div className="bg-emerald-50 rounded-lg border border-emerald-200 p-4">
               <p className="text-xs text-emerald-800 mb-1">Revenue</p>
               <p className="text-2xl font-bold text-emerald-900">
-                ${stats.revenue.toFixed(0)}
+                €{stats.revenue.toFixed(0)}
               </p>
             </div>
           </div>
