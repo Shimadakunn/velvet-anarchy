@@ -27,7 +27,7 @@ export default function ProductCard({ product }: { product: Product }) {
       {/* Product Image Container */}
       <div className="relative aspect-square overflow-hidden mb-4">
         {product.images.length === 0 ? (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
             <span className="text-gray-300 text-sm">No Image</span>
           </div>
         ) : imageUrl ? (
@@ -41,9 +41,7 @@ export default function ProductCard({ product }: { product: Product }) {
             />
           </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-gray-300 text-sm">Loading...</span>
-          </div>
+          <div className="w-full h-full bg-gray-100 animate-pulse"></div>
         )}
       </div>
 

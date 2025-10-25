@@ -5,14 +5,21 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import ProductCard from "@/components/ProductCard";
 import Hero from "@/components/Hero";
+import Loading from "@/components/Loading";
 
 export default function Home() {
   const products = useQuery(api.products.list);
+  const heroSlides = useQuery(api.hero.getActiveSlides);
+
+  // Wait for all queries to complete
+  if (products === undefined || heroSlides === undefined) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen">
       {/* <Book /> */}
-      <Hero />
+      <Hero slides={heroSlides} />
 
       {/* Bottom decorative element */}
       <div className="mt-8 text-center">

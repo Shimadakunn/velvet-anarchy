@@ -25,6 +25,7 @@ import {
   Home,
 } from "lucide-react";
 import { toast } from "sonner";
+import Loading from "@/components/Loading";
 
 // Status badge component
 function StatusBadge({ status }: { status: string }) {
@@ -502,14 +503,7 @@ export default function AdminOrdersPage() {
     : null;
 
   if (!orders) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading orders...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (

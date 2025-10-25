@@ -3,11 +3,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
-export default function Hero() {
-  const slides = useQuery(api.hero.getActiveSlides);
+type HeroSlide = {
+  _id: string;
+  imageUrl: string;
+  title: string;
+  product: {
+    slug: string;
+    name: string;
+  } | null;
+};
+
+type HeroProps = {
+  slides: HeroSlide[];
+};
+
+export default function Hero({ slides }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [shouldAnimate, setShouldAnimate] = useState(false);
@@ -44,17 +55,9 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
 
-  // Show loading or fallback
-  if (!slides || slides.length === 0) {
-    return (
-      <section className="w-full relative">
-        <div className="w-full h-[70vh] bg-gray-200 flex items-center justify-center">
-          <p className="text-gray-500">
-            {slides === undefined ? "Loading slides..." : "No slides available"}
-          </p>
-        </div>
-      </section>
-    );
+  // If no slides, show nothing or a placeholder
+  if (slides.length === 0) {
+    return null;
   }
 
   return (

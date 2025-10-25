@@ -10,6 +10,7 @@ import { useStorageUrls } from "@/hooks/useStorageUrls";
 import { Product as ProductType, Variant, Review } from "@/lib/type";
 import TrustBadges from "@/components/TrustBadges";
 import Reviews from "@/components/Reviews";
+import Loading from "@/components/Loading";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -38,13 +39,9 @@ export default function ProductDetailPage() {
   // Get image URLs from storage
   const imageUrls = useStorageUrls(product?.images || []);
 
-  // Show loading state
-  if (product === undefined) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading product...</p>
-      </div>
-    );
+  // Wait for all queries to complete
+  if (product === undefined || variants === undefined || reviews === undefined) {
+    return <Loading />;
   }
 
   // Show not found state
@@ -61,32 +58,23 @@ export default function ProductDetailPage() {
     );
   }
 
-  if (!variants) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading variants...</p>
-      </div>
-    );
+  // Wait for image URLs to load
+  if (!imageUrls || imageUrls.length === 0) {
+    return <Loading />;
   }
 
   return (
     <>
       <div className="mx-auto max-w-5xl flex flex-col md:flex-row items-start space-y-6 md:space-x-6 py-8">
         <div className="w-full md:w-5/10">
-          {imageUrls && imageUrls.length > 0 ? (
-            <Carroussel images={imageUrls} />
-          ) : (
-            <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
-              <p className="text-gray-500">Loading images...</p>
-            </div>
-          )}
+          <Carroussel images={imageUrls} />
         </div>
         <div className="w-full md:w-5/10 px-4 md:px-0">
           <Product product={product} variants={variants} />
         </div>
       </div>
       <TrustBadges />
-      {reviews && reviews.length > 0 && (
+      {reviews.length > 0 && (
         <div className="mx-auto max-w-5xl px-4 md:px-0 pb-8">
           <Reviews reviews={reviews} />
         </div>

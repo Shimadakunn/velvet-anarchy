@@ -6,6 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import StorageImage from "@/components/StorageImage";
 import Image from "next/image";
+import Loading from "@/components/Loading";
 
 export default function HeroAdmin() {
   const slides = useQuery(api.hero.getAllSlides);
@@ -180,11 +181,7 @@ export default function HeroAdmin() {
   };
 
   if (slides === undefined || products === undefined) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
