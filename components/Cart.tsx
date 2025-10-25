@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
-import { X, Minus, Plus, Trash2, BadgeCheck } from "lucide-react";
+import { X, Minus, Plus, Trash2, BadgeCheck, Truck } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -11,6 +11,14 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Lock } from "lucide-react";
 import PaymentBadges from "./PaymentBadges";
+import {
+  calculateOriginalSubtotal,
+  calculateDiscountedSubtotal,
+  calculateShipping,
+  shouldApplyDiscount,
+  calculateShippingProgress,
+  calculateAmountToFreeShipping,
+} from "@/lib/pricing";
 
 export default function Cart() {
   const {
@@ -97,10 +105,93 @@ export default function Cart() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-300 p-4">
+            {/* Price Breakdown */}
+            <div className="space-y-2 mb-4">
+              {/* Subtotal */}
+              {shouldApplyDiscount(items) ? (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Subtotal</span>
+                  <div className="flex items-center gap-2">
+                    <span className="line-through text-gray-400">
+                      €{calculateOriginalSubtotal(items).toFixed(2)}
+                    </span>
+                    <span className="font-semibold text-green-600">
+                      €{calculateDiscountedSubtotal(items).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-semibold">
+                    €{calculateOriginalSubtotal(items).toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              {/* Discount Badge */}
+              {shouldApplyDiscount(items) && (
+                <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                  <BadgeCheck size={14} />
+                  <span>10% off for multiple items!</span>
+                </div>
+              )}
+
+              {/* Shipping */}
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600">Shipping</span>
+                <span className="font-semibold">
+                  {calculateShipping(calculateDiscountedSubtotal(items)) === 0
+                    ? "FREE"
+                    : `€${calculateShipping(calculateDiscountedSubtotal(items)).toFixed(2)}`}
+                </span>
+              </div>
+
+              {/* Free Shipping Progress Bar */}
+              {calculateDiscountedSubtotal(items) < 100 && (
+                <div className="pt-2">
+                  <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                    <div className="flex items-center gap-1">
+                      <Truck size={14} />
+                      <span>
+                        €
+                        {calculateAmountToFreeShipping(
+                          calculateDiscountedSubtotal(items)
+                        ).toFixed(2)}{" "}
+                        away from free shipping
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${calculateShippingProgress(calculateDiscountedSubtotal(items))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Free Shipping Achieved */}
+              {calculateDiscountedSubtotal(items) >= 100 && (
+                <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                  <Truck size={14} />
+                  <span>You got free shipping!</span>
+                </div>
+              )}
+            </div>
+
             {/* Total */}
-            <div className="flex justify-between items-center text-2xl font-black mb-2">
+            <div className="flex justify-between items-center text-2xl font-black mb-2 pt-2 border-t border-gray-200">
               <span>Total</span>
-              <span>€{getTotalPrice().toFixed(2)}</span>
+              <span>
+                €
+                {(
+                  calculateDiscountedSubtotal(items) +
+                  calculateShipping(calculateDiscountedSubtotal(items))
+                ).toFixed(2)}
+              </span>
             </div>
 
             <Link href="/checkout">
@@ -209,7 +300,6 @@ function CartItemComponent({
           >
             {item.productName}
           </Link>
-          {item.quantity > 1 && <p className="font-bold ">{item.price} €</p>}
           <p className="font-semibold text-xs text-gray-600 ">
             {formatVariants()}
           </p>

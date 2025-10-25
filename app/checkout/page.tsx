@@ -10,7 +10,15 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Loader2, CheckCircle2, BadgeCheck } from "lucide-react";
+import {
+  calculateOriginalSubtotal,
+  calculateDiscountedSubtotal,
+  calculateShipping,
+  calculateTax,
+  shouldApplyDiscount,
+  calculateDiscountAmount,
+} from "@/lib/pricing";
 
 // Component to display individual checkout item with variant image support
 function CheckoutItem({ item }: { item: CartItem }) {
@@ -87,13 +95,15 @@ function CheckoutItem({ item }: { item: CartItem }) {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { items, clearCart } = useCartStore();
   const createOrder = useMutation(api.orders.create);
   const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const subtotal = getTotalPrice();
-  const shipping = subtotal > 100 ? 0 : 10; // Free shipping over $100
-  const tax = subtotal * 0.1; // 10% tax
+  const originalSubtotal = calculateOriginalSubtotal(items);
+  const subtotal = calculateDiscountedSubtotal(items);
+  const discountAmount = calculateDiscountAmount(items);
+  const shipping = calculateShipping(subtotal);
+  const tax = calculateTax(subtotal);
   const total = subtotal + shipping + tax;
 
   if (items.length === 0) {
@@ -304,10 +314,40 @@ export default function CheckoutPage() {
 
               {/* Price Breakdown */}
               <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-sm text-gray-700">
-                  <span>Subtotal · {items.length} items</span>
-                  <span>€{subtotal.toFixed(2)}</span>
-                </div>
+                {/* Subtotal */}
+                {shouldApplyDiscount(items) ? (
+                  <div className="flex justify-between text-sm text-gray-700">
+                    <span>Subtotal · {items.length} items</span>
+                    <div className="flex items-center gap-2">
+                      <span className="line-through text-gray-400">
+                        €{originalSubtotal.toFixed(2)}
+                      </span>
+                      <span className="font-semibold text-green-600">
+                        €{subtotal.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-between text-sm text-gray-700">
+                    <span>Subtotal · {items.length} items</span>
+                    <span>€{subtotal.toFixed(2)}</span>
+                  </div>
+                )}
+
+                {/* Discount */}
+                {shouldApplyDiscount(items) && (
+                  <div className="flex justify-between text-sm">
+                    <div className="flex items-center gap-1 text-green-600">
+                      <BadgeCheck size={16} />
+                      <span>Discount (10% off)</span>
+                    </div>
+                    <span className="text-green-600 font-semibold">
+                      -€{discountAmount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Shipping */}
                 <div className="flex justify-between text-sm text-gray-700">
                   <div className="flex items-center gap-1">
                     <span>Shipping</span>
@@ -331,7 +371,7 @@ export default function CheckoutPage() {
                 </div>
                 {shipping === 0 && (
                   <p className="text-xs text-green-600">
-                    🎉 Free shipping on orders over €100
+                    Free shipping on orders over €100
                   </p>
                 )}
               </div>
@@ -341,9 +381,20 @@ export default function CheckoutPage() {
                 <span className="text-lg font-bold">Total</span>
                 <div className="text-right">
                   <span className="text-xs text-gray-500 mr-2">EUR</span>
-                  <span className="text-2xl font-bold">
-                    €{total.toFixed(2)}
-                  </span>
+                  {shouldApplyDiscount(items) ? (
+                    <div className="flex flex-col items-end">
+                      <span className="text-sm line-through text-gray-400">
+                        €{(originalSubtotal + shipping + tax).toFixed(2)}
+                      </span>
+                      <span className="text-2xl font-bold">
+                        €{total.toFixed(2)}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-2xl font-bold">
+                      €{total.toFixed(2)}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
