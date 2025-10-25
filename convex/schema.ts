@@ -80,4 +80,12 @@ export default defineSchema({
     date: v.string(),
     reviewImages: v.optional(v.array(v.string())),
   }).index("byProduct", ["productId"]),
+
+  hero: defineTable({
+    image: v.string(),
+    title: v.string(),
+    productId: v.optional(v.id("products")),
+    order: v.number(), // For ordering slides
+    isActive: v.boolean(), // To show/hide slides
+  }).index("byOrder", ["order"]),
 });

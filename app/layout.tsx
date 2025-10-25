@@ -18,15 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${helveticaNeue.variable} ${dirtyline.variable}  font-medium antialiased min-h-screen flex flex-col`}
+        className={`${helveticaNeue.variable} ${dirtyline.variable} relative font-medium antialiased min-h-screen flex flex-col`}
       >
         <Header />
         <Provider>
-          <div className="flex-1">
-            {children}
-          </div>
+          <div className="flex-1">{children}</div>
           <Cart />
         </Provider>
         <Footer />

@@ -1,10 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Product } from "@/lib/type";
+import { CheckCheck, Flame, Package } from "lucide-react";
+import { useIsMobile } from "@/lib/isMobile";
+import { Star } from "lucide-react";
 
 export default function ProductCard({ product }: { product: Product }) {
   // Get the first image URL only if images exist
@@ -18,50 +22,102 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/product/${product.slug}`}
-      className="group block bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+      className="group block bg-white transition-all duration-300 relative"
     >
-      {/* Product Image */}
-      <div className="relative aspect-[3/4] bg-gray-200 overflow-hidden">
+      {/* Product Image Container */}
+      <div className="relative aspect-square overflow-hidden mb-4">
         {product.images.length === 0 ? (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-gray-400">No Image</span>
+            <span className="text-gray-300 text-sm">No Image</span>
           </div>
         ) : imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          <div className="w-full h-full p-8 flex items-center justify-center relative">
+            <Image
+              src={imageUrl}
+              alt={product.name}
+              fill
+              className="object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+            />
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-gray-400">Loading...</span>
+            <span className="text-gray-300 text-sm">Loading...</span>
           </div>
         )}
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-          {product.name}
-        </h3>
+      <div className="pb-4">
+        <Rating product={product} />
+        {/* Product Name */}
+        <h3 className="text-xl font-Dirty mt-2">{product.name}</h3>
 
-        {/* Rating and Reviews */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex items-center">
-            <span className="text-yellow-500">★</span>
-            <span className="text-sm font-medium ml-1">{product.rating}</span>
-          </div>
-          <span className="text-sm text-gray-500">({product.reviews})</span>
-        </div>
-
-        {/* Price and Sold */}
-        <div className="flex items-center justify-between">
-          <span className="text-xl font-bold text-gray-900">
-            ${product.price.toFixed(2)}
-          </span>
-          <span className="text-sm text-gray-500">{product.sold} sold</span>
-        </div>
+        {/* Price */}
+        <p className="text-base font-black -translate-y-2">
+          {product.price.toFixed(2)} €
+        </p>
+        <Badges product={product} />
       </div>
     </Link>
+  );
+}
+
+function Badges({ product }: { product: Product }) {
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      <div className="px-2 py-1 bg-pink-100 text-pink-500 text-xs font-semibold rounded-full inline-block">
+        <Flame className="w-4 h-4 inline-block mb-[3px] mr-[2px]" />
+        Trending!
+      </div>
+      <div className="px-2 py-1 bg-green-100 text-green-600 text-xs font-semibold rounded-full inline-block">
+        <CheckCheck className="w-4 h-4 inline-block mb-[2px] mr-[2px]" />
+        {product.sold} sold
+      </div>
+      <div className="px-2 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full inline-block">
+        <Package className="w-4 h-4 inline-block mb-[3px] mr-[3px]" />
+        {product.stock} in stock
+      </div>
+    </div>
+  );
+}
+
+function Rating({ product }: { product: Product }) {
+  const isMobile = useIsMobile();
+  const fullStars = Math.floor(product.rating);
+  const hasHalfStar = product.rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  const starSize = isMobile ? 3 : 4;
+
+  return (
+    <div className="flex items-center gap-1">
+      <div className="flex items-center">
+        {[...Array(fullStars)].map((_, i) => (
+          <Star
+            key={`full-${i}`}
+            className={`w-${starSize} h-${starSize} fill-black text-black`}
+          />
+        ))}
+        {hasHalfStar && (
+          <div className={`relative w-${starSize} h-${starSize}`}>
+            <Star
+              className={`w-${starSize} h-${starSize} text-black absolute`}
+            />
+            <div className="overflow-hidden absolute w-1/2">
+              <Star
+                className={`w-${starSize} h-${starSize} fill-black text-black`}
+              />
+            </div>
+          </div>
+        )}
+        {[...Array(emptyStars)].map((_, i) => (
+          <Star
+            key={`empty-${i}`}
+            className={`w-${starSize} h-${starSize} text-black`}
+          />
+        ))}
+      </div>
+      <span className="font-black text-xs pt-1">{product.rating}/5</span>
+    </div>
   );
 }

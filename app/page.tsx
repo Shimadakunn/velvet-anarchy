@@ -1,26 +1,46 @@
 "use client";
 
 import { api } from "@/convex/_generated/api";
+
 import { useQuery } from "convex/react";
 import ProductCard from "@/components/ProductCard";
+import Hero from "@/components/Hero";
 
 export default function Home() {
   const products = useQuery(api.products.list);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen">
+      {/* <Book /> */}
+      <Hero />
+
+      {/* Bottom decorative element */}
+      <div className="mt-8 text-center">
+        <div className="inline-block">
+          <div className="flex items-center gap-2">
+            <div className="w-12 h-px bg-gray-300"></div>
+            <span className="text-sm text-gray-500 uppercase tracking-widest">
+              Products
+            </span>
+            <div className="w-12 h-px bg-gray-300"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 md:max-w-[85vw] mx-auto">
         {/* Products Grid */}
         {products === undefined ? (
-          <div className="flex items-center justify-center h-64">
-            <p className="text-gray-500">Loading products...</p>
-          </div>
+          <p className="text-gray-500">Loading products...</p>
         ) : products.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
-            <p className="text-gray-500">No products available yet.</p>
+          <p className="text-gray-500">No products available yet.</p>
+        ) : products.length < 4 ? (
+          <div className="flex flex-wrap justify-center gap-8">
+            {products.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
