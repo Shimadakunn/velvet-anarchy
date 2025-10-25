@@ -40,7 +40,11 @@ export default function ProductDetailPage() {
   const imageUrls = useStorageUrls(product?.images || []);
 
   // Wait for all queries to complete
-  if (product === undefined || variants === undefined || reviews === undefined) {
+  if (
+    product === undefined ||
+    variants === undefined ||
+    reviews === undefined
+  ) {
     return <Loading />;
   }
 
@@ -73,12 +77,12 @@ export default function ProductDetailPage() {
           <Product product={product} variants={variants} />
         </div>
       </div>
-      <TrustBadges />
       {reviews.length > 0 && (
-        <div className="mx-auto max-w-5xl px-4 md:px-0 pb-8">
+        <div className="mx-auto max-w-5xl px-4 md:px-0">
           <Reviews reviews={reviews} />
         </div>
       )}
+      <TrustBadges />
     </>
   );
 }

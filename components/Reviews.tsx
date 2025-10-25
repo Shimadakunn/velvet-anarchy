@@ -55,14 +55,11 @@ export default function Reviews({ reviews }: { reviews: Review[] }) {
   };
 
   return (
-    <div className="mt-8 border-t pt-8">
-      <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+    <div className="border-y py-4">
+      <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
       <div className="space-y-6">
         {reviews.map((review, index) => (
-          <div
-            key={review._id || index}
-            className="border-b pb-6 last:border-b-0"
-          >
+          <div key={review._id || index} className="">
             <div className="flex items-start gap-4">
               {/* User Image */}
               {review.userImage ? (
@@ -80,7 +77,9 @@ export default function Reviews({ reviews }: { reviews: Review[] }) {
               )}
 
               {/* Review Content */}
-              <div className="flex-1">
+              <div
+                className={`flex-1 pb-4 ${index !== reviews.length - 1 ? "border-b" : ""}`}
+              >
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold text-lg">{review.userName}</h3>
