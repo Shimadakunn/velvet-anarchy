@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
-import { X, Minus, Plus, Trash2, BadgeCheck, Truck } from "lucide-react";
+import { X, Minus, Plus, Trash2, BadgePercent, BadgeCheck } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -16,22 +16,23 @@ import {
   calculateDiscountedSubtotal,
   calculateShipping,
   shouldApplyDiscount,
-  calculateShippingProgress,
-  calculateAmountToFreeShipping,
+  calculateDiscountProgress,
+  calculateAmountToDiscount,
+  calculateDiscountAmount,
 } from "@/lib/pricing";
 
 export default function Cart() {
-  const {
-    items,
-    isOpen,
-    closeCart,
-    updateQuantity,
-    removeItem,
-    getTotalPrice,
-  } = useCartStore();
+  const { items, isOpen, closeCart, updateQuantity, removeItem } =
+    useCartStore();
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+
+  const originalSubtotal = calculateOriginalSubtotal(items);
+  const subtotal = calculateDiscountedSubtotal(items);
+  const discountAmount = calculateDiscountAmount(items);
+  const shipping = calculateShipping(subtotal);
+  const total = subtotal + shipping;
 
   useEffect(() => {
     if (isOpen) {
@@ -76,6 +77,40 @@ export default function Cart() {
           </button>
         </div>
 
+        {/* Discount Progress Banner */}
+        {items.length > 0 && (
+          <div className="bg-black text-white px-4 py-3">
+            {calculateOriginalSubtotal(items) < 150 ? (
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1 -translate-y-0.5">
+                  <div className="flex items-center mx-auto gap-1">
+                    <span>
+                      €
+                      {calculateAmountToDiscount(
+                        calculateOriginalSubtotal(items)
+                      )}{" "}
+                      away from 10% off
+                    </span>
+                  </div>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-1">
+                  <div
+                    className="bg-white h-1 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${calculateDiscountProgress(calculateOriginalSubtotal(items))}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-1 text-xs">
+                <BadgePercent size={14} />
+                <span>You got 10% off your order!</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Cart Items */}
         <div className="flex-1 overflow-y-auto p-4">
           {items.length === 0 ? (
@@ -96,6 +131,7 @@ export default function Cart() {
                   item={item}
                   onUpdateQuantity={updateQuantity}
                   onRemove={removeItem}
+                  hasDiscount={shouldApplyDiscount(items)}
                 />
               ))}
             </div>
@@ -104,100 +140,47 @@ export default function Cart() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-gray-300 p-4">
+          <div className="p-4">
             {/* Price Breakdown */}
-            <div className="space-y-2 mb-4">
+            <div className="space-y-2 py-3 border-y border-gray-200">
               {/* Subtotal */}
-              {shouldApplyDiscount(items) ? (
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <div className="flex items-center gap-2">
-                    <span className="line-through text-gray-400">
-                      €{calculateOriginalSubtotal(items).toFixed(2)}
-                    </span>
-                    <span className="font-semibold text-green-600">
-                      €{calculateDiscountedSubtotal(items).toFixed(2)}
-                    </span>
+              <div className="flex justify-between text-sm text-gray-700">
+                <span>Subtotal · {items.length} items</span>
+                <span>€{originalSubtotal.toFixed(2)}</span>
+              </div>
+
+              {/* Discount */}
+              {shouldApplyDiscount(items) && (
+                <div className="flex justify-between text-xs pl-2">
+                  <div className="flex items-center gap-1 text-green-700">
+                    <BadgeCheck size={14} />
+                    <span>Discount (10% off)</span>
                   </div>
-                </div>
-              ) : (
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">
-                    €{calculateOriginalSubtotal(items).toFixed(2)}
+                  <span className="text-green-700 font-semibold">
+                    -€{discountAmount.toFixed(2)}
                   </span>
                 </div>
               )}
 
-              {/* Discount Badge */}
-              {shouldApplyDiscount(items) && (
-                <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                  <BadgeCheck size={14} />
-                  <span>10% off for multiple items!</span>
-                </div>
-              )}
-
               {/* Shipping */}
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Shipping</span>
-                <span className="font-semibold">
-                  {calculateShipping(calculateDiscountedSubtotal(items)) === 0
-                    ? "FREE"
-                    : `€${calculateShipping(calculateDiscountedSubtotal(items)).toFixed(2)}`}
-                </span>
+              <div className="flex justify-between text-sm text-gray-700">
+                <span>Shipping</span>
+                <span className="text-green-600 font-semibold">FREE</span>
               </div>
-
-              {/* Free Shipping Progress Bar */}
-              {calculateDiscountedSubtotal(items) < 100 && (
-                <div className="pt-2">
-                  <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-                    <div className="flex items-center gap-1">
-                      <Truck size={14} />
-                      <span>
-                        €
-                        {calculateAmountToFreeShipping(
-                          calculateDiscountedSubtotal(items)
-                        ).toFixed(2)}{" "}
-                        away from free shipping
-                      </span>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${calculateShippingProgress(calculateDiscountedSubtotal(items))}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Free Shipping Achieved */}
-              {calculateDiscountedSubtotal(items) >= 100 && (
-                <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                  <Truck size={14} />
-                  <span>You got free shipping!</span>
-                </div>
-              )}
             </div>
 
             {/* Total */}
-            <div className="flex justify-between items-center text-2xl font-black mb-2 pt-2 border-t border-gray-200">
-              <span>Total</span>
-              <span>
-                €
-                {(
-                  calculateDiscountedSubtotal(items) +
-                  calculateShipping(calculateDiscountedSubtotal(items))
-                ).toFixed(2)}
+            <div className="flex justify-between items-end py-4">
+              <span className="text-xl font-bold">Total</span>
+              <span className="text-2xl font-extrabold tracking-tighter">
+                €{total.toFixed(2)}
               </span>
             </div>
 
             <Link href="/checkout">
               <Button
                 effect="ringHover"
-                className="w-full my-2 relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
+                className="w-full mb-2 relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
                 onClick={closeCart}
               >
                 <Lock
@@ -234,11 +217,13 @@ function CartItemComponent({
   item,
   onUpdateQuantity,
   onRemove,
+  hasDiscount,
 }: {
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   item: any;
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
+  hasDiscount: boolean;
 }) {
   // Get all variants for this product
   const variants = useQuery(
@@ -327,10 +312,21 @@ function CartItemComponent({
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-lg">
-              €{(item.price * item.quantity).toFixed(2)}
-            </span>
+          <div className="flex items-center gap-2 tracking-tighter">
+            {hasDiscount ? (
+              <>
+                <span className="line-through text-gray-400 text-sm">
+                  €{(item.price * item.quantity).toFixed(2)}
+                </span>
+                <span className="font-bold text-lg">
+                  €{(item.price * item.quantity * 0.9).toFixed(2)}
+                </span>
+              </>
+            ) : (
+              <span className="font-bold text-lg">
+                €{(item.price * item.quantity).toFixed(2)}
+              </span>
+            )}
           </div>
         </div>
       </div>

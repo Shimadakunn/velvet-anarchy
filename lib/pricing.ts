@@ -2,11 +2,11 @@ import { CartItem } from "@/store/cartStore";
 
 /**
  * Calculate if the 10% discount applies
- * Discount applies when total quantity of all items > 1
+ * Discount applies when subtotal >= €150
  */
 export function shouldApplyDiscount(items: CartItem[]): boolean {
-  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-  return totalQuantity > 1;
+  const subtotal = calculateOriginalSubtotal(items);
+  return subtotal >= 150;
 }
 
 /**
@@ -26,10 +26,10 @@ export function calculateDiscountedSubtotal(items: CartItem[]): number {
 
 /**
  * Calculate shipping cost
- * Free shipping if subtotal >= €100, otherwise €10
+ * Shipping is always free
  */
 export function calculateShipping(subtotal: number): number {
-  return subtotal >= 100 ? 0 : 10;
+  return 0;
 }
 
 /**
@@ -72,4 +72,20 @@ export function calculateShippingProgress(subtotal: number): number {
 export function calculateAmountToFreeShipping(subtotal: number): number {
   if (subtotal >= 100) return 0;
   return 100 - subtotal;
+}
+
+/**
+ * Calculate progress towards 10% discount (0-100)
+ */
+export function calculateDiscountProgress(subtotal: number): number {
+  if (subtotal >= 150) return 100;
+  return (subtotal / 150) * 100;
+}
+
+/**
+ * Calculate amount needed to reach 10% discount
+ */
+export function calculateAmountToDiscount(subtotal: number): number {
+  if (subtotal >= 150) return 0;
+  return 150 - subtotal;
 }

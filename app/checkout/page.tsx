@@ -10,18 +10,29 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ArrowLeft, Loader2, CheckCircle2, BadgeCheck } from "lucide-react";
+import {
+  ShoppingBag,
+  ArrowLeft,
+  Loader2,
+  CheckCircle2,
+  BadgeCheck,
+} from "lucide-react";
 import {
   calculateOriginalSubtotal,
   calculateDiscountedSubtotal,
   calculateShipping,
-  calculateTax,
   shouldApplyDiscount,
   calculateDiscountAmount,
 } from "@/lib/pricing";
 
 // Component to display individual checkout item with variant image support
-function CheckoutItem({ item }: { item: CartItem }) {
+function CheckoutItem({
+  item,
+  hasDiscount,
+}: {
+  item: CartItem;
+  hasDiscount: boolean;
+}) {
   // Get all variants for this product
   const variants = useQuery(
     api.variants.get,
@@ -84,10 +95,21 @@ function CheckoutItem({ item }: { item: CartItem }) {
       </div>
 
       {/* Price */}
-      <div className="text-right flex-shrink-0">
-        <p className="font-semibold text-sm">
-          €{(item.price * item.quantity).toFixed(2)}
-        </p>
+      <div className="text-right flex-shrink-0 mr-1 tracking-tighter">
+        {hasDiscount ? (
+          <div className="flex flex-col items-end gap-0.5">
+            <p className="line-through text-gray-400 text-xs">
+              €{(item.price * item.quantity).toFixed(2)}
+            </p>
+            <p className="font-semibold text-sm">
+              €{(item.price * item.quantity * 0.9).toFixed(2)}
+            </p>
+          </div>
+        ) : (
+          <p className="font-semibold text-sm">
+            €{(item.price * item.quantity).toFixed(2)}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -103,8 +125,7 @@ export default function CheckoutPage() {
   const subtotal = calculateDiscountedSubtotal(items);
   const discountAmount = calculateDiscountAmount(items);
   const shipping = calculateShipping(subtotal);
-  const tax = calculateTax(subtotal);
-  const total = subtotal + shipping + tax;
+  const total = subtotal + shipping;
 
   if (items.length === 0) {
     return (
@@ -163,7 +184,7 @@ export default function CheckoutPage() {
         })),
         subtotal,
         shipping,
-        tax,
+        tax: 0,
         total,
         status: "pending",
         shippingStatus: "pending",
@@ -204,13 +225,13 @@ export default function CheckoutPage() {
           {/* Left Column - Payment Method */}
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-2xl font-bold mb-6">Payment</h2>
-              <p className="text-sm text-gray-600 mb-6">
-                All transactions are secure and encrypted.
+              <h2 className="text-2xl font-bold mb-2">Payment & Delivery</h2>
+              <p className="text-sm text-gray-500 mb-6">
+                Please provide your payment information and delivery address.
               </p>
 
               {/* PayPal Buttons */}
-              <div className="mb-4">
+              <div className="">
                 <PayPalButtons
                   style={{
                     layout: "vertical",
@@ -236,10 +257,6 @@ export default function CheckoutPage() {
                                 currency_code: "EUR",
                                 value: shipping.toFixed(2),
                               },
-                              tax_total: {
-                                currency_code: "EUR",
-                                value: tax.toFixed(2),
-                              },
                             },
                           },
                           items: items.map((item) => ({
@@ -250,7 +267,9 @@ export default function CheckoutPage() {
                               .join(", ")}`,
                             unit_amount: {
                               currency_code: "EUR",
-                              value: item.price.toFixed(2),
+                              value: shouldApplyDiscount(items)
+                                ? (item.price * 0.9).toFixed(2)
+                                : item.price.toFixed(2),
                             },
                             quantity: item.quantity.toString(),
                           })),
@@ -266,8 +285,8 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              {/* Security Notice
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              {/* Security Notice */}
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -281,8 +300,8 @@ export default function CheckoutPage() {
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                   />
                 </svg>
-                <span>Secure payment powered by PayPal</span>
-              </div> */}
+                <span> All transactions are secure and encrypted.</span>
+              </div>
             </div>
           </div>
 
@@ -294,7 +313,11 @@ export default function CheckoutPage() {
               {/* Order Items */}
               <div className="space-y-4 mb-4 pt-2 max-h-[400px] overflow-y-auto">
                 {items.map((item) => (
-                  <CheckoutItem key={item.id} item={item} />
+                  <CheckoutItem
+                    key={item.id}
+                    item={item}
+                    hasDiscount={shouldApplyDiscount(items)}
+                  />
                 ))}
               </div>
 
@@ -315,33 +338,19 @@ export default function CheckoutPage() {
               {/* Price Breakdown */}
               <div className="space-y-3 mb-4">
                 {/* Subtotal */}
-                {shouldApplyDiscount(items) ? (
-                  <div className="flex justify-between text-sm text-gray-700">
-                    <span>Subtotal · {items.length} items</span>
-                    <div className="flex items-center gap-2">
-                      <span className="line-through text-gray-400">
-                        €{originalSubtotal.toFixed(2)}
-                      </span>
-                      <span className="font-semibold text-green-600">
-                        €{subtotal.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex justify-between text-sm text-gray-700">
-                    <span>Subtotal · {items.length} items</span>
-                    <span>€{subtotal.toFixed(2)}</span>
-                  </div>
-                )}
+                <div className="flex justify-between text-sm text-gray-700">
+                  <span>Subtotal · {items.length} items</span>
+                  <span>€{originalSubtotal.toFixed(2)}</span>
+                </div>
 
                 {/* Discount */}
                 {shouldApplyDiscount(items) && (
-                  <div className="flex justify-between text-sm">
-                    <div className="flex items-center gap-1 text-green-600">
-                      <BadgeCheck size={16} />
+                  <div className="flex justify-between text-xs pl-2">
+                    <div className="flex items-center gap-1 text-green-700">
+                      <BadgeCheck size={14} />
                       <span>Discount (10% off)</span>
                     </div>
-                    <span className="text-green-600 font-semibold">
+                    <span className="text-green-700 font-semibold">
                       -€{discountAmount.toFixed(2)}
                     </span>
                   </div>
@@ -349,53 +358,17 @@ export default function CheckoutPage() {
 
                 {/* Shipping */}
                 <div className="flex justify-between text-sm text-gray-700">
-                  <div className="flex items-center gap-1">
-                    <span>Shipping</span>
-                    <svg
-                      className="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <span>
-                    {shipping === 0 ? "FREE" : `€${shipping.toFixed(2)}`}
-                  </span>
+                  <span>Shipping</span>
+                  <span className="text-green-600 font-semibold">FREE</span>
                 </div>
-                {shipping === 0 && (
-                  <p className="text-xs text-green-600">
-                    Free shipping on orders over €100
-                  </p>
-                )}
               </div>
 
               {/* Total */}
-              <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                <span className="text-lg font-bold">Total</span>
-                <div className="text-right">
-                  <span className="text-xs text-gray-500 mr-2">EUR</span>
-                  {shouldApplyDiscount(items) ? (
-                    <div className="flex flex-col items-end">
-                      <span className="text-sm line-through text-gray-400">
-                        €{(originalSubtotal + shipping + tax).toFixed(2)}
-                      </span>
-                      <span className="text-2xl font-bold">
-                        €{total.toFixed(2)}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-2xl font-bold">
-                      €{total.toFixed(2)}
-                    </span>
-                  )}
-                </div>
+              <div className="flex justify-between items-end pt-4 border-t border-gray-200">
+                <span className="text-xl font-bold">Total</span>
+                <span className="text-2xl font-extrabold tracking-tighter">
+                  €{total.toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
