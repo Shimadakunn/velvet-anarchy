@@ -6,7 +6,7 @@ export default function Badges({ product }: { product: Product }) {
     <div className="flex flex-wrap items-center gap-2">
       <div className="px-2 py-1 bg-pink-100 text-pink-500 text-xs font-semibold rounded-full inline-block">
         <Flame className="w-4 h-4 inline-block mb-[3px] mr-[2px]" />
-        Trending product!
+        Trending <span className="hidden md:inline">product</span>!
       </div>
       <div className="px-2 py-1 bg-green-100 text-green-600 text-xs font-semibold rounded-full inline-block">
         <CheckCheck className="w-4 h-4 inline-block mb-[2px] mr-[2px]" />
@@ -14,7 +14,7 @@ export default function Badges({ product }: { product: Product }) {
       </div>
       <div className="px-2 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full inline-block">
         <Package className="w-4 h-4 inline-block mb-[3px] mr-[3px]" />
-        {product.stock} left in stock
+        {product.stock} left <span className="hidden md:inline">in stock</span>
       </div>
     </div>
   );

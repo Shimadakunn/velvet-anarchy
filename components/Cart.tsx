@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Lock } from "lucide-react";
 import PaymentBadges from "./PaymentBadges";
+import Cadena from "@/public/cadena.svg";
 import {
   calculateOriginalSubtotal,
   calculateDiscountedSubtotal,
@@ -164,7 +165,7 @@ export default function Cart() {
 
               {/* Shipping */}
               <div className="flex justify-between text-sm text-gray-700">
-                <span>Shipping</span>
+                <span>Shipping · 10-25 days</span>
                 <span className="text-green-600 font-semibold">FREE</span>
               </div>
             </div>
@@ -180,14 +181,11 @@ export default function Cart() {
             <Link href="/checkout">
               <Button
                 effect="ringHover"
-                className="w-full mb-2 relative bg-foreground text-background py-3 rounded-lg hover:scale-[1.005] active:scale-[0.98] transition-all duration-200"
+                className="w-full mb-2 relative bg-foreground rounded-none text-background py-3 hover:scale-[1.005] active:scale-[0.98] transition-all duration-200 cursor-pointer"
                 onClick={closeCart}
               >
-                <Lock
-                  style={{ width: "16px", height: "16px" }}
-                  strokeWidth={2.5}
-                />
-                <h1 className="text-xl font-semibold">Proceed to Checkout</h1>
+                <Image src={Cadena} alt="Lock" width={14} height={14} />
+                <h1 className="text-xl font-black">CHECKOUT</h1>
               </Button>
             </Link>
 
@@ -292,23 +290,24 @@ function CartItemComponent({
 
         {/* Quantity Controls */}
         <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center border border-gray-300 rounded">
+          <div className="flex items-center ">
             <button
               onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-              className="px-2 py-1 hover:bg-gray-100 transition-colors"
+              className="border border-black h-5 w-5 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               aria-label="Decrease quantity"
+              disabled={item.quantity <= 1}
             >
-              <Minus size={14} />
+              <Minus size={10} strokeWidth={4} />
             </button>
-            <span className="px-3 py-1 text-sm font-medium">
+            <span className="text-sm font-bold w-8 text-center">
               {item.quantity}
             </span>
             <button
               onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-              className="px-2 py-1 hover:bg-gray-100 transition-colors"
+              className="border border-black h-5 w-5 flex items-center justify-center cursor-pointer"
               aria-label="Increase quantity"
             >
-              <Plus size={14} />
+              <Plus size={10} strokeWidth={4} />
             </button>
           </div>
 
@@ -332,7 +331,7 @@ function CartItemComponent({
       </div>
       <button
         onClick={() => onRemove(item.id)}
-        className="p-1 border border-foreground/50 text-foreground/50 rounded-full absolute top-0 right-0"
+        className="p-1 border border-foreground/50 text-foreground/50 rounded-full absolute top-0 right-0 cursor-pointer"
         aria-label="Remove item"
       >
         <Trash2 size={18} />

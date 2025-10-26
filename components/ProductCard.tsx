@@ -74,7 +74,7 @@ function Badges({ product }: { product: Product }) {
       </div>
       <div className="px-2 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full inline-block">
         <Package className="w-4 h-4 inline-block mb-[3px] mr-[3px]" />
-        {product.stock} in stock
+        {product.stock} left
       </div>
     </div>
   );

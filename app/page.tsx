@@ -17,7 +17,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen mb-8">
       {/* <Book /> */}
       <Hero slides={heroSlides} />
 

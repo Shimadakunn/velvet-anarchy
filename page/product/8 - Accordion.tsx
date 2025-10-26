@@ -13,18 +13,18 @@ export default function Accordion({ product }: { product: Product }) {
   const sections = [
     {
       icon: Info,
-      title: "Product Details",
+      title: "DETAILS",
       content: product.detail,
     },
     {
       icon: PlaneTakeoff,
-      title: "Processing & Shipping",
+      title: "PROCESSING & SHIPPING",
       content:
         "Add your shipping and processing information here. Include delivery times, shipping methods, and any relevant policies.",
     },
     {
       icon: RotateCcw,
-      title: "30 Day Guarantee",
+      title: "30 DAY GUARANTEE",
       content:
         "Add your guarantee and return policy information here. Explain the terms and conditions of your guarantee.",
     },
@@ -40,11 +40,11 @@ export default function Accordion({ product }: { product: Product }) {
           <div key={index} className="border-gray-200">
             <button
               onClick={() => toggleSection(index)}
-              className="w-full px-4 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              className="w-full px-4 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-2">
                 <Icon className="w-5 h-5" strokeWidth={1.8} />
-                <span className="">{section.title}</span>
+                <span className="text-sm">{section.title.toUpperCase()}</span>
               </div>
               <div className="transition-transform duration-500">
                 {isOpen ? (

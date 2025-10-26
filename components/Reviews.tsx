@@ -4,6 +4,7 @@ import { useIsMobile } from "@/lib/isMobile";
 import { Star } from "lucide-react";
 import { Review } from "@/lib/type";
 import StorageImage from "@/components/StorageImage";
+import { MessagesSquare } from "lucide-react";
 
 export default function Reviews({ reviews }: { reviews: Review[] }) {
   const isMobile = useIsMobile();
@@ -11,7 +12,7 @@ export default function Reviews({ reviews }: { reviews: Review[] }) {
   if (!reviews || reviews.length === 0) {
     return (
       <div className="mt-8 border-t pt-8">
-        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+        <h2 className="text-2xl mb-6">REVIEWS</h2>
         <p className="text-gray-500">No reviews yet. Be the first to review!</p>
       </div>
     );
@@ -56,7 +57,10 @@ export default function Reviews({ reviews }: { reviews: Review[] }) {
 
   return (
     <div className="border-y py-4">
-      <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
+      <h2 className="text-sm  mb-4 text-gray-500">
+        <MessagesSquare className="w-4 h-4 inline-block mr-1" />
+        CUSTOMER REVIEWS
+      </h2>
       <div className="space-y-6">
         {reviews.map((review, index) => (
           <div key={review._id || index} className="">

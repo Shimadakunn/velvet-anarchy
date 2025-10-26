@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useIsMobile } from "@/lib/isMobile";
 import { useCartStore } from "@/store/cartStore";
 import Marquee from "./ui/marquee";
@@ -24,6 +25,7 @@ export function Header() {
 function DesktopHeader() {
   const { toggleCart, getTotalItems } = useCartStore();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
@@ -37,20 +39,28 @@ function DesktopHeader() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
             <h1 className="text-4xl font-Dirty mt-2 tracking-tighter cursor-pointer">
-              <Link href="/">VeLvEt AnaRCHy</Link>
+              <Link href="/"> Velvet anarchy</Link>
             </h1>
             <nav>
               <ul className="flex items-center gap-4">
-                <li className=" font-semibold cursor-pointer hover:underline underline-offset-4">
+                <li
+                  className={`font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/" ? "underline" : ""}`}
+                >
                   <Link href="/">Home</Link>
                 </li>
-                <li className=" font-semibold cursor-pointer hover:underline underline-offset-4">
+                <li
+                  className={`font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/track" ? "underline" : ""}`}
+                >
                   <Link href="/track">Order Tracking</Link>
                 </li>
-                <li className="font-semibold cursor-pointer hover:underline underline-offset-4">
+                <li
+                  className={`font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/about" ? "underline" : ""}`}
+                >
                   <Link href="/about">About</Link>
                 </li>
-                <li className="font-semibold cursor-pointer hover:underline underline-offset-4">
+                <li
+                  className={`font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/contact" ? "underline" : ""}`}
+                >
                   <Link href="/contact">Contact</Link>
                 </li>
               </ul>
@@ -80,6 +90,7 @@ function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { toggleCart, getTotalItems } = useCartStore();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
@@ -149,16 +160,24 @@ function MobileHeader() {
           {/* Navigation Links */}
           <nav className="flex-1 p-4">
             <ul className="flex flex-col gap-4">
-              <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
+              <li
+                className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/" ? "underline" : ""}`}
+              >
                 <Link href="/">Home</Link>
               </li>
-              <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
+              <li
+                className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/track" ? "underline" : ""}`}
+              >
                 <Link href="/track">Order Tracking</Link>
               </li>
-              <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
+              <li
+                className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/about" ? "underline" : ""}`}
+              >
                 <Link href="/about">About</Link>
               </li>
-              <li className="text-xl font-semibold cursor-pointer hover:underline underline-offset-4">
+              <li
+                className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/contact" ? "underline" : ""}`}
+              >
                 <Link href="/contact">Contact</Link>
               </li>
             </ul>

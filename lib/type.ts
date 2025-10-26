@@ -18,6 +18,7 @@ export type Variant = {
   productId?: Id<"products">;
   type: VariantType;
   value: string;
+  subvalue?: string;
   image?: string;
   _creationTime?: number;
 };

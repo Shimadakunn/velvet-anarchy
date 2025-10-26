@@ -18,7 +18,7 @@ type CartStore = {
   isOpen: boolean;
 
   // Actions
-  addItem: (item: Omit<CartItem, "id" | "quantity">) => void;
+  addItem: (item: Omit<CartItem, "id"> & { quantity?: number; openCart?: boolean }) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -50,25 +50,28 @@ export const useCartStore = create<CartStore>()(
       isOpen: false,
 
       addItem: (item) => {
-        const id = generateCartItemId(item.productId, item.variants);
+        const { quantity = 1, openCart = true, ...itemData } = item;
+        const id = generateCartItemId(itemData.productId, itemData.variants);
         const existingItem = get().items.find((i) => i.id === id);
 
         if (existingItem) {
-          // If item exists, increment quantity
+          // If item exists, add the new quantity to existing quantity
           set({
             items: get().items.map((i) =>
-              i.id === id ? { ...i, quantity: i.quantity + 1 } : i
+              i.id === id ? { ...i, quantity: i.quantity + quantity } : i
             ),
           });
         } else {
-          // Add new item
+          // Add new item with specified quantity
           set({
-            items: [...get().items, { ...item, id, quantity: 1 }],
+            items: [...get().items, { ...itemData, id, quantity }],
           });
         }
 
-        // Open cart when item is added
-        set({ isOpen: true });
+        // Open cart when item is added (if openCart is true)
+        if (openCart) {
+          set({ isOpen: true });
+        }
       },
 
       removeItem: (id) => {

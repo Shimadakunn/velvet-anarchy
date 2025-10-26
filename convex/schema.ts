@@ -17,6 +17,7 @@ export default defineSchema({
     productId: v.id("products"),
     type: v.union(v.literal("size"), v.literal("color")),
     value: v.string(),
+    subvalue: v.optional(v.string()),
     image: v.optional(v.string()),
   }).index("byProduct", ["productId"]),
 

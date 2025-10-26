@@ -63,6 +63,7 @@ export default function ModifyProductPage() {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [newVariantType, setNewVariantType] = useState<VariantType>("color");
   const [newVariantValue, setNewVariantValue] = useState("");
+  const [newVariantSubvalue, setNewVariantSubvalue] = useState("");
   const [newVariantImage, setNewVariantImage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -265,6 +266,7 @@ export default function ModifyProductPage() {
       const variantsData = variants.map((v) => ({
         type: v.type,
         value: v.value,
+        subvalue: v.subvalue,
         image: v.image,
       }));
 
@@ -321,11 +323,13 @@ export default function ModifyProductPage() {
     const newVariant: Variant = {
       type: newVariantType,
       value: newVariantValue,
+      subvalue: newVariantSubvalue || undefined,
       image: newVariantImage || undefined,
     };
 
     setVariants([...variants, newVariant]);
     setNewVariantValue("");
+    setNewVariantSubvalue("");
     setNewVariantImage("");
   };
 
@@ -549,51 +553,62 @@ export default function ModifyProductPage() {
           <div className="mb-4 pt-2 border-t">
             <h3 className="text-lg font-semibold">Variants</h3>
 
+            {/* Add Variant Form */}
+            <div className="flex gap-2 mb-2">
+              <select
+                value={newVariantType}
+                onChange={(e) =>
+                  setNewVariantType(e.target.value as VariantType)
+                }
+                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {variantTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={newVariantValue}
+                onChange={(e) => setNewVariantValue(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addVariant()}
+                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter variant value"
+              />
+              <input
+                type="text"
+                value={newVariantSubvalue}
+                onChange={(e) => setNewVariantSubvalue(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addVariant()}
+                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={
+                  newVariantType === "color"
+                    ? "Hex (e.g. #FF0000)"
+                    : "Subvalue (optional)"
+                }
+              />
+              <select
+                value={newVariantImage}
+                onChange={(e) => setNewVariantImage(e.target.value)}
+                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={product.images.length === 0}
+              >
+                <option value="">No image</option>
+                {product.images.map((img, index) => (
+                  <option key={img} value={img}>
+                    Image {index + 1}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={addVariant}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              >
+                Add
+              </button>
+            </div>
             <div className="flex gap-2">
-              {/* Add Variant Form */}
-              <div className="flex gap-2 mr-4">
-                <select
-                  value={newVariantType}
-                  onChange={(e) =>
-                    setNewVariantType(e.target.value as VariantType)
-                  }
-                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {variantTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  value={newVariantValue}
-                  onChange={(e) => setNewVariantValue(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && addVariant()}
-                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter variant value"
-                />
-                <select
-                  value={newVariantImage}
-                  onChange={(e) => setNewVariantImage(e.target.value)}
-                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={product.images.length === 0}
-                >
-                  <option value="">No image</option>
-                  {product.images.map((img, index) => (
-                    <option key={img} value={img}>
-                      Image {index + 1}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={addVariant}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                >
-                  Add
-                </button>
-              </div>
-
               {/* Variants List */}
               {variants.length > 0 &&
                 variants.map((variant) => (
@@ -609,11 +624,22 @@ export default function ModifyProductPage() {
                           className="w-8 h-8 object-cover rounded"
                         />
                       )}
+                      {variant.type === "color" && variant.subvalue && (
+                        <div
+                          className="w-6 h-6 rounded border border-gray-300"
+                          style={{ backgroundColor: variant.subvalue }}
+                        />
+                      )}
                       <div>
                         <span className="text-sm text-gray-700">
                           {variant.type}:
                         </span>{" "}
                         {variant.value}
+                        {variant.subvalue && (
+                          <span className="text-xs text-gray-500 ml-1">
+                            ({variant.subvalue})
+                          </span>
+                        )}
                       </div>
                     </div>
                     <button

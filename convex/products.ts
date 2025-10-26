@@ -35,6 +35,7 @@ export const create = mutation({
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),
         value: v.string(),
+        subvalue: v.optional(v.string()),
         image: v.optional(v.string()),
       })
     ),
@@ -52,6 +53,7 @@ export const create = mutation({
         productId,
         type: variant.type,
         value: variant.value,
+        subvalue: variant.subvalue,
         image: variant.image,
       });
     }
@@ -75,6 +77,7 @@ export const update = mutation({
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),
         value: v.string(),
+        subvalue: v.optional(v.string()),
         image: v.optional(v.string()),
       })
     ),
@@ -102,6 +105,7 @@ export const update = mutation({
         productId: id,
         type: variant.type,
         value: variant.value,
+        subvalue: variant.subvalue,
         image: variant.image,
       });
     }
