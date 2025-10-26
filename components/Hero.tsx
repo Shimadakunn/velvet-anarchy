@@ -109,7 +109,7 @@ export default function Hero({ slides }: HeroProps) {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white/60 p-2 md:p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 z-10"
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white/60 p-2 md:p-3 rounded-full transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-10"
           aria-label="Previous slide"
         >
           <svg
@@ -129,7 +129,7 @@ export default function Hero({ slides }: HeroProps) {
 
         <button
           onClick={nextSlide}
-          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white/60 p-2 md:p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 z-10"
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white/60 p-2 md:p-3 rounded-full transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-10"
           aria-label="Next slide"
         >
           <svg

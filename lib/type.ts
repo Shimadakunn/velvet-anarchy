@@ -10,6 +10,10 @@ export type Product = {
   sold: number;
   stock: number;
   images: string[];
+  trending?: boolean;
+  mostPopular?: boolean;
+  order?: number;
+  isActive?: boolean;
   _creationTime?: number;
 };
 

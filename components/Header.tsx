@@ -163,22 +163,30 @@ function MobileHeader() {
               <li
                 className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/" ? "underline" : ""}`}
               >
-                <Link href="/">Home</Link>
+                <Link href="/" onClick={() => setIsMenuOpen(false)}>
+                  Home
+                </Link>
               </li>
               <li
                 className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/track" ? "underline" : ""}`}
               >
-                <Link href="/track">Order Tracking</Link>
+                <Link href="/track" onClick={() => setIsMenuOpen(false)}>
+                  Order Tracking
+                </Link>
               </li>
               <li
                 className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/about" ? "underline" : ""}`}
               >
-                <Link href="/about">About</Link>
+                <Link href="/about" onClick={() => setIsMenuOpen(false)}>
+                  About
+                </Link>
               </li>
               <li
                 className={`text-xl font-semibold cursor-pointer hover:underline underline-offset-4 ${pathname === "/contact" ? "underline" : ""}`}
               >
-                <Link href="/contact">Contact</Link>
+                <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
+                  Contact
+                </Link>
               </li>
             </ul>
           </nav>

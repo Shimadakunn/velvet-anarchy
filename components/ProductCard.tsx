@@ -22,16 +22,16 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/product/${product.slug}`}
-      className="group block bg-white transition-all duration-300 relative"
+      className="group block bg-white transition-all duration-300 relative w-full mx-12 md:mx-0 md:w-64"
     >
       {/* Product Image Container */}
-      <div className="relative aspect-square overflow-hidden mb-4">
+      <div className="relative h-64 overflow-hidden mb-4">
         {product.images.length === 0 ? (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center">
             <span className="text-gray-300 text-sm">No Image</span>
           </div>
         ) : imageUrl ? (
-          <div className="w-full h-full p-8 flex items-center justify-center relative">
+          <div className="w-full h-full p-8 flex items-center justify-center">
             <Image
               src={imageUrl}
               alt={product.name}
@@ -57,23 +57,38 @@ export default function ProductCard({ product }: { product: Product }) {
         </p>
         <Badges product={product} />
       </div>
+
+      {/* Most Popular Badge */}
+      {product.mostPopular && (
+        <div className="absolute -top-6 -right-2 w-16 h-16 md:w-20 md:h-20 rotate-12">
+          <Image
+            src="/popular.svg"
+            alt="Most Popular"
+            width={80}
+            height={80}
+            className="w-full h-full"
+          />
+        </div>
+      )}
     </Link>
   );
 }
 
 function Badges({ product }: { product: Product }) {
   return (
-    <div className="flex flex-wrap items-center gap-1">
-      <div className="px-2 py-1 bg-pink-100 text-pink-500 text-xs font-semibold rounded-full inline-block">
-        <Flame className="w-4 h-4 inline-block mb-[3px] mr-[2px]" />
-        Trending!
-      </div>
-      <div className="px-2 py-1 bg-green-100 text-green-600 text-xs font-semibold rounded-full inline-block">
+    <div className="flex flex-wrap items-center gap-1 text-xs">
+      {product.trending && (
+        <div className="px-2 py-1 bg-pink-100 text-pink-500  rounded-full inline-block">
+          <Flame className="w-4 h-4 inline-block mb-[3px] mr-[1px]" />
+          Trending!
+        </div>
+      )}
+      <div className="px-2 py-1 bg-green-100 text-green-600 rounded-full inline-block">
         <CheckCheck className="w-4 h-4 inline-block mb-[2px] mr-[2px]" />
         {product.sold} sold
       </div>
-      <div className="px-2 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full inline-block">
-        <Package className="w-4 h-4 inline-block mb-[3px] mr-[3px]" />
+      <div className="px-2 py-1 bg-red-100 text-red-600 rounded-full inline-block">
+        <Package className="w-4 h-4 inline-block mb-[3px] mr-[2px]" />
         {product.stock} left
       </div>
     </div>

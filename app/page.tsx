@@ -8,7 +8,7 @@ import Hero from "@/components/Hero";
 import Loading from "@/components/Loading";
 
 export default function Home() {
-  const products = useQuery(api.products.list);
+  const products = useQuery(api.products.listActive);
   const heroSlides = useQuery(api.hero.getActiveSlides);
 
   // Wait for all queries to complete
@@ -22,7 +22,7 @@ export default function Home() {
       <Hero slides={heroSlides} />
 
       {/* Bottom decorative element */}
-      <div className="mt-8 text-center">
+      <div className="my-8 text-center">
         <div className="inline-block">
           <div className="flex items-center gap-2">
             <div className="w-12 h-px bg-gray-300"></div>
@@ -34,20 +34,20 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="px-4 md:max-w-[85vw] mx-auto">
+      <div className="md:px-4 md:max-w-[85vw] mx-auto">
         {/* Products Grid */}
         {products === undefined ? (
           <p className="text-gray-500">Loading products...</p>
         ) : products.length === 0 ? (
           <p className="text-gray-500">No products available yet.</p>
         ) : products.length < 4 ? (
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-wrap justify-center md:gap-8">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:gap-8 justify-items-center">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

@@ -4,7 +4,30 @@ import { v } from "convex/values";
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("products").collect();
+    const products = await ctx.db.query("products").collect();
+    // Sort by order field (ascending), with products without order at the end
+    return products.sort((a, b) => {
+      const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
+      const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
+      return orderA - orderB;
+    });
+  },
+});
+
+export const listActive = query({
+  args: {},
+  handler: async (ctx) => {
+    const products = await ctx.db.query("products").collect();
+    // Filter only active products (isActive is true or undefined/null)
+    const activeProducts = products.filter(
+      (p) => p.isActive === undefined || p.isActive === true
+    );
+    // Sort by order field (ascending), with products without order at the end
+    return activeProducts.sort((a, b) => {
+      const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
+      const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
+      return orderA - orderB;
+    });
   },
 });
 
@@ -31,6 +54,9 @@ export const create = mutation({
     rating: v.number(),
     sold: v.number(),
     stock: v.number(),
+    trending: v.optional(v.boolean()),
+    mostPopular: v.optional(v.boolean()),
+    order: v.optional(v.number()),
     variants: v.array(
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),
@@ -73,6 +99,9 @@ export const update = mutation({
     rating: v.number(),
     sold: v.number(),
     stock: v.number(),
+    trending: v.optional(v.boolean()),
+    mostPopular: v.optional(v.boolean()),
+    order: v.optional(v.number()),
     variants: v.array(
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),
@@ -111,5 +140,79 @@ export const update = mutation({
     }
 
     return id;
+  },
+});
+
+export const updateOrder = mutation({
+  args: {
+    id: v.id("products"),
+    order: v.number(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { order: args.order });
+    return args.id;
+  },
+});
+
+export const updateMostPopular = mutation({
+  args: {
+    id: v.id("products"),
+    mostPopular: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    // If setting a product as most popular, unset all other products
+    if (args.mostPopular) {
+      const allProducts = await ctx.db.query("products").collect();
+      for (const product of allProducts) {
+        if (product._id !== args.id && product.mostPopular) {
+          await ctx.db.patch(product._id, { mostPopular: false });
+        }
+      }
+    }
+    await ctx.db.patch(args.id, { mostPopular: args.mostPopular });
+    return args.id;
+  },
+});
+
+export const updateTrending = mutation({
+  args: {
+    id: v.id("products"),
+    trending: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { trending: args.trending });
+    return args.id;
+  },
+});
+
+export const toggleActive = mutation({
+  args: {
+    id: v.id("products"),
+    isActive: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { isActive: args.isActive });
+    return args.id;
+  },
+});
+
+export const deleteProduct = mutation({
+  args: {
+    id: v.id("products"),
+  },
+  handler: async (ctx, args) => {
+    // Delete all variants associated with the product
+    const variants = await ctx.db
+      .query("variants")
+      .withIndex("byProduct", (q) => q.eq("productId", args.id))
+      .collect();
+
+    for (const variant of variants) {
+      await ctx.db.delete(variant._id);
+    }
+
+    // Delete the product
+    await ctx.db.delete(args.id);
+    return args.id;
   },
 });

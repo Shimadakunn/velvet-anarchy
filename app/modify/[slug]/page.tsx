@@ -58,6 +58,9 @@ export default function ModifyProductPage() {
     rating: 0,
     sold: 0,
     stock: 0,
+    trending: false,
+    mostPopular: false,
+    order: 0,
   });
 
   const [variants, setVariants] = useState<Variant[]>([]);
@@ -100,6 +103,9 @@ export default function ModifyProductPage() {
         rating: existingProduct.rating,
         sold: existingProduct.sold,
         stock: existingProduct.stock,
+        trending: existingProduct.trending ?? false,
+        mostPopular: existingProduct.mostPopular ?? false,
+        order: existingProduct.order ?? 0,
       });
       setVariants(existingVariants);
       setReviews(existingReviews);
@@ -229,7 +235,7 @@ export default function ModifyProductPage() {
   // Handle product field changes
   const handleFieldChange = (
     field: keyof ProductType,
-    value: string | number
+    value: string | number | boolean
   ) => {
     setProduct((prev) => {
       const updated = {
@@ -281,6 +287,9 @@ export default function ModifyProductPage() {
         rating: product.rating,
         sold: product.sold,
         stock: product.stock,
+        trending: product.trending,
+        mostPopular: product.mostPopular,
+        order: product.order,
         variants: variantsData,
       });
 

@@ -31,6 +31,9 @@ export default function AddProductPage() {
     rating: 0,
     sold: 0,
     stock: 0,
+    trending: false,
+    mostPopular: false,
+    order: 0,
   });
 
   const [variants, setVariants] = useState<Variant[]>([]);
@@ -179,7 +182,7 @@ export default function AddProductPage() {
   // Handle product field changes
   const handleFieldChange = (
     field: keyof ProductType,
-    value: string | number
+    value: string | number | boolean
   ) => {
     setProduct((prev) => {
       const updated = {
@@ -228,6 +231,9 @@ export default function AddProductPage() {
         rating: product.rating,
         sold: product.sold,
         stock: product.stock,
+        trending: product.trending,
+        mostPopular: product.mostPopular,
+        order: product.order,
         variants: variantsData,
       });
 
@@ -256,6 +262,9 @@ export default function AddProductPage() {
         rating: 0,
         sold: 0,
         stock: 0,
+        trending: false,
+        mostPopular: false,
+        order: 0,
       });
       setVariants([]);
       setReviews([]);
@@ -435,6 +444,49 @@ export default function AddProductPage() {
                 value={product.stock || ""}
                 onChange={(e) =>
                   handleFieldChange("stock", parseInt(e.target.value) || 0)
+                }
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="0"
+                min="0"
+              />
+            </div>
+          </div>
+
+          {/* Product Flags */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-4">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="trending"
+                checked={product.trending || false}
+                onChange={(e) => handleFieldChange("trending", e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="trending" className="ml-2 text-sm font-medium">
+                Mark as Trending
+              </label>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="mostPopular"
+                checked={product.mostPopular || false}
+                onChange={(e) => handleFieldChange("mostPopular", e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="mostPopular" className="ml-2 text-sm font-medium">
+                Mark as Most Popular
+              </label>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Display Order
+              </label>
+              <input
+                type="number"
+                value={product.order || ""}
+                onChange={(e) =>
+                  handleFieldChange("order", parseInt(e.target.value) || 0)
                 }
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0"

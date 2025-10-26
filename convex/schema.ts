@@ -11,6 +11,10 @@ export default defineSchema({
     rating: v.number(),
     sold: v.number(),
     stock: v.number(),
+    trending: v.optional(v.boolean()),
+    mostPopular: v.optional(v.boolean()),
+    order: v.optional(v.number()),
+    isActive: v.optional(v.boolean()),
   }).index("bySlug", ["slug"]),
 
   variants: defineTable({
