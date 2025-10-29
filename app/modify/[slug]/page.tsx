@@ -449,7 +449,7 @@ export default function ModifyProductPage() {
             {/* Product Detail */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Product Detail
+                Product Detail (**text** pour gras / *text* pour italique)
               </label>
               <textarea
                 value={product.detail}
