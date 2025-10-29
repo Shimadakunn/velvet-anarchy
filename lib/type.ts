@@ -14,6 +14,7 @@ export type Product = {
   mostPopular?: boolean;
   order?: number;
   isActive?: boolean;
+  sizeGuide?: string;
   _creationTime?: number;
 };
 

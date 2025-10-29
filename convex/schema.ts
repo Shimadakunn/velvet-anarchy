@@ -15,6 +15,7 @@ export default defineSchema({
     mostPopular: v.optional(v.boolean()),
     order: v.optional(v.number()),
     isActive: v.optional(v.boolean()),
+    sizeGuide: v.optional(v.string()),
   }).index("bySlug", ["slug"]),
 
   variants: defineTable({

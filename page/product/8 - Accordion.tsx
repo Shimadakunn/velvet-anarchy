@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
-import { Info, Minus, PlaneTakeoff, Plus, RotateCcw } from "lucide-react";
 import { Product } from "@/lib/type";
+import { Info, Minus, PlaneTakeoff, Plus, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 export default function Accordion({ product }: { product: Product }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -25,8 +26,7 @@ export default function Accordion({ product }: { product: Product }) {
     {
       icon: RotateCcw,
       title: "30 DAY GUARANTEE",
-      content:
-        "Add your guarantee and return policy information here. Explain the terms and conditions of your guarantee.",
+      content: "**",
     },
   ];
 
@@ -64,8 +64,28 @@ export default function Accordion({ product }: { product: Product }) {
                   : "max-h-0 opacity-0 -translate-y-2"
               }`}
             >
-              <div className="px-4 pb-4 pt-2 text-sm text-gray-600">
-                {section.content}
+              <div className="px-4 pb-4 pt-2 text-sm text-gray-600 prose prose-sm max-w-none prose-p:my-2 prose-ul:my-2 prose-li:my-1 prose-strong:font-semibold prose-ul:list-disc prose-ul:pl-4">
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => (
+                      <p className="mb-2 whitespace-pre-wrap">{children}</p>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className="list-disc pl-5 my-2 space-y-1">
+                        {children}
+                      </ul>
+                    ),
+                    li: ({ children }) => <li className="ml-0">{children}</li>,
+                    strong: ({ children }) => (
+                      <strong className="font-semibold text-gray-900">
+                        {children}
+                      </strong>
+                    ),
+                    br: () => <br />,
+                  }}
+                >
+                  {section.content}
+                </ReactMarkdown>
               </div>
             </div>
           </div>

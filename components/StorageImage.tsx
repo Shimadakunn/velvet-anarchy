@@ -1,8 +1,10 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import Image from "next/image";
+import Loading from "./Loading";
 
 type StorageImageProps = {
   storageId: string;
@@ -20,12 +22,16 @@ export default function StorageImage({
   });
 
   if (!imageUrl) {
-    return (
-      <div className={`bg-gray-200 animate-pulse ${className}`}>
-        Loading...
-      </div>
-    );
+    return <Loading />;
   }
 
-  return <img src={imageUrl} alt={alt} className={className} />;
+  return (
+    <Image
+      src={imageUrl}
+      alt={alt}
+      className={className}
+      width={1000}
+      height={1000}
+    />
+  );
 }

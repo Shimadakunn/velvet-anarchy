@@ -1,23 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import Carroussel from "@/components/Carroussel";
+import Reviews from "@/components/Reviews";
+import StorageImage from "@/components/StorageImage";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Carroussel from "@/components/Carroussel";
-import Product from "@/page/product";
+import { useStorageUrls } from "@/hooks/useStorageUrls";
 import {
   Product as ProductType,
+  Review,
   Variant,
   VariantType,
   variantTypes,
-  Review,
 } from "@/lib/type";
-import { useStorageUrls } from "@/hooks/useStorageUrls";
-import StorageImage from "@/components/StorageImage";
+import Product from "@/page/product";
+import { useMutation, useQuery } from "convex/react";
 import { Trash2 } from "lucide-react";
-import Reviews from "@/components/Reviews";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function ModifyProductPage() {
   const params = useParams();
@@ -61,6 +61,7 @@ export default function ModifyProductPage() {
     trending: false,
     mostPopular: false,
     order: 0,
+    sizeGuide: undefined,
   });
 
   const [variants, setVariants] = useState<Variant[]>([]);
@@ -106,6 +107,7 @@ export default function ModifyProductPage() {
         trending: existingProduct.trending ?? false,
         mostPopular: existingProduct.mostPopular ?? false,
         order: existingProduct.order ?? 0,
+        sizeGuide: existingProduct.sizeGuide,
       });
       setVariants(existingVariants);
       setReviews(existingReviews);
@@ -232,6 +234,36 @@ export default function ModifyProductPage() {
     setNewReviewImages(newReviewImages.filter((_, i) => i !== index));
   };
 
+  // Handle size guide upload
+  const handleSizeGuideUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      if (!result.ok) {
+        throw new Error(`Failed to upload ${file.name}`);
+      }
+
+      const { storageId } = await result.json();
+      setProduct((prev) => ({
+        ...prev,
+        sizeGuide: storageId,
+      }));
+    } catch (error) {
+      console.error("Error uploading size guide:", error);
+      alert("Failed to upload size guide. Please try again.");
+    }
+  };
+
   // Handle product field changes
   const handleFieldChange = (
     field: keyof ProductType,
@@ -290,6 +322,7 @@ export default function ModifyProductPage() {
         trending: product.trending,
         mostPopular: product.mostPopular,
         order: product.order,
+        sizeGuide: product.sizeGuide,
         variants: variantsData,
       });
 
@@ -449,7 +482,18 @@ export default function ModifyProductPage() {
             {/* Product Detail */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Product Detail (**text** pour gras / *text* pour italique)
+                Product Detail{" "}
+                <span
+                  className="text-blue-500 cursor-pointer"
+                  onClick={() =>
+                    window.open(
+                      "https://www.markdownguide.org/cheat-sheet/",
+                      "_blank"
+                    )
+                  }
+                >
+                  (see syntax)
+                </span>
               </label>
               <textarea
                 value={product.detail}
@@ -553,6 +597,36 @@ export default function ModifyProductPage() {
                       </button>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Size Guide Upload */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">Size Guide</label>
+            <div className="flex items-start gap-4">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleSizeGuideUpload}
+                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {product.sizeGuide && (
+                <div className="relative">
+                  <StorageImage
+                    storageId={product.sizeGuide}
+                    alt="Size Guide Preview"
+                    className="aspect-auto h-20 object-cover rounded"
+                  />
+                  <button
+                    onClick={() =>
+                      setProduct((prev) => ({ ...prev, sizeGuide: undefined }))
+                    }
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full flex w-5 h-5 items-center justify-center pb-[2px]"
+                  >
+                    &times;
+                  </button>
                 </div>
               )}
             </div>

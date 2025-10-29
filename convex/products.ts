@@ -1,5 +1,5 @@
-import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 
 export const list = query({
   args: {},
@@ -57,6 +57,7 @@ export const create = mutation({
     trending: v.optional(v.boolean()),
     mostPopular: v.optional(v.boolean()),
     order: v.optional(v.number()),
+    sizeGuide: v.optional(v.string()),
     variants: v.array(
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),
@@ -102,6 +103,7 @@ export const update = mutation({
     trending: v.optional(v.boolean()),
     mostPopular: v.optional(v.boolean()),
     order: v.optional(v.number()),
+    sizeGuide: v.optional(v.string()),
     variants: v.array(
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),

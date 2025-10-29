@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import Loading from "@/components/Loading";
+import StorageImage from "@/components/StorageImage";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import StorageImage from "@/components/StorageImage";
+import { useMutation, useQuery } from "convex/react";
 import Image from "next/image";
-import Loading from "@/components/Loading";
+import { useState } from "react";
 
 export default function HeroAdmin() {
   const slides = useQuery(api.hero.getAllSlides);
@@ -82,12 +82,14 @@ export default function HeroAdmin() {
     try {
       if (editingId) {
         // Find the current slide to keep its order
-        const currentSlide = slides?.find(s => s._id === editingId);
+        const currentSlide = slides?.find((s) => s._id === editingId);
         await updateSlide({
           id: editingId,
           image: formData.image,
           title: formData.title,
-          productId: formData.productId ? (formData.productId as Id<"products">) : undefined,
+          productId: formData.productId
+            ? (formData.productId as Id<"products">)
+            : undefined,
           order: currentSlide?.order,
           isActive: formData.isActive,
         });
@@ -96,7 +98,9 @@ export default function HeroAdmin() {
         await createSlide({
           image: formData.image,
           title: formData.title,
-          productId: formData.productId ? (formData.productId as Id<"products">) : undefined,
+          productId: formData.productId
+            ? (formData.productId as Id<"products">)
+            : undefined,
           order: slides ? slides.length : 0,
           isActive: formData.isActive,
         });
@@ -108,6 +112,7 @@ export default function HeroAdmin() {
     }
   };
 
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEdit = (slide: any) => {
     setFormData({
       image: slide.image,
@@ -188,7 +193,9 @@ export default function HeroAdmin() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Hero Slide Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Hero Slide Management
+          </h1>
         </div>
 
         {/* Create/Edit Form */}
@@ -225,73 +232,84 @@ export default function HeroAdmin() {
               )}
             </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="Discover a Feerique World"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Title
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="Discover a Feerique World"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Link (Optional)
-                </label>
-                <select
-                  value={formData.productId}
-                  onChange={(e) => setFormData({ ...formData, productId: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                >
-                  <option value="">No product link</option>
-                  {products.map((product) => (
-                    <option key={product._id} value={product._id}>
-                      {product.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Product Link (Optional)
+              </label>
+              <select
+                value={formData.productId}
+                onChange={(e) =>
+                  setFormData({ ...formData, productId: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+              >
+                <option value="">No product link</option>
+                {products.map((product) => (
+                  <option key={product._id} value={product._id}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
-                />
-                <label htmlFor="isActive" className="ml-2 text-sm font-medium text-gray-700">
-                  Active
-                </label>
-              </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="isActive"
+                checked={formData.isActive}
+                onChange={(e) =>
+                  setFormData({ ...formData, isActive: e.target.checked })
+                }
+                className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+              />
+              <label
+                htmlFor="isActive"
+                className="ml-2 text-sm font-medium text-gray-700"
+              >
+                Active
+              </label>
+            </div>
 
-              <div className="flex gap-4">
-                <button
-                  type="submit"
-                  className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  {editingId ? "Update Slide" : "Create Slide"}
-                </button>
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-                >
-                  {editingId ? "Cancel" : "Clear Form"}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                {editingId ? "Update Slide" : "Create Slide"}
+              </button>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                {editingId ? "Cancel" : "Clear Form"}
+              </button>
+            </div>
+          </form>
+        </div>
 
         {/* Slides List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Existing Slides</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Existing Slides
+            </h2>
             {slides.length > 0 && (
               <p className="text-sm text-gray-500">
                 Drag and drop to reorder slides
@@ -299,7 +317,9 @@ export default function HeroAdmin() {
             )}
           </div>
           {slides.length === 0 ? (
-            <p className="text-gray-500">No slides yet. Create your first slide!</p>
+            <p className="text-gray-500">
+              No slides yet. Create your first slide!
+            </p>
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {slides.map((slide, index) => (
@@ -340,8 +360,12 @@ export default function HeroAdmin() {
                   </div>
 
                   <div className="flex-grow">
-                    <h3 className="font-semibold text-gray-900">{slide.title}</h3>
-                    <p className="text-sm text-gray-600">Order: {slide.order}</p>
+                    <h3 className="font-semibold text-gray-900">
+                      {slide.title}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Order: {slide.order}
+                    </p>
                     {slide.product && (
                       <p className="text-sm text-gray-600">
                         Links to: {slide.product.name}
