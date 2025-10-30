@@ -1,31 +1,31 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import Loading from "@/components/Loading";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Image from "next/image";
-import { useState } from "react";
+import { useMutation, useQuery } from "convex/react";
 import {
-  Package,
-  Search,
+  Calendar,
+  CheckCircle,
   ChevronDown,
   ChevronUp,
-  Mail,
-  User,
-  Calendar,
-  ShoppingBag,
-  CheckCircle,
-  XCircle,
   Clock,
-  RotateCcw,
-  Truck,
+  Home,
+  Mail,
+  Navigation,
+  Package,
   PackageCheck,
   PackageSearch,
-  Navigation,
-  Home,
+  RotateCcw,
+  Search,
+  ShoppingBag,
+  Truck,
+  User,
+  XCircle,
 } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/Loading";
 
 // Status badge component
 function StatusBadge({ status }: { status: string }) {
@@ -274,6 +274,34 @@ function OrderCard({
     }
   };
 
+  const handleSendShippingEmail = async () => {
+    try {
+      const response = await fetch("/api/send-customer-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerEmail: order.customerEmail,
+          customerName: order.customerName,
+          orderId: order.orderId,
+          shippingStatus: selectedShippingStatus,
+          items: order.items,
+          shippingAddress: order.shippingAddress,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send email");
+      }
+
+      toast.success("Shipping status email sent successfully!");
+    } catch (error) {
+      console.error("Failed to send shipping email:", error);
+      toast.error("Failed to send shipping status email");
+    }
+  };
+
   const orderDate = new Date(order._creationTime).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -386,6 +414,15 @@ function OrderCard({
             </select>
           </div>
         </div>
+
+        {/* Send Shipping Status Email Button */}
+        <button
+          onClick={handleSendShippingEmail}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors mb-3"
+        >
+          <Mail className="w-4 h-4" />
+          Send Shipping Status Email to Customer
+        </button>
 
         {/* Expand/Collapse Button */}
         <button

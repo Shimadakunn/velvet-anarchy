@@ -1,14 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Product } from "@/lib/type";
-import { CheckCheck, Flame, Package } from "lucide-react";
 import { useIsMobile } from "@/lib/isMobile";
-import { Star } from "lucide-react";
+import { Product } from "@/lib/type";
+import { useQuery } from "convex/react";
+import { CheckCheck, Flame, Package, Star } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function ProductCard({ product }: { product: Product }) {
   // Get the first image URL only if images exist
@@ -25,7 +24,7 @@ export default function ProductCard({ product }: { product: Product }) {
       className="group block bg-white transition-all duration-300 relative w-full mx-12 md:mx-0 md:w-64"
     >
       {/* Product Image Container */}
-      <div className="relative h-64 overflow-hidden mb-4">
+      <div className="relative h-[20rem] overflow-hidden mb-4">
         {product.images.length === 0 ? (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center">
             <span className="text-gray-300 text-sm">No Image</span>

@@ -1,8 +1,8 @@
 "use client";
 
-import ProductCard from "@/components/ProductCard";
 import Hero from "@/components/Hero";
 import Loading from "@/components/Loading";
+import ProductCard from "@/components/ProductCard";
 import { useDataStore } from "@/store/dataStore";
 
 export default function Home() {
@@ -40,7 +40,7 @@ export default function Home() {
         {products.length === 0 ? (
           <p className="text-gray-500">No products available yet.</p>
         ) : products.length < 4 ? (
-          <div className="flex flex-wrap justify-center md:gap-8">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

@@ -1,6 +1,6 @@
+import { AdminMail } from "@/components/AdminMail";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { AdminNotificationMail } from "@/components/AdminNotificationMail";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -24,7 +24,7 @@ interface ShippingAddress {
   country: string;
 }
 
-interface SendAdminNotificationRequest {
+interface SendAdminEmailRequest {
   customerEmail: string;
   customerName: string;
   orderId: string;
@@ -38,7 +38,7 @@ interface SendAdminNotificationRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: SendAdminNotificationRequest = await request.json();
+    const body: SendAdminEmailRequest = await request.json();
 
     const {
       customerEmail,
@@ -67,9 +67,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if admin email is configured
-    const adminEmail = process.env.ADMIN_MAIL;
+    const adminEmail = process.env.ADMIN_EMAIL;
     if (!adminEmail) {
-      console.error("ADMIN_MAIL environment variable is not set");
+      console.error("ADMIN_EMAIL environment variable is not set");
       return NextResponse.json(
         { error: "Admin email not configured" },
         { status: 500 }
@@ -80,9 +80,9 @@ export async function POST(request: NextRequest) {
     const { data, error } = await resend.emails.send({
       from: "Velvet Anarchy <onboarding@resend.dev>",
       to: [adminEmail],
-      subject: `New Order Received - #${orderId}`,
+      subject: `New Order - #${orderId}`,
       react: (
-        <AdminNotificationMail
+        <AdminMail
           customerName={customerName}
           customerEmail={customerEmail}
           orderId={orderId}
@@ -97,22 +97,23 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("Error sending admin notification email:", error);
+      console.error("Error sending admin email:", error);
       return NextResponse.json(
-        { error: "Failed to send admin notification email", details: error },
+        { error: "Failed to send admin email", details: error },
         { status: 500 }
       );
     }
 
     return NextResponse.json(
-      { message: "Admin notification email sent successfully", data },
+      { message: "Admin email sent successfully", data },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error in send-admin-notification API:", error);
+    console.error("Error in send-admin-email API:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
+

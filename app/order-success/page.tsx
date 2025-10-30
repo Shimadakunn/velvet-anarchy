@@ -1,12 +1,12 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { ArrowLeft, CheckCircle2, Mail, Package, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, Package, Mail, ArrowLeft, Truck } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 // Component to display individual order item with variant image support
@@ -103,7 +103,7 @@ export default function OrderSuccessPage() {
       // Send both emails in parallel
       Promise.all([
         // Send confirmation email to customer
-        fetch("/api/send-confirmation", {
+        fetch("/api/send-customer-email", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -112,6 +112,7 @@ export default function OrderSuccessPage() {
             customerEmail: order.customerEmail,
             customerName: order.customerName,
             orderId: order.orderId,
+            shippingStatus: "pending",
             items: order.items.map((item) => ({
               productName: item.productName,
               price: item.price,
@@ -124,11 +125,11 @@ export default function OrderSuccessPage() {
             total: order.total,
           }),
         }).catch((error) => {
-          console.error("Error sending confirmation email:", error);
+          console.error("Error sending customer confirmation email:", error);
         }),
 
         // Send admin notification email
-        fetch("/api/send-admin-notification", {
+        fetch("/api/send-admin-email", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
