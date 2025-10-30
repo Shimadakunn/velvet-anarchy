@@ -1,7 +1,7 @@
 "use client";
 import { useIsMobile } from "@/lib/isMobile";
-import { Star } from "lucide-react";
 import { Product } from "@/lib/type";
+import { Star } from "lucide-react";
 import Image from "next/image";
 
 export default function Rating({ product }: { product: Product }) {

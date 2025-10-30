@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import {
+  Product as ProductType,
+  Variant,
+  VariantType,
+  variantTypes,
+} from "@/lib/type";
+import { useMemo, useState } from "react";
 import Rating from "./1 - Rating";
 import Name from "./2 - Name";
 import Badges from "./3 - Badges";
@@ -10,12 +16,6 @@ import Quantity from "./5 - Quantity";
 import Variants from "./6 - Variants";
 import Buy from "./7 - Buy";
 import Accordion from "./8 - Accordion";
-import {
-  Product as ProductType,
-  Variant,
-  VariantType,
-  variantTypes,
-} from "@/lib/type";
 
 export default function Product({
   product,
@@ -77,9 +77,10 @@ export default function Product({
   return (
     <div className="">
       <Rating product={product} />
-      <div className="mb-4" />
+      <div className="mb-3" />
 
       <Name product={product} />
+      <div className="mb-1" />
       <Badges product={product} />
 
       <div className="mb-4" />

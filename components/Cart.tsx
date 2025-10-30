@@ -1,27 +1,26 @@
 "use client";
 
-import Image from "next/image";
-import { useCartStore } from "@/store/cartStore";
-import { X, Minus, Plus, Trash2, BadgePercent, BadgeCheck } from "lucide-react";
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
-import { Lock } from "lucide-react";
-import PaymentBadges from "./PaymentBadges";
-import Cadena from "@/public/cadena.svg";
-import { useDataStore } from "@/store/dataStore";
 import {
-  calculateOriginalSubtotal,
-  calculateDiscountedSubtotal,
-  calculateShipping,
-  shouldApplyDiscount,
-  calculateDiscountProgress,
   calculateAmountToDiscount,
   calculateDiscountAmount,
+  calculateDiscountedSubtotal,
+  calculateDiscountProgress,
+  calculateOriginalSubtotal,
+  calculateShipping,
+  shouldApplyDiscount,
 } from "@/lib/pricing";
+import Cadena from "@/public/cadena.svg";
+import { useCartStore } from "@/store/cartStore";
+import { useDataStore } from "@/store/dataStore";
+import { useQuery } from "convex/react";
+import { BadgeCheck, BadgePercent, Minus, Plus, Trash2, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import PaymentBadges from "./PaymentBadges";
+import { Button } from "./ui/button";
 
 export default function Cart() {
   const { items, isOpen, closeCart, updateQuantity, removeItem } =
@@ -227,7 +226,9 @@ function CartItemComponent({
   const { getVariants, getImageUrl } = useDataStore();
 
   // Get cached variants only - fetching happens globally in Footer
-  const { data: variants } = item.productId ? getVariants(item.productId) : { data: null };
+  const { data: variants } = item.productId
+    ? getVariants(item.productId)
+    : { data: null };
 
   // Find variant image if any selected variant has one
   const variantImage = variants?.find((variant) => {
@@ -245,7 +246,9 @@ function CartItemComponent({
   // Fallback: fetch if not cached yet
   const fetchedImageUrl = useQuery(
     api.files.getUrl,
-    imageToDisplay && !imageUrl ? { storageId: imageToDisplay as Id<"_storage"> } : "skip"
+    imageToDisplay && !imageUrl
+      ? { storageId: imageToDisplay as Id<"_storage"> }
+      : "skip"
   );
 
   const displayImageUrl = imageUrl || fetchedImageUrl;
@@ -284,7 +287,7 @@ function CartItemComponent({
         <div>
           <Link
             href={`/product/${item.productSlug}`}
-            className="text-xl font-bold font-Dirty hover:underline line-clamp-2"
+            className="text-xl font-bold font-Meg hover:underline line-clamp-2"
           >
             {item.productName}
           </Link>

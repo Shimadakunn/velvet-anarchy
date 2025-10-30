@@ -1,9 +1,9 @@
 "use client";
 
+import { Facebook, Instagram, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
-import { Instagram, Facebook, Twitter, Mail } from "lucide-react";
-import PaymentBadges from "./PaymentBadges";
 import { DataFetcher } from "./DataFetcher";
+import PaymentBadges from "./PaymentBadges";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -17,11 +17,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <h2 className="text-3xl font-Dirty tracking-tighter">
-              VeLvEt AnaRCHy
+            <h2 className="text-2xl font-Meg tracking-tighter">
+              Velvet Anarchy
             </h2>
             <p className="text-sm text-gray-600">
-              Unique streetwear for the rebellious soul.
+              Where luxury meets rebellion
             </p>
           </div>
 

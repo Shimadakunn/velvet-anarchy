@@ -1,30 +1,30 @@
 "use client";
 
-import React from "react";
-import { useCartStore, CartItem } from "@/store/cartStore";
-import Image from "next/image";
-import Link from "next/link";
-import { PayPalButtons } from "@paypal/react-paypal-js";
-import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import Cadena from "@/public/cadena-black.svg";
 import {
-  ShoppingBag,
-  ArrowLeft,
-  Loader2,
-  CheckCircle2,
-  BadgeCheck,
-} from "lucide-react";
-import {
-  calculateOriginalSubtotal,
+  calculateDiscountAmount,
   calculateDiscountedSubtotal,
+  calculateOriginalSubtotal,
   calculateShipping,
   shouldApplyDiscount,
-  calculateDiscountAmount,
 } from "@/lib/pricing";
+import Cadena from "@/public/cadena-black.svg";
+import { CartItem, useCartStore } from "@/store/cartStore";
+import { PayPalButtons } from "@paypal/react-paypal-js";
+import { useMutation, useQuery } from "convex/react";
+import {
+  ArrowLeft,
+  BadgeCheck,
+  CheckCircle2,
+  Loader2,
+  ShoppingBag,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { toast } from "sonner";
 
 // Component to display individual checkout item with variant image support
 function CheckoutItem({
@@ -96,7 +96,7 @@ function CheckoutItem({
       </div>
 
       {/* Price */}
-      <div className="text-right flex-shrink-0 mr-1 tracking-tighter">
+      <div className="text-right flex-shrink-0 mr-1 ">
         {hasDiscount ? (
           <div className="flex flex-col items-end gap-0.5">
             <p className="line-through text-gray-400 text-xs">

@@ -6,9 +6,7 @@ export default function PrivacyPolicyPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-Dirty tracking-tighter mb-4">
-            Privacy Policy
-          </h1>
+          <h1 className="text-5xl font-Meg  mb-4">Privacy Policy</h1>
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
         </div>
 
@@ -17,24 +15,32 @@ export default function PrivacyPolicyPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              At Velvet Anarchy, we take your privacy seriously. This Privacy Policy
-              explains how we collect, use, disclose, and safeguard your information
-              when you visit our website and make purchases.
+              At Velvet Anarchy, we take your privacy seriously. This Privacy
+              Policy explains how we collect, use, disclose, and safeguard your
+              information when you visit our website and make purchases.
             </p>
           </section>
 
           {/* Information We Collect */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Information We Collect</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Information We Collect
+            </h2>
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold text-lg mb-2">Personal Information</h3>
+                <h3 className="font-semibold text-lg mb-2">
+                  Personal Information
+                </h3>
                 <p className="text-gray-700 text-sm leading-relaxed">
-                  We collect information that you provide directly to us, including:
+                  We collect information that you provide directly to us,
+                  including:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 text-sm space-y-1 mt-2 ml-4">
                   <li>Name and contact information (email, phone, address)</li>
-                  <li>Payment information (processed securely through our payment provider)</li>
+                  <li>
+                    Payment information (processed securely through our payment
+                    provider)
+                  </li>
                   <li>Order history and preferences</li>
                   <li>Account credentials if you create an account</li>
                 </ul>
@@ -45,7 +51,8 @@ export default function PrivacyPolicyPage() {
                   Automatically Collected Information
                 </h3>
                 <p className="text-gray-700 text-sm leading-relaxed">
-                  When you visit our website, we automatically collect certain information:
+                  When you visit our website, we automatically collect certain
+                  information:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 text-sm space-y-1 mt-2 ml-4">
                   <li>Browser type and device information</li>
@@ -79,7 +86,8 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Information Sharing</h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
-              We do not sell your personal information. We may share your information with:
+              We do not sell your personal information. We may share your
+              information with:
             </p>
             <ul className="list-disc list-inside text-gray-700 text-sm space-y-1 ml-4">
               <li>Service providers who help us operate our business</li>
@@ -93,9 +101,10 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Data Security</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              We implement appropriate technical and organizational measures to protect
-              your personal information. However, no method of transmission over the
-              internet is 100% secure, and we cannot guarantee absolute security.
+              We implement appropriate technical and organizational measures to
+              protect your personal information. However, no method of
+              transmission over the internet is 100% secure, and we cannot
+              guarantee absolute security.
             </p>
           </section>
 
@@ -118,9 +127,9 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Cookies</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              We use cookies and similar tracking technologies to improve your browsing
-              experience and analyze site traffic. You can control cookies through your
-              browser settings.
+              We use cookies and similar tracking technologies to improve your
+              browsing experience and analyze site traffic. You can control
+              cookies through your browser settings.
             </p>
           </section>
 
@@ -128,8 +137,9 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Children's Privacy</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              Our website is not intended for children under 13 years of age. We do not
-              knowingly collect personal information from children under 13.
+              Our website is not intended for children under 13 years of age. We
+              do not knowingly collect personal information from children under
+              13.
             </p>
           </section>
 
@@ -139,9 +149,9 @@ export default function PrivacyPolicyPage() {
               Changes to This Privacy Policy
             </h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              We may update this Privacy Policy from time to time. We will notify you of
-              any changes by posting the new Privacy Policy on this page and updating the
-              "Last updated" date.
+              We may update this Privacy Policy from time to time. We will
+              notify you of any changes by posting the new Privacy Policy on
+              this page and updating the "Last updated" date.
             </p>
           </section>
 
@@ -149,7 +159,8 @@ export default function PrivacyPolicyPage() {
           <section className="pt-8 border-t border-gray-200">
             <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              If you have any questions about this Privacy Policy, please contact us at{" "}
+              If you have any questions about this Privacy Policy, please
+              contact us at{" "}
               <a
                 href="mailto:privacy@velvetanarchy.com"
                 className="text-black font-semibold hover:underline underline-offset-4"

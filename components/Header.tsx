@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { ShoppingCart, Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { useIsMobile } from "@/lib/isMobile";
 import { useCartStore } from "@/store/cartStore";
+import { Menu, ShoppingCart, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import Marquee from "./ui/marquee";
 const items = [
   "BUY 2 OR MORE TO GET 10% OFF",
@@ -38,8 +38,8 @@ function DesktopHeader() {
       <header className="w-full py-4 border-b border-gray-300 ">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
-            <h1 className="text-4xl font-Dirty mt-2 tracking-tighter cursor-pointer">
-              <Link href="/"> Velvet anarchy</Link>
+            <h1 className="text-4xl font-Meg  mt-2 pb-1 cursor-pointer">
+              <Link href="/"> Velvet Anarchy</Link>
             </h1>
             <nav>
               <ul className="flex items-center gap-4">
@@ -108,8 +108,8 @@ function MobileHeader() {
           </button>
 
           {/* Center: Brand Name */}
-          <h1 className="text-2xl font-Dirty mt-2 tracking-tighter absolute left-1/2 transform -translate-x-1/2">
-            <Link href="/">VeLvEt AnaRCHy</Link>
+          <h1 className="text-xl font-Meg tracking-tighter mt-2 absolute left-1/2 font-black transform -translate-x-1/2 pb-1">
+            <Link href="/">Velvet Anarchy</Link>
           </h1>
 
           {/* Right: Shopping Cart */}
@@ -147,7 +147,7 @@ function MobileHeader() {
         <div className="flex flex-col h-full">
           {/* Close Button */}
           <div className="flex justify-between items-center p-4 border-b border-gray-300">
-            <h2 className="text-3xl font-Dirty tracking-tighter mt-2">mEnU</h2>
+            <h2 className="text-3xl font-Meg tracking-tighter mt-2">mEnU</h2>
             <button
               onClick={() => setIsMenuOpen(false)}
               className="p-2"

@@ -1,7 +1,7 @@
 "use client";
 
+import { Facebook, Instagram, Mail, Send, Twitter } from "lucide-react";
 import { useState } from "react";
-import { Mail, Instagram, Facebook, Twitter, Send } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ContactPage() {
@@ -39,11 +39,9 @@ export default function ContactPage() {
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-Dirty tracking-tighter mb-4">
-            Get In Touch
-          </h1>
+          <h1 className="text-5xl font-Meg mb-4">Get In Touch</h1>
           <p className="text-lg text-gray-600">
-            Have a question? We're here to help
+            Have a question? We are here to help
           </p>
         </div>
 

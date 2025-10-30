@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type HeroSlide = {
   _id: string;
@@ -85,20 +85,18 @@ export default function Hero({ slides }: HeroProps) {
             />
 
             {/* Overlay Content */}
-            <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full">
+            <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white [-webkit-text-stroke:_2px_black] [paint-order:_stroke_fill]">
               {/* [-webkit-text-stroke:_2px_black] [paint-order:_stroke_fill] */}
-              <h2 className="font-Dirty text-2xl md:text-5xl text-white [-webkit-text-stroke:_2px_black] [paint-order:_stroke_fill]">
-                {slide.title}
-              </h2>
+              <h2 className="font-Meg text-2xl md:text-5xl ">{slide.title}</h2>
               {slide.product ? (
                 <Link
                   href={`/product/${slide.product.slug}`}
-                  className="text-white font-medium text-sm md:text-lg border-b border-white hover:border-gray-300 hover:text-gray-300 transition-colors"
+                  className=" font-medium text-sm md:text-lg border-b"
                 >
                   SHOP NOW
                 </Link>
               ) : (
-                <button className="text-white font-medium text-sm md:text-lg border-b border-white">
+                <button className=" font-medium text-sm md:text-lg border-b ">
                   SHOP NOW
                 </button>
               )}

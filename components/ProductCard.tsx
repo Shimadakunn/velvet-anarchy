@@ -48,7 +48,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="pb-4">
         <Rating product={product} />
         {/* Product Name */}
-        <h3 className="text-xl font-Dirty mt-2">{product.name}</h3>
+        <h3 className="text-xl font-Meg mt-1">{product.name}</h3>
 
         {/* Price */}
         <p className="text-base font-black -translate-y-2">
@@ -99,7 +99,8 @@ function Rating({ product }: { product: Product }) {
   const fullStars = Math.floor(product.rating);
   const hasHalfStar = product.rating % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-  const starSize = isMobile ? 3 : 4;
+  const starSize = isMobile ? 4 : 5;
+  console.log(isMobile);
 
   return (
     <div className="flex items-center gap-1">
@@ -107,7 +108,7 @@ function Rating({ product }: { product: Product }) {
         {[...Array(fullStars)].map((_, i) => (
           <Star
             key={`full-${i}`}
-            className={`w-${starSize} h-${starSize} fill-black text-black`}
+            className={`w-4 h-${starSize} fill-black text-black`}
           />
         ))}
         {hasHalfStar && (

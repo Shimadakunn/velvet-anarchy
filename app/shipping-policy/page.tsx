@@ -6,9 +6,7 @@ export default function ShippingPolicyPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-Dirty tracking-tighter mb-4">
-            Shipping Policy
-          </h1>
+          <h1 className="text-5xl font-Meg  mb-4">Shipping Policy</h1>
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
         </div>
 
@@ -17,9 +15,9 @@ export default function ShippingPolicyPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              At Velvet Anarchy, we're committed to delivering your jewelry safely and
-              promptly. This Shipping Policy outlines our shipping methods, costs, and
-              delivery times.
+              At Velvet Anarchy, we are committed to delivering your jewelry
+              safely and promptly. This Shipping Policy outlines our shipping
+              methods, costs, and delivery times.
             </p>
           </section>
 
@@ -27,13 +25,14 @@ export default function ShippingPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Processing Time</h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
-              All orders are processed within 1-3 business days (excluding weekends and
-              holidays) after receiving your order confirmation email. You will receive
-              another notification when your order has shipped.
+              All orders are processed within 1-3 business days (excluding
+              weekends and holidays) after receiving your order confirmation
+              email. You will receive another notification when your order has
+              shipped.
             </p>
             <p className="text-gray-700 text-sm leading-relaxed">
-              During peak seasons or promotional periods, processing times may be
-              extended. We'll notify you of any delays.
+              During peak seasons or promotional periods, processing times may
+              be extended. We will notify you of any delays.
             </p>
           </section>
 
@@ -46,11 +45,12 @@ export default function ShippingPolicyPage() {
               <div className="border border-gray-200 rounded-lg p-4">
                 <h3 className="font-semibold mb-2">Standard Shipping</h3>
                 <p className="text-gray-700 text-sm mb-2">
-                  <span className="font-medium">Cost:</span> $5.99 (Free on orders over
-                  $50)
+                  <span className="font-medium">Cost:</span> $5.99 (Free on
+                  orders over $50)
                 </p>
                 <p className="text-gray-700 text-sm">
-                  <span className="font-medium">Delivery:</span> 5-7 business days
+                  <span className="font-medium">Delivery:</span> 5-7 business
+                  days
                 </p>
               </div>
 
@@ -60,7 +60,8 @@ export default function ShippingPolicyPage() {
                   <span className="font-medium">Cost:</span> $12.99
                 </p>
                 <p className="text-gray-700 text-sm">
-                  <span className="font-medium">Delivery:</span> 2-3 business days
+                  <span className="font-medium">Delivery:</span> 2-3 business
+                  days
                 </p>
               </div>
 
@@ -72,7 +73,7 @@ export default function ShippingPolicyPage() {
                 <p className="text-gray-700 text-sm">
                   <span className="font-medium">Delivery:</span> 1 business day
                 </p>
-                <p className="text-gray-700 text-xs text-gray-500 mt-2">
+                <p className="text-gray-500 text-xs mt-2">
                   Must be ordered before 12 PM EST for next-day delivery
                 </p>
               </div>
@@ -81,24 +82,27 @@ export default function ShippingPolicyPage() {
 
           {/* International Shipping */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">International Shipping</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              International Shipping
+            </h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
-              We currently ship to most countries worldwide. International shipping rates
-              and delivery times vary by destination.
+              We currently ship to most countries worldwide. International
+              shipping rates and delivery times vary by destination.
             </p>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
               <p className="text-gray-700 text-sm mb-2">
-                <span className="font-medium">International Standard:</span> $15.99 -
-                $29.99
+                <span className="font-medium">International Standard:</span>{" "}
+                $15.99 - $29.99
               </p>
               <p className="text-gray-700 text-sm">
-                <span className="font-medium">Delivery:</span> 10-21 business days
+                <span className="font-medium">Delivery:</span> 10-21 business
+                days
               </p>
             </div>
             <p className="text-gray-700 text-sm leading-relaxed mt-3">
-              <span className="font-semibold">Note:</span> International customers are
-              responsible for any customs duties, taxes, or fees imposed by their
-              country.
+              <span className="font-semibold">Note:</span> International
+              customers are responsible for any customs duties, taxes, or fees
+              imposed by their country.
             </p>
           </section>
 
@@ -106,23 +110,28 @@ export default function ShippingPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Order Tracking</h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
-              Once your order ships, you'll receive a shipping confirmation email with
-              your tracking number. You can track your order at any time by:
+              Once your order ships, you will receive a shipping confirmation
+              email with your tracking number. You can track your order at any
+              time by:
             </p>
             <ul className="list-disc list-inside text-gray-700 text-sm space-y-1 ml-4">
               <li>Visiting our Track Order page</li>
-              <li>Using the tracking link in your shipping confirmation email</li>
+              <li>
+                Using the tracking link in your shipping confirmation email
+              </li>
               <li>Checking your order status in your account</li>
             </ul>
             <p className="text-gray-700 text-sm leading-relaxed mt-3">
-              Please allow 24 hours after shipment for tracking information to become
-              available.
+              Please allow 24 hours after shipment for tracking information to
+              become available.
             </p>
           </section>
 
           {/* Shipping Restrictions */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Shipping Restrictions</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Shipping Restrictions
+            </h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
               We currently do not ship to:
             </p>
@@ -134,7 +143,9 @@ export default function ShippingPolicyPage() {
 
           {/* Lost or Damaged Packages */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Lost or Damaged Packages</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Lost or Damaged Packages
+            </h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
               If your package is lost or arrives damaged:
             </p>
@@ -148,10 +159,12 @@ export default function ShippingPolicyPage() {
                   support@velvetanarchy.com
                 </a>
               </li>
-              <li>Provide your order number and photos if the package is damaged</li>
               <li>
-                We'll work with the carrier to resolve the issue and send a replacement
-                or refund
+                Provide your order number and photos if the package is damaged
+              </li>
+              <li>
+                We will work with the carrier to resolve the issue and send a
+                replacement or refund
               </li>
             </ol>
             <p className="text-gray-700 text-sm leading-relaxed mt-3">
@@ -163,17 +176,18 @@ export default function ShippingPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Address Changes</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              Please ensure your shipping address is correct before completing your order.
-              Once an order has shipped, we cannot change the delivery address. If you
-              need to change your address, contact us immediately at{" "}
+              Please ensure your shipping address is correct before completing
+              your order. Once an order has shipped, we cannot change the
+              delivery address. If you need to change your address, contact us
+              immediately at{" "}
               <a
                 href="mailto:support@velvetanarchy.com"
                 className="text-black font-semibold hover:underline underline-offset-4"
               >
                 support@velvetanarchy.com
               </a>
-              . We'll do our best to help, but we cannot guarantee address changes after
-              shipment.
+              . We will do our best to help, but we cannot guarantee address
+              changes after shipment.
             </p>
           </section>
 
@@ -181,9 +195,10 @@ export default function ShippingPolicyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Holiday Shipping</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              During major holidays, shipping carriers may experience delays. We recommend
-              ordering early to ensure delivery by your desired date. Holiday shipping
-              deadlines will be posted on our website and social media.
+              During major holidays, shipping carriers may experience delays. We
+              recommend ordering early to ensure delivery by your desired date.
+              Holiday shipping deadlines will be posted on our website and
+              social media.
             </p>
           </section>
 

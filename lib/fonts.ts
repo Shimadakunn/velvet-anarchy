@@ -31,7 +31,7 @@ export const helveticaNeue = localFont({
   variable: "--font-helvetica-neue",
 });
 
-export const dirtyline = localFont({
-  src: "../public/fonts/Dirtyline.ttf",
-  variable: "--font-dirtyline",
+export const meg = localFont({
+  src: "../public/fonts/Meg.otf",
+  variable: "--font-meg",
 });

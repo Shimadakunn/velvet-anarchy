@@ -4,9 +4,7 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-Dirty tracking-tighter mb-4">
-            Velvet anarchy
-          </h1>
+          <h1 className="text-5xl font-Meg mb-4">Velvet anarchy</h1>
           <p className="text-lg text-gray-600">Where luxury meets rebellion</p>
         </div>
 
