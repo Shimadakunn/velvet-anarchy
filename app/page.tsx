@@ -1,18 +1,19 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-
-import { useQuery } from "convex/react";
 import ProductCard from "@/components/ProductCard";
 import Hero from "@/components/Hero";
 import Loading from "@/components/Loading";
+import { useDataStore } from "@/store/dataStore";
 
 export default function Home() {
-  const products = useQuery(api.products.listActive);
-  const heroSlides = useQuery(api.hero.getActiveSlides);
+  const { getProducts, getHeroSlides } = useDataStore();
 
-  // Wait for all queries to complete
-  if (products === undefined || heroSlides === undefined) {
+  // Get data from cache only - fetching happens globally in Footer
+  const { data: products } = getProducts();
+  const { data: heroSlides } = getHeroSlides();
+
+  // Only show loading on first visit when cache is empty
+  if (!products || !heroSlides) {
     return <Loading />;
   }
 
@@ -36,9 +37,7 @@ export default function Home() {
 
       <div className="md:px-4 md:max-w-[85vw] mx-auto">
         {/* Products Grid */}
-        {products === undefined ? (
-          <p className="text-gray-500">Loading products...</p>
-        ) : products.length === 0 ? (
+        {products.length === 0 ? (
           <p className="text-gray-500">No products available yet.</p>
         ) : products.length < 4 ? (
           <div className="flex flex-wrap justify-center md:gap-8">

@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { Instagram, Facebook, Twitter, Mail } from "lucide-react";
 import PaymentBadges from "./PaymentBadges";
+import { DataFetcher } from "./DataFetcher";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="w-full border-t border-gray-300 bg-white mt-auto">
+      {/* Global data fetcher - fetches all data once for the entire app */}
+      <DataFetcher />
+
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}

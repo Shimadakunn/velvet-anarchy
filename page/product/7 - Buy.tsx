@@ -1,10 +1,10 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Product, Variant, VariantType } from "@/lib/type";
+import { useCartStore } from "@/store/cartStore";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { useCartStore } from "@/store/cartStore";
-import { Product, Variant, VariantType } from "@/lib/type";
 
 export default function Buy({
   product,
@@ -86,10 +86,6 @@ export default function Buy({
       quantity: quantity,
       openCart: false,
     });
-
-    toast.success(
-      `Added ${quantity} ${quantity === 1 ? "item" : "items"} to cart!`
-    );
 
     // Redirect to checkout
     router.push("/checkout");

@@ -1,65 +1,34 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Carroussel from "@/components/Carroussel";
 import Product from "@/page/product";
 import { useStorageUrls } from "@/hooks/useStorageUrls";
-import { Product as ProductType, Variant, Review } from "@/lib/type";
 import TrustBadges from "@/components/TrustBadges";
 import Reviews from "@/components/Reviews";
 import Loading from "@/components/Loading";
+import { useDataStore } from "@/store/dataStore";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
 
-  // Fetch product by slug
-  const product: ProductType | undefined | null = useQuery(
-    api.products.getBySlug,
-    {
-      slug,
-    }
-  );
+  const { getProductBySlug, getVariants, getReviews } = useDataStore();
 
-  // Fetch variants if product exists
-  const variants: Variant[] | undefined = useQuery(
-    api.variants.get,
-    product ? { id: product._id as Id<"products"> } : "skip"
-  );
+  // Get data from cache only - fetching happens globally in Footer
+  const { data: product } = getProductBySlug(slug);
+  const productId = product?._id as Id<"products"> | undefined;
 
-  // Fetch reviews if product exists
-  const reviews: Review[] | undefined = useQuery(
-    api.reviews.get,
-    product ? { productId: product._id as Id<"products"> } : "skip"
-  );
+  const { data: variants } = productId ? getVariants(productId) : { data: null };
+  const { data: reviews } = productId ? getReviews(productId) : { data: null };
 
   // Get image URLs from storage
   const imageUrls = useStorageUrls(product?.images || []);
 
-  // Wait for all queries to complete
-  if (
-    product === undefined ||
-    variants === undefined ||
-    reviews === undefined
-  ) {
+  // Only show loading on first visit when cache is empty
+  if (!product || !variants || !reviews) {
     return <Loading />;
-  }
-
-  // Show not found state
-  if (product === null) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Product Not Found
-        </h1>
-        <p className="text-gray-500">
-          The product you are looking for does not exist.
-        </p>
-      </div>
-    );
   }
 
   // Wait for image URLs to load

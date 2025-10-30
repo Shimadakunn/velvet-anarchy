@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { Lock } from "lucide-react";
 import PaymentBadges from "./PaymentBadges";
 import Cadena from "@/public/cadena.svg";
+import { useDataStore } from "@/store/dataStore";
 import {
   calculateOriginalSubtotal,
   calculateDiscountedSubtotal,
@@ -223,11 +224,10 @@ function CartItemComponent({
   onRemove: (id: string) => void;
   hasDiscount: boolean;
 }) {
-  // Get all variants for this product
-  const variants = useQuery(
-    api.variants.get,
-    item.productId ? { id: item.productId as Id<"products"> } : "skip"
-  );
+  const { getVariants, getImageUrl } = useDataStore();
+
+  // Get cached variants only - fetching happens globally in Footer
+  const { data: variants } = item.productId ? getVariants(item.productId) : { data: null };
 
   // Find variant image if any selected variant has one
   const variantImage = variants?.find((variant) => {
@@ -239,11 +239,16 @@ function CartItemComponent({
   // Use variant image if available, otherwise use product image
   const imageToDisplay = variantImage || item.productImage;
 
-  // Get image URL from storage
-  const imageUrl = useQuery(
+  // Get cached image URL only - fetching happens via useStorageUrls hook
+  const imageUrl = imageToDisplay ? getImageUrl(imageToDisplay) : null;
+
+  // Fallback: fetch if not cached yet
+  const fetchedImageUrl = useQuery(
     api.files.getUrl,
-    imageToDisplay ? { storageId: imageToDisplay as Id<"_storage"> } : "skip"
+    imageToDisplay && !imageUrl ? { storageId: imageToDisplay as Id<"_storage"> } : "skip"
   );
+
+  const displayImageUrl = imageUrl || fetchedImageUrl;
 
   const formatVariants = () => {
     return Object.entries(item.variants)
@@ -259,11 +264,11 @@ function CartItemComponent({
         href={`/product/${item.productSlug}`}
         className="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg overflow-hidden"
       >
-        {imageUrl ? (
+        {displayImageUrl ? (
           <Image
             width={100}
             height={100}
-            src={imageUrl}
+            src={displayImageUrl}
             alt={item.productName}
             className="w-full h-full object-cover"
           />

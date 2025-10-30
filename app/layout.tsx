@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { helveticaNeue, dirtyline } from "@/lib/fonts";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { Toaster } from "sonner";
-import { Provider } from "./provider";
 import Cart from "@/components/Cart";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import { dirtyline, helveticaNeue } from "@/lib/fonts";
+import type { Metadata } from "next";
+import { Toaster } from "sonner";
+import "./globals.css";
+import { Provider } from "./provider";
 
 export const metadata: Metadata = {
   title: "Velvet Anarchy",
@@ -26,8 +26,8 @@ export default function RootLayout({
         <Provider>
           <div className="flex-1">{children}</div>
           <Cart />
+          <Footer />
         </Provider>
-        <Footer />
         <Toaster richColors position="top-right" />
       </body>
     </html>
