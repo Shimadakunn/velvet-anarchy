@@ -52,6 +52,7 @@ export const create = mutation({
     images: v.array(v.string()),
     price: v.number(),
     rating: v.number(),
+    review: v.number(),
     sold: v.number(),
     stock: v.number(),
     trending: v.optional(v.boolean()),
@@ -98,6 +99,7 @@ export const update = mutation({
     images: v.array(v.string()),
     price: v.number(),
     rating: v.number(),
+    review: v.number(),
     sold: v.number(),
     stock: v.number(),
     trending: v.optional(v.boolean()),
@@ -216,5 +218,27 @@ export const deleteProduct = mutation({
     // Delete the product
     await ctx.db.delete(args.id);
     return args.id;
+  },
+});
+
+export const updateInventory = mutation({
+  args: {
+    productId: v.id("products"),
+    quantitySold: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const product = await ctx.db.get(args.productId);
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    // Update sold count and decrease stock
+    await ctx.db.patch(args.productId, {
+      sold: product.sold + args.quantitySold,
+      stock: Math.max(0, product.stock - args.quantitySold),
+    });
+
+    return args.productId;
   },
 });

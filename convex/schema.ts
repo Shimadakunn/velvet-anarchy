@@ -9,6 +9,7 @@ export default defineSchema({
     images: v.array(v.string()),
     price: v.number(),
     rating: v.number(),
+    review: v.number(),
     sold: v.number(),
     stock: v.number(),
     trending: v.optional(v.boolean()),

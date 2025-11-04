@@ -40,6 +40,11 @@ export default function Rating({ product }: { product: Product }) {
         ))}
       </div>
       <span className="font-black">{product.rating}/5</span>
+      {product.review !== undefined && product.review > 0 && (
+        <span className="text-gray-600">
+          ({product.review.toLocaleString()} Reviews)
+        </span>
+      )}
       {product.mostPopular && (
         <div className="absolute -top-5 -right-18 w-16 h-16 rotate-12 z-20">
           <Image

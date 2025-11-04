@@ -7,7 +7,6 @@ import { ArrowLeft, CheckCircle2, Mail, Package, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
 
 // Component to display individual order item with variant image support
 function OrderItem({
@@ -87,78 +86,25 @@ function OrderItem({
 export default function OrderSuccessPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
-  const emailsSentRef = useRef(false);
 
   const order = useQuery(
     api.orders.getByOrderId,
     orderId ? { orderId: orderId } : "skip"
   );
 
-  // Send confirmation and admin notification emails when order is loaded
-  useEffect(() => {
-    // Only send emails once and only when order data is available
-    if (order && !emailsSentRef.current) {
-      emailsSentRef.current = true;
+  // Show loading state while order is being fetched
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading order details...</p>
+        </div>
+      </div>
+    );
+  }
 
-      // Send both emails in parallel
-      Promise.all([
-        // Send confirmation email to customer
-        fetch("/api/send-customer-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerEmail: order.customerEmail,
-            customerName: order.customerName,
-            orderId: order.orderId,
-            shippingStatus: "pending",
-            items: order.items.map((item) => ({
-              productName: item.productName,
-              price: item.price,
-              quantity: item.quantity,
-              variants: item.variants,
-            })),
-            subtotal: order.subtotal,
-            shipping: order.shipping,
-            tax: order.tax,
-            total: order.total,
-          }),
-        }).catch((error) => {
-          console.error("Error sending customer confirmation email:", error);
-        }),
-
-        // Send admin notification email
-        fetch("/api/send-admin-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerEmail: order.customerEmail,
-            customerName: order.customerName,
-            orderId: order.orderId,
-            items: order.items.map((item) => ({
-              productName: item.productName,
-              price: item.price,
-              quantity: item.quantity,
-              variants: item.variants,
-            })),
-            subtotal: order.subtotal,
-            shipping: order.shipping,
-            tax: order.tax,
-            total: order.total,
-            shippingAddress: order.shippingAddress,
-          }),
-        }).catch((error) => {
-          console.error("Error sending admin notification email:", error);
-        }),
-      ]).then(() => {
-        console.log("Emails sent successfully");
-      });
-    }
-  }, [order]);
-
+  // If we have loaded but still no orderId, show error
   if (!orderId) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
@@ -174,17 +120,6 @@ export default function OrderSuccessPage() {
             <ArrowLeft className="w-4 h-4" />
             Return to Home
           </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (!order) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading order details...</p>
         </div>
       </div>
     );

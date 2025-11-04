@@ -6,6 +6,7 @@ import StorageImage from "@/components/StorageImage";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useStorageUrls } from "@/hooks/useStorageUrls";
+import { getRandomDateLastMonth, getRandomNumber } from "@/lib/getRandom";
 import {
   Product as ProductType,
   Review,
@@ -56,6 +57,7 @@ export default function ModifyProductPage() {
     images: [],
     price: 0,
     rating: 0,
+    review: 0,
     sold: 0,
     stock: 0,
     trending: false,
@@ -76,15 +78,11 @@ export default function ModifyProductPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [newReviewUserName, setNewReviewUserName] = useState("");
   const [newReviewUserImage, setNewReviewUserImage] = useState<string>("");
-  const [newReviewRating, setNewReviewRating] = useState(5);
-  const [newReviewComment, setNewReviewComment] = useState("");
-  const [newReviewDate, setNewReviewDate] = useState(
-    new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+  const [newReviewRating, setNewReviewRating] = useState(
+    getRandomNumber(4, 5, true)
   );
+  const [newReviewComment, setNewReviewComment] = useState("");
+  const [newReviewDate, setNewReviewDate] = useState(getRandomDateLastMonth());
   const [newReviewImages, setNewReviewImages] = useState<string[]>([]);
 
   // Initialize form with existing product data
@@ -102,6 +100,7 @@ export default function ModifyProductPage() {
         images: existingProduct.images,
         price: existingProduct.price,
         rating: existingProduct.rating,
+        review: existingProduct.review ?? 0,
         sold: existingProduct.sold,
         stock: existingProduct.stock,
         trending: existingProduct.trending ?? false,
@@ -317,6 +316,7 @@ export default function ModifyProductPage() {
         images: product.images,
         price: product.price,
         rating: product.rating,
+        review: product.review,
         sold: product.sold,
         stock: product.stock,
         trending: product.trending,
@@ -396,15 +396,9 @@ export default function ModifyProductPage() {
     setReviews([...reviews, newReview]);
     setNewReviewUserName("");
     setNewReviewUserImage("");
-    setNewReviewRating(5);
+    setNewReviewRating(getRandomNumber(4, 5, true));
     setNewReviewComment("");
-    setNewReviewDate(
-      new Date().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    );
+    setNewReviewDate(getRandomDateLastMonth());
     setNewReviewImages([]);
   };
 
@@ -505,7 +499,7 @@ export default function ModifyProductPage() {
           </div>
 
           {/* Rating, Sold, Stock in a row */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-5 mb-4">
             <div>
               <label className="block text-sm font-medium mb-2">Price</label>
               <input
@@ -535,6 +529,21 @@ export default function ModifyProductPage() {
                 min="0"
                 max="5"
                 step="0.1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Number of Reviews
+              </label>
+              <input
+                type="number"
+                value={product.review || ""}
+                onChange={(e) =>
+                  handleFieldChange("review", parseInt(e.target.value) || 0)
+                }
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="0"
+                min="0"
               />
             </div>
             <div>
@@ -583,11 +592,11 @@ export default function ModifyProductPage() {
               {product.images.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {product.images.map((img, index) => (
-                    <div key={index} className="relative">
+                    <div key={index} className="relative w-20 h-20">
                       <StorageImage
                         storageId={img}
                         alt={`Preview ${index + 1}`}
-                        className="aspect-auto h-20 object-cover rounded"
+                        className="w-full h-full object-cover rounded"
                       />
                       <button
                         onClick={() => removeImage(index)}
@@ -613,11 +622,11 @@ export default function ModifyProductPage() {
                 className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {product.sizeGuide && (
-                <div className="relative">
+                <div className="relative w-20 h-20">
                   <StorageImage
                     storageId={product.sizeGuide}
                     alt="Size Guide Preview"
-                    className="aspect-auto h-20 object-cover rounded"
+                    className="w-full h-full object-cover rounded"
                   />
                   <button
                     onClick={() =>

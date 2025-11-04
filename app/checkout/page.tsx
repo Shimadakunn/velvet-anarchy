@@ -120,6 +120,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const createOrder = useMutation(api.orders.create);
+  const updateInventory = useMutation(api.products.updateInventory);
   const [isProcessing, setIsProcessing] = React.useState(false);
 
   const originalSubtotal = calculateOriginalSubtotal(items);
@@ -170,27 +171,92 @@ export default function CheckoutPage() {
         country: paypalShipping.address.country_code || "",
       };
 
-      // Create order in database
-      await createOrder({
-        orderId: details.id,
-        customerEmail: details.payer.email_address,
-        customerName: `${details.payer.name.given_name} ${details.payer.name.surname}`,
-        items: items.map((item) => ({
-          productId: item.productId,
-          productName: item.productName,
-          productImage: item.productImage,
-          price: item.price,
-          quantity: item.quantity,
-          variants: item.variants,
-        })),
-        subtotal,
-        shipping,
-        tax: 0,
-        total,
-        status: "pending",
-        shippingStatus: "pending",
-        shippingAddress,
-      });
+      const customerEmail = details.payer.email_address;
+      const customerName = `${details.payer.name.given_name} ${details.payer.name.surname}`;
+      const orderId = details.id;
+
+      // Prepare order items
+      const orderItems = items.map((item) => ({
+        productId: item.productId,
+        productName: item.productName,
+        productImage: item.productImage,
+        price: item.price,
+        quantity: item.quantity,
+        variants: item.variants,
+      }));
+
+      // Execute everything in parallel: create order, send emails, update inventory
+      await Promise.all([
+        // Create order in database
+        createOrder({
+          orderId,
+          customerEmail,
+          customerName,
+          items: orderItems,
+          subtotal,
+          shipping,
+          tax: 0,
+          total,
+          status: "pending",
+          shippingStatus: "pending",
+          shippingAddress,
+        }),
+
+        // Send confirmation email to customer
+        fetch("/api/send-customer-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerEmail,
+            customerName,
+            orderId,
+            shippingStatus: "pending",
+            items: orderItems,
+            subtotal,
+            shipping,
+            tax: 0,
+            total,
+          }),
+        }).catch((error) => {
+          console.error("Error sending customer confirmation email:", error);
+        }),
+
+        // Send admin notification email
+        fetch("/api/send-admin-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerEmail,
+            customerName,
+            orderId,
+            items: orderItems,
+            subtotal,
+            shipping,
+            tax: 0,
+            total,
+            shippingAddress,
+          }),
+        }).catch((error) => {
+          console.error("Error sending admin notification email:", error);
+        }),
+
+        // Update inventory for each product
+        ...items.map((item) =>
+          updateInventory({
+            productId: item.productId as Id<"products">,
+            quantitySold: item.quantity,
+          }).catch((error) => {
+            console.error(
+              `Error updating inventory for product ${item.productId}:`,
+              error
+            );
+          })
+        ),
+      ]);
 
       // Clear cart
       clearCart();
@@ -198,8 +264,8 @@ export default function CheckoutPage() {
       // Show success message
       toast.success("Payment successful! Order has been placed.");
 
-      // Redirect to success page (emails will be sent from there)
-      router.push(`/order-success?orderId=${details.id}`);
+      // Redirect to success page
+      router.push(`/order-success?orderId=${orderId}`);
     } catch (error) {
       console.error("Error processing payment:", error);
       toast.error("Failed to process payment. Please try again.");
