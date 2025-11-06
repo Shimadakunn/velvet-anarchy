@@ -93,9 +93,10 @@ export default function Product({
         variants={variants}
         selectedVariants={selectedVariants}
         onVariantChange={handleVariantChange}
+        product={product}
       />
       <div className="mb-4" />
-      <Quantity quantity={quantity} onQuantityChange={setQuantity} />
+      <Quantity quantity={quantity} onQuantityChange={setQuantity} product={product} />
       <div className="mb-8" />
       <Buy
         product={product}

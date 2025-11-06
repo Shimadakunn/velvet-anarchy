@@ -1,22 +1,48 @@
 import { Minus, Plus } from "lucide-react";
+import { Product } from "@/lib/type";
+import { trackQuantityChange } from "@/lib/analytics";
 
 interface QuantityProps {
   quantity: number;
   onQuantityChange: (newQuantity: number) => void;
+  product?: Product;
 }
 
 export default function Quantity({
   quantity,
   onQuantityChange,
+  product,
 }: QuantityProps) {
   const handleDecrease = () => {
     if (quantity > 1) {
-      onQuantityChange(quantity - 1);
+      const newQuantity = quantity - 1;
+      onQuantityChange(newQuantity);
+      
+      // Track quantity change
+      if (product) {
+        trackQuantityChange({
+          productId: product._id,
+          productName: product.name,
+          oldQuantity: quantity,
+          newQuantity,
+        });
+      }
     }
   };
 
   const handleIncrease = () => {
-    onQuantityChange(quantity + 1);
+    const newQuantity = quantity + 1;
+    onQuantityChange(newQuantity);
+    
+    // Track quantity change
+    if (product) {
+      trackQuantityChange({
+        productId: product._id,
+        productName: product.name,
+        oldQuantity: quantity,
+        newQuantity,
+      });
+    }
   };
 
   return (

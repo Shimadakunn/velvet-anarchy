@@ -7,6 +7,8 @@ import { ArrowLeft, CheckCircle2, Mail, Package, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { trackOrderView } from "@/lib/analytics";
 
 // Component to display individual order item with variant image support
 function OrderItem({
@@ -91,6 +93,17 @@ export default function OrderSuccessPage() {
     api.orders.getByOrderId,
     orderId ? { orderId: orderId } : "skip"
   );
+
+  // Track order view
+  useEffect(() => {
+    if (order && orderId) {
+      trackOrderView({
+        orderId,
+        total: order.total,
+        itemCount: order.items.reduce((sum, item) => sum + item.quantity, 0),
+      });
+    }
+  }, [order, orderId]);
 
   // Show loading state while order is being fetched
   if (!order) {
