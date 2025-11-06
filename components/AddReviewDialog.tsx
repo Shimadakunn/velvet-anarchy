@@ -17,14 +17,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import StorageImage from "@/components/StorageImage";
+import { trackReviewAdded } from "@/lib/analytics";
 
 interface AddReviewDialogProps {
   productId: Id<"products">;
+  productName?: string;
   children: React.ReactNode;
 }
 
 export default function AddReviewDialog({
   productId,
+  productName = "",
   children,
 }: AddReviewDialogProps) {
   const [open, setOpen] = useState(false);
@@ -66,7 +69,7 @@ export default function AddReviewDialog({
       // Move to review step - verification will happen when submitting the review
       setStep("review");
       toast.success("Please fill in your review");
-    } catch (error) {
+    } catch {
       toast.error("Verification failed");
     } finally {
       setLoading(false);
@@ -173,6 +176,9 @@ export default function AddReviewDialog({
 
       toast.success("Review submitted successfully!");
 
+      // Track review added
+      trackReviewAdded(productId, productName, rating);
+
       // Reset form
       setEmail("");
       setOrderId("");
@@ -183,8 +189,9 @@ export default function AddReviewDialog({
       setReviewImages([]);
       setStep("verify");
       setOpen(false);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to submit review");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to submit review";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

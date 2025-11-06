@@ -4,7 +4,6 @@ import { useIsMobile } from "@/lib/isMobile";
 import { Plus, Star, MessagesSquare, X } from "lucide-react";
 import { Review } from "@/lib/type";
 import StorageImage from "@/components/StorageImage";
-import { Button } from "@/components/ui/button";
 import AddReviewDialog from "@/components/AddReviewDialog";
 import { Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
@@ -12,9 +11,11 @@ import { useState } from "react";
 export default function Reviews({
   reviews,
   productId,
+  productName,
 }: {
   reviews: Review[];
   productId: Id<"products">;
+  productName?: string;
 }) {
   const isMobile = useIsMobile();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export default function Reviews({
       <div className="mt-8 border-t pt-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl">REVIEWS</h2>
-          <AddReviewDialog productId={productId}>
+          <AddReviewDialog productId={productId} productName={productName}>
             <button className="cursor-pointer border-b text-sm text-gray-500">
               <Plus className="w-4 h-4 inline-block mr-1 mb-1" />
               Add review
@@ -80,7 +81,7 @@ export default function Reviews({
           <MessagesSquare className="w-4 h-4 inline-block mr-1" />
           CUSTOMER REVIEWS
         </h2>
-        <AddReviewDialog productId={productId}>
+        <AddReviewDialog productId={productId} productName={productName}>
           <button className="cursor-pointer border-b">
             <Plus className="w-4 h-4 inline-block mr-1 mb-1" />
             Add review

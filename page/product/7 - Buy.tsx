@@ -5,6 +5,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
+import { trackAddToCart, trackBuyNow } from "@/lib/analytics";
 
 export default function Buy({
   product,
@@ -55,6 +56,9 @@ export default function Buy({
       quantity: quantity,
     });
 
+    // Track add to cart event
+    trackAddToCart(product, selectedVariants, quantity);
+
     toast.success(
       `Added ${quantity} ${quantity === 1 ? "item" : "items"} to cart!`
     );
@@ -86,6 +90,9 @@ export default function Buy({
       quantity: quantity,
       openCart: false,
     });
+
+    // Track buy now event
+    trackBuyNow(product, selectedVariants, quantity);
 
     // Redirect to checkout
     router.push("/checkout");

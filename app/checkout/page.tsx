@@ -23,7 +23,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
+import { trackCheckoutInitiated, trackPaymentStarted, trackPurchaseCompleted } from "@/lib/analytics";
 import { toast } from "sonner";
 
 // Component to display individual checkout item with variant image support
@@ -129,6 +130,20 @@ export default function CheckoutPage() {
   const shipping = calculateShipping(subtotal);
   const total = subtotal + shipping;
 
+  // Track checkout initiated
+  useEffect(() => {
+    if (items.length > 0) {
+      trackCheckoutInitiated(
+        items,
+        subtotal,
+        shipping,
+        total,
+        shouldApplyDiscount(items),
+        discountAmount
+      );
+    }
+  }, []);
+
   if (items.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
@@ -155,6 +170,9 @@ export default function CheckoutPage() {
     try {
       // Show processing overlay
       setIsProcessing(true);
+
+      // Track payment started
+      trackPaymentStarted("paypal", total);
 
       // Capture the payment
       const details = await actions.order.capture();
@@ -257,6 +275,17 @@ export default function CheckoutPage() {
           })
         ),
       ]);
+
+      // Track purchase completed
+      trackPurchaseCompleted(
+        orderId,
+        items,
+        subtotal,
+        shipping,
+        total,
+        shouldApplyDiscount(items),
+        discountAmount
+      );
 
       // Clear cart
       clearCart();

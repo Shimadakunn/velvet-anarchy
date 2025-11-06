@@ -9,6 +9,8 @@ import TrustBadges from "@/components/TrustBadges";
 import Reviews from "@/components/Reviews";
 import Loading from "@/components/Loading";
 import { useDataStore } from "@/store/dataStore";
+import { useEffect } from "react";
+import { trackProductViewed } from "@/lib/analytics";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -27,6 +29,13 @@ export default function ProductDetailPage() {
 
   // Get image URLs from storage
   const imageUrls = useStorageUrls(product?.images || []);
+
+  // Track product view
+  useEffect(() => {
+    if (product) {
+      trackProductViewed(product);
+    }
+  }, [product]);
 
   // Only show loading on first visit when cache is empty
   if (!product || !variants || !reviews) {
@@ -49,7 +58,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
       <div className="mx-auto max-w-5xl px-4 md:px-0">
-        <Reviews reviews={reviews} productId={productId!} />
+        <Reviews reviews={reviews} productId={productId!} productName={product.name} />
       </div>
       <TrustBadges />
     </>

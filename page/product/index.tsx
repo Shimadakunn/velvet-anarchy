@@ -72,6 +72,11 @@ export default function Product({
       ...prev,
       [type]: value,
     }));
+    
+    // Track variant selection
+    import("@/lib/analytics").then(({ trackVariantSelected }) => {
+      trackVariantSelected(product, type, value);
+    });
   };
 
   return (
