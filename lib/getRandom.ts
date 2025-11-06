@@ -1,9 +1,16 @@
 export function getRandomNumber(
   min: number,
   max: number,
-  withDecimals: boolean = false
+  withDecimals: boolean = false,
+  step?: number
 ) {
   const randomValue = Math.random() * (max - min) + min;
+
+  if (step !== undefined) {
+    // Round to the nearest step
+    return Math.round(randomValue / step) * step;
+  }
+
   if (withDecimals) {
     return Math.floor(randomValue * 10) / 10;
   }

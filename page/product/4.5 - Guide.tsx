@@ -33,7 +33,7 @@ export default function Guide({ product }: { product: Product }) {
             {/* Close Button */}
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 cursor-pointer hover:text-gray-500 transition-colors"
+              className="absolute top-4 right-4 cursor-pointer hover:text-gray-500 transition-colors z-10 bg-white rounded-full p-1"
             >
               <X className="w-5 h-5" />
             </button>

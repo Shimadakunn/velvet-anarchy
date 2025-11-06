@@ -80,6 +80,7 @@ export default defineSchema({
 
   reviews: defineTable({
     productId: v.id("products"),
+    orderId: v.optional(v.string()), // Order ID to prevent duplicate reviews (optional for admin)
     userName: v.string(),
     userImage: v.optional(v.string()),
     rating: v.number(),

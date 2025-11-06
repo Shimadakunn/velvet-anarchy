@@ -79,7 +79,7 @@ export default function ModifyProductPage() {
   const [newReviewUserName, setNewReviewUserName] = useState("");
   const [newReviewUserImage, setNewReviewUserImage] = useState<string>("");
   const [newReviewRating, setNewReviewRating] = useState(
-    getRandomNumber(4, 5, true)
+    getRandomNumber(4, 5, false, 0.5)
   );
   const [newReviewComment, setNewReviewComment] = useState("");
   const [newReviewDate, setNewReviewDate] = useState(getRandomDateLastMonth());
@@ -396,7 +396,7 @@ export default function ModifyProductPage() {
     setReviews([...reviews, newReview]);
     setNewReviewUserName("");
     setNewReviewUserImage("");
-    setNewReviewRating(getRandomNumber(4, 5, true));
+    setNewReviewRating(getRandomNumber(4, 5, false, 0.5));
     setNewReviewComment("");
     setNewReviewDate(getRandomDateLastMonth());
     setNewReviewImages([]);
@@ -771,7 +771,7 @@ export default function ModifyProductPage() {
                   placeholder="Rating (0-5)"
                   min="0"
                   max="5"
-                  step="0.1"
+                  step="0.5"
                 />
                 <input
                   type="text"
@@ -944,9 +944,12 @@ export default function ModifyProductPage() {
                   </div>
                 </div>
                 {/* Reviews Preview */}
-                {reviews.length > 0 && (
+                {reviews.length > 0 && existingProduct._id && (
                   <div className="mt-8">
-                    <Reviews reviews={reviews} />
+                    <Reviews
+                      reviews={reviews}
+                      productId={existingProduct._id as Id<"products">}
+                    />
                   </div>
                 )}
               </>

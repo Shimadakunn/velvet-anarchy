@@ -53,7 +53,7 @@ export default function AddProductPage() {
   const [newReviewUserName, setNewReviewUserName] = useState("");
   const [newReviewUserImage, setNewReviewUserImage] = useState<string>("");
   const [newReviewRating, setNewReviewRating] = useState(
-    getRandomNumber(4, 5, true)
+    getRandomNumber(4, 5, false, 0.5)
   );
   const [newReviewComment, setNewReviewComment] = useState("");
   const [newReviewDate, setNewReviewDate] = useState(getRandomDateLastMonth());
@@ -347,7 +347,7 @@ export default function AddProductPage() {
     setReviews([...reviews, newReview]);
     setNewReviewUserName("");
     setNewReviewUserImage("");
-    setNewReviewRating(getRandomNumber(4, 5, true));
+    setNewReviewRating(getRandomNumber(4, 5, false, 0.5));
     setNewReviewComment("");
     setNewReviewDate(getRandomDateLastMonth());
     setNewReviewImages([]);
@@ -699,7 +699,7 @@ export default function AddProductPage() {
                   placeholder="Rating (0-5)"
                   min="0"
                   max="5"
-                  step="0.1"
+                  step="0.5"
                 />
                 <input
                   type="text"
@@ -872,9 +872,9 @@ export default function AddProductPage() {
                   </div>
                 </div>
                 {/* Reviews Preview */}
-                {reviews.length > 0 && (
+                {reviews.length > 0 && product._id && (
                   <div className="mt-8">
-                    <Reviews reviews={reviews} />
+                    <Reviews reviews={reviews} productId={product._id} />
                   </div>
                 )}
               </>

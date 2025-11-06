@@ -36,6 +36,7 @@ export const variantTypes: VariantType[] = ["color", "size"];
 export type Review = {
   _id?: Id<"reviews">;
   productId?: Id<"products">;
+  orderId?: string; // Optional - only required for customer reviews, not admin
   userName: string;
   userImage?: string;
   rating: number;

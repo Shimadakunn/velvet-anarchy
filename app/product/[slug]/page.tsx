@@ -20,7 +20,9 @@ export default function ProductDetailPage() {
   const { data: product } = getProductBySlug(slug);
   const productId = product?._id as Id<"products"> | undefined;
 
-  const { data: variants } = productId ? getVariants(productId) : { data: null };
+  const { data: variants } = productId
+    ? getVariants(productId)
+    : { data: null };
   const { data: reviews } = productId ? getReviews(productId) : { data: null };
 
   // Get image URLs from storage
@@ -46,11 +48,9 @@ export default function ProductDetailPage() {
           <Product product={product} variants={variants} />
         </div>
       </div>
-      {reviews.length > 0 && (
-        <div className="mx-auto max-w-5xl px-4 md:px-0">
-          <Reviews reviews={reviews} />
-        </div>
-      )}
+      <div className="mx-auto max-w-5xl px-4 md:px-0">
+        <Reviews reviews={reviews} productId={productId!} />
+      </div>
       <TrustBadges />
     </>
   );
