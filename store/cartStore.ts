@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { VariantType } from "@/lib/type";
+import { trackAddToCart, trackRemoveFromCart, trackCartQuantityUpdate } from "@/lib/analytics";
 
 export type CartItem = {
   id: string; // Unique identifier for this cart item (productId + variants combination)
@@ -68,6 +69,15 @@ export const useCartStore = create<CartStore>()(
           });
         }
 
+        // Track add to cart event
+        trackAddToCart({
+          productId: itemData.productId,
+          productName: itemData.productName,
+          price: itemData.price,
+          quantity: quantity,
+          variants: itemData.variants,
+        });
+
         // Open cart when item is added (if openCart is true)
         if (openCart) {
           set({ isOpen: true });
@@ -75,6 +85,13 @@ export const useCartStore = create<CartStore>()(
       },
 
       removeItem: (id) => {
+        const item = get().items.find((i) => i.id === id);
+        
+        if (item) {
+          // Track remove from cart event
+          trackRemoveFromCart(item);
+        }
+
         set({
           items: get().items.filter((i) => i.id !== id),
         });
@@ -84,6 +101,19 @@ export const useCartStore = create<CartStore>()(
         if (quantity <= 0) {
           get().removeItem(id);
           return;
+        }
+
+        const item = get().items.find((i) => i.id === id);
+        
+        if (item && item.quantity !== quantity) {
+          // Track quantity update
+          trackCartQuantityUpdate({
+            productId: item.productId,
+            productName: item.productName,
+            oldQuantity: item.quantity,
+            newQuantity: quantity,
+            price: item.price,
+          });
         }
 
         set({

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import StorageImage from "@/components/StorageImage";
+import { trackReviewSubmit } from "@/lib/analytics";
 
 interface AddReviewDialogProps {
   productId: Id<"products">;
@@ -169,6 +170,15 @@ export default function AddReviewDialog({
         rating,
         comment: comment.trim(),
         reviewImages: reviewImages.length > 0 ? reviewImages : undefined,
+      });
+
+      // Track review submission
+      trackReviewSubmit({
+        productId,
+        rating,
+        hasComment: comment.trim().length > 0,
+        hasImages: reviewImages.length > 0,
+        imageCount: reviewImages.length,
       });
 
       toast.success("Review submitted successfully!");

@@ -9,6 +9,8 @@ import TrustBadges from "@/components/TrustBadges";
 import Reviews from "@/components/Reviews";
 import Loading from "@/components/Loading";
 import { useDataStore } from "@/store/dataStore";
+import { useEffect } from "react";
+import { trackProductView } from "@/lib/analytics";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -27,6 +29,20 @@ export default function ProductDetailPage() {
 
   // Get image URLs from storage
   const imageUrls = useStorageUrls(product?.images || []);
+
+  // Track product view
+  useEffect(() => {
+    if (product) {
+      trackProductView({
+        id: product._id,
+        name: product.name,
+        price: product.price,
+        slug: product.slug,
+        rating: product.rating,
+        stock: product.stock,
+      });
+    }
+  }, [product]);
 
   // Only show loading on first visit when cache is empty
   if (!product || !variants || !reviews) {

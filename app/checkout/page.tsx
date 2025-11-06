@@ -23,8 +23,9 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { toast } from "sonner";
+import { trackCheckoutStart, trackPurchaseComplete, identifyUser } from "@/lib/analytics";
 
 // Component to display individual checkout item with variant image support
 function CheckoutItem({
@@ -128,6 +129,20 @@ export default function CheckoutPage() {
   const discountAmount = calculateDiscountAmount(items);
   const shipping = calculateShipping(subtotal);
   const total = subtotal + shipping;
+
+  // Track checkout start
+  useEffect(() => {
+    if (items.length > 0) {
+      trackCheckoutStart({
+        items,
+        subtotal,
+        shipping,
+        total,
+        discountApplied: shouldApplyDiscount(items),
+        discountAmount: shouldApplyDiscount(items) ? discountAmount : 0,
+      });
+    }
+  }, []); // Only track once on mount
 
   if (items.length === 0) {
     return (
@@ -257,6 +272,23 @@ export default function CheckoutPage() {
           })
         ),
       ]);
+
+      // Track purchase completion
+      trackPurchaseComplete({
+        orderId,
+        customerEmail,
+        items: orderItems,
+        subtotal,
+        shipping,
+        total,
+        discountAmount: shouldApplyDiscount(items) ? discountAmount : 0,
+      });
+
+      // Identify user for future tracking
+      identifyUser(customerEmail, {
+        name: customerName,
+        last_order_id: orderId,
+      });
 
       // Clear cart
       clearCart();

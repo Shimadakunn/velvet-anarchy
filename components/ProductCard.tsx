@@ -8,6 +8,7 @@ import { useQuery } from "convex/react";
 import { CheckCheck, Flame, Package, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { trackProductClick } from "@/lib/analytics";
 
 export default function ProductCard({ product }: { product: Product }) {
   // Get the first image URL only if images exist
@@ -18,9 +19,18 @@ export default function ProductCard({ product }: { product: Product }) {
       : "skip"
   );
 
+  const handleProductClick = () => {
+    trackProductClick({
+      id: product._id,
+      name: product.name,
+      price: product.price,
+    });
+  };
+
   return (
     <Link
       href={`/product/${product.slug}`}
+      onClick={handleProductClick}
       className="group block bg-white transition-all duration-300 relative w-full mx-12 md:mx-0 md:w-64"
     >
       {/* Product Image Container */}

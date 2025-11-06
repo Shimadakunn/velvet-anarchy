@@ -21,9 +21,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import PaymentBadges from "./PaymentBadges";
 import { Button } from "./ui/button";
+import { trackCartView } from "@/lib/analytics";
 
 export default function Cart() {
-  const { items, isOpen, closeCart, updateQuantity, removeItem } =
+  const { items, isOpen, closeCart, updateQuantity, removeItem, getTotalItems, getTotalPrice } =
     useCartStore();
 
   const [isAnimating, setIsAnimating] = useState(false);
@@ -40,13 +41,22 @@ export default function Cart() {
       setShouldRender(true);
       // Small delay to trigger animation after render
       setTimeout(() => setIsAnimating(true), 10);
+      
+      // Track cart view when opened
+      if (items.length > 0) {
+        trackCartView({
+          items,
+          totalItems: getTotalItems(),
+          totalPrice: getTotalPrice(),
+        });
+      }
     } else {
       setIsAnimating(false);
       // Wait for animation to complete before unmounting
       const timer = setTimeout(() => setShouldRender(false), 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, items, getTotalItems, getTotalPrice]);
 
   if (!shouldRender) return null;
 

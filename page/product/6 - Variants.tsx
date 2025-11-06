@@ -1,17 +1,34 @@
 import { useMemo } from "react";
-import { Variant, VariantType } from "@/lib/type";
+import { Variant, VariantType, Product } from "@/lib/type";
+import { trackVariantSelect } from "@/lib/analytics";
 
 interface VariantsProps {
   variants: Variant[];
   selectedVariants: Record<VariantType, string>;
   onVariantChange: (type: VariantType, value: string) => void;
+  product?: Product;
 }
 
 export default function Variants({
   variants,
   selectedVariants,
   onVariantChange,
+  product,
 }: VariantsProps) {
+  
+  const handleVariantChange = (type: VariantType, value: string) => {
+    onVariantChange(type, value);
+    
+    // Track variant selection
+    if (product) {
+      trackVariantSelect({
+        productId: product._id,
+        productName: product.name,
+        variantType: type,
+        variantValue: value,
+      });
+    }
+  };
   // Group variants by type
   const variantsByType = useMemo(() => {
     const grouped: Partial<Record<VariantType, string[]>> = {};
@@ -60,7 +77,7 @@ export default function Variants({
                 return (
                   <button
                     key={value}
-                    onClick={() => onVariantChange(type, value)}
+                    onClick={() => handleVariantChange(type, value)}
                     className={`
                       transition-all duration-200 cursor-pointer
                       ${

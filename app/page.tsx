@@ -3,6 +3,8 @@
 import Hero from "@/components/Hero";
 import ProductCard from "@/components/ProductCard";
 import { useDataStore } from "@/store/dataStore";
+import { useEffect } from "react";
+import { trackProductListView } from "@/lib/analytics";
 
 export default function Home() {
   const { getProducts, getHeroSlides } = useDataStore();
@@ -10,6 +12,19 @@ export default function Home() {
   // Get data from cache only - fetching happens globally in Footer
   const { data: products } = getProducts();
   const { data: heroSlides } = getHeroSlides();
+
+  // Track product list view
+  useEffect(() => {
+    if (products && products.length > 0) {
+      trackProductListView(
+        products.map(p => ({
+          id: p._id,
+          name: p.name,
+          price: p.price,
+        }))
+      );
+    }
+  }, [products]);
 
   return (
     <div className="min-h-screen mb-8">
