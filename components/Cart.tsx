@@ -21,9 +21,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import PaymentBadges from "./PaymentBadges";
 import { Button } from "./ui/button";
+import { trackCartOpened, trackCartClosed } from "@/lib/analytics";
 
 export default function Cart() {
-  const { items, isOpen, closeCart, updateQuantity, removeItem } =
+  const { items, isOpen, closeCart, updateQuantity, removeItem, getTotalItems, getTotalPrice } =
     useCartStore();
 
   const [isAnimating, setIsAnimating] = useState(false);
@@ -40,12 +41,22 @@ export default function Cart() {
       setShouldRender(true);
       // Small delay to trigger animation after render
       setTimeout(() => setIsAnimating(true), 10);
+      
+      // Track cart opened
+      trackCartOpened(items, getTotalItems(), getTotalPrice());
     } else {
       setIsAnimating(false);
       // Wait for animation to complete before unmounting
       const timer = setTimeout(() => setShouldRender(false), 300);
+      
+      // Track cart closed
+      if (shouldRender) {
+        trackCartClosed();
+      }
+      
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   if (!shouldRender) return null;
@@ -224,6 +235,26 @@ function CartItemComponent({
   hasDiscount: boolean;
 }) {
   const { getVariants, getImageUrl } = useDataStore();
+  
+  // Wrap handlers to track events
+  const handleUpdateQuantity = (id: string, newQuantity: number) => {
+    const oldQuantity = item.quantity;
+    onUpdateQuantity(id, newQuantity);
+    
+    // Track quantity update
+    import("@/lib/analytics").then(({ trackCartQuantityUpdated }) => {
+      trackCartQuantityUpdated(item, oldQuantity, newQuantity);
+    });
+  };
+  
+  const handleRemove = (id: string) => {
+    onRemove(id);
+    
+    // Track item removal
+    import("@/lib/analytics").then(({ trackRemoveFromCart }) => {
+      trackRemoveFromCart(item);
+    });
+  };
 
   // Get cached variants only - fetching happens globally in Footer
   const { data: variants } = item.productId
@@ -300,7 +331,7 @@ function CartItemComponent({
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center ">
             <button
-              onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+              onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
               className="border border-black h-5 w-5 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               aria-label="Decrease quantity"
               disabled={item.quantity <= 1}
@@ -311,7 +342,7 @@ function CartItemComponent({
               {item.quantity}
             </span>
             <button
-              onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
               className="border border-black h-5 w-5 flex items-center justify-center cursor-pointer"
               aria-label="Increase quantity"
             >
@@ -338,7 +369,7 @@ function CartItemComponent({
         </div>
       </div>
       <button
-        onClick={() => onRemove(item.id)}
+        onClick={() => handleRemove(item.id)}
         className="p-1 border border-foreground/50 text-foreground/50 rounded-full absolute top-0 right-0 cursor-pointer"
         aria-label="Remove item"
       >

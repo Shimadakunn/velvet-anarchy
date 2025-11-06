@@ -8,8 +8,12 @@ import { useQuery } from "convex/react";
 import { CheckCheck, Flame, Package, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { trackProductClicked } from "@/lib/analytics";
+import { usePathname } from "next/navigation";
 
 export default function ProductCard({ product }: { product: Product }) {
+  const pathname = usePathname();
+  
   // Get the first image URL only if images exist
   const imageUrl = useQuery(
     api.files.getUrl,
@@ -18,9 +22,22 @@ export default function ProductCard({ product }: { product: Product }) {
       : "skip"
   );
 
+  const handleClick = () => {
+    // Determine the source based on current page
+    let source = "unknown";
+    if (pathname === "/") {
+      source = "homepage";
+    } else if (pathname === "/products") {
+      source = "products_page";
+    }
+    
+    trackProductClicked(product, source);
+  };
+
   return (
     <Link
       href={`/product/${product.slug}`}
+      onClick={handleClick}
       className="group block bg-white transition-all duration-300 relative w-full mx-12 md:mx-0 md:w-64"
     >
       {/* Product Image Container */}
