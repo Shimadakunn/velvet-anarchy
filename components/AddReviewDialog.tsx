@@ -1,11 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { Star, Upload, X } from "lucide-react";
-import { toast } from "sonner";
+import StorageImage from "@/components/StorageImage";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +11,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import StorageImage from "@/components/StorageImage";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { Star, Upload, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface AddReviewDialogProps {
   productId: Id<"products">;
@@ -67,7 +67,9 @@ export default function AddReviewDialog({
       setStep("review");
       toast.success("Please fill in your review");
     } catch (error) {
-      toast.error("Verification failed");
+      const errorMessage =
+        error instanceof Error ? error.message : "Verification failed";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -183,8 +185,10 @@ export default function AddReviewDialog({
       setReviewImages([]);
       setStep("verify");
       setOpen(false);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to submit review");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to submit review";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

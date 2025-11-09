@@ -28,6 +28,7 @@ export function calculateDiscountedSubtotal(items: CartItem[]): number {
  * Calculate shipping cost
  * Shipping is always free
  */
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function calculateShipping(subtotal: number): number {
   return 0;
 }

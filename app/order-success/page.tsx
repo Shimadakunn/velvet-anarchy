@@ -7,6 +7,7 @@ import { ArrowLeft, CheckCircle2, Mail, Package, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 // Component to display individual order item with variant image support
 function OrderItem({
@@ -83,7 +84,20 @@ function OrderItem({
   );
 }
 
-export default function OrderSuccessPage() {
+// Loading fallback component
+function OrderSuccessLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-gray-600">Loading order details...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main content component that uses useSearchParams
+function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
@@ -94,14 +108,7 @@ export default function OrderSuccessPage() {
 
   // Show loading state while order is being fetched
   if (!order) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading order details...</p>
-        </div>
-      </div>
-    );
+    return <OrderSuccessLoading />;
   }
 
   // If we have loaded but still no orderId, show error
@@ -256,5 +263,14 @@ export default function OrderSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={<OrderSuccessLoading />}>
+      <OrderSuccessContent />
+    </Suspense>
   );
 }

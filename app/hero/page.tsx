@@ -148,6 +148,7 @@ export default function HeroAdmin() {
     setDraggedIndex(index);
   };
 
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
   };

@@ -400,13 +400,6 @@ export default function AddProductPage() {
   // Get URLs for preview
   const previewUrls = useStorageUrls(product.images);
 
-  // Update product with variants for preview
-  const productWithVariants = {
-    ...product,
-    images: previewUrls || product.images,
-    variants,
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 py-2">
       <div className="max-w-7xl mx-auto px-4">

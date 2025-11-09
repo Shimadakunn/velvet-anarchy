@@ -1,12 +1,4 @@
-import {
-  Truck,
-  DollarSign,
-  RotateCcw,
-  Star,
-  Globe,
-  ShieldCheck,
-  BadgeCheck,
-} from "lucide-react";
+import { BadgeCheck, Globe, RotateCcw, ShieldCheck } from "lucide-react";
 
 export default function TrustBadges() {
   const badges = [

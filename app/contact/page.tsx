@@ -148,7 +148,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold text-lg mb-1">Email Us</h3>
                   <p className="text-gray-600 text-sm mb-2">
-                    We'll respond within 24 hours
+                    We&apos;ll respond within 24 hours
                   </p>
                   <a
                     href="mailto:contact@velvetanarchy.com"
