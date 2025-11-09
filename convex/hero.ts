@@ -1,32 +1,32 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-// Get all active hero slides ordered by their order field
+// Get all hero slides ordered by their order field (filtering happens on client side based on device)
 export const getActiveSlides = query({
   handler: async (ctx) => {
-    const slides = await ctx.db
-      .query("hero")
-      .withIndex("byOrder")
-      .filter((q) => q.eq(q.field("isActive"), true))
-      .collect();
+    const slides = await ctx.db.query("hero").withIndex("byOrder").collect();
 
     // Fetch product details and image URLs for each slide
     const slidesWithProducts = await Promise.all(
       slides.map(async (slide) => {
-        const imageUrl = slide.image ? await ctx.storage.getUrl(slide.image) : null;
+        const imageUrl = slide.image
+          ? await ctx.storage.getUrl(slide.image)
+          : null;
 
         if (slide.productId) {
           const product = await ctx.db.get(slide.productId);
           return {
             ...slide,
             imageUrl: imageUrl || "",
-            product: product ? { slug: product.slug, name: product.name } : null,
+            product: product
+              ? { slug: product.slug, name: product.name }
+              : null,
           };
         }
         return {
           ...slide,
           imageUrl: imageUrl || "",
-          product: null
+          product: null,
         };
       })
     );
@@ -38,28 +38,29 @@ export const getActiveSlides = query({
 // Get all hero slides (for admin)
 export const getAllSlides = query({
   handler: async (ctx) => {
-    const slides = await ctx.db
-      .query("hero")
-      .withIndex("byOrder")
-      .collect();
+    const slides = await ctx.db.query("hero").withIndex("byOrder").collect();
 
     // Fetch product details and image URLs for each slide
     const slidesWithProducts = await Promise.all(
       slides.map(async (slide) => {
-        const imageUrl = slide.image ? await ctx.storage.getUrl(slide.image) : null;
+        const imageUrl = slide.image
+          ? await ctx.storage.getUrl(slide.image)
+          : null;
 
         if (slide.productId) {
           const product = await ctx.db.get(slide.productId);
           return {
             ...slide,
             imageUrl: imageUrl || "",
-            product: product ? { slug: product.slug, name: product.name } : null,
+            product: product
+              ? { slug: product.slug, name: product.name }
+              : null,
           };
         }
         return {
           ...slide,
           imageUrl: imageUrl || "",
-          product: null
+          product: null,
         };
       })
     );
@@ -75,7 +76,8 @@ export const createSlide = mutation({
     title: v.string(),
     productId: v.optional(v.id("products")),
     order: v.number(),
-    isActive: v.boolean(),
+    showOnMobile: v.optional(v.boolean()),
+    showOnDesktop: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const slideId = await ctx.db.insert("hero", {
@@ -83,7 +85,8 @@ export const createSlide = mutation({
       title: args.title,
       productId: args.productId,
       order: args.order,
-      isActive: args.isActive,
+      showOnMobile: args.showOnMobile ?? true,
+      showOnDesktop: args.showOnDesktop ?? true,
     });
     return slideId;
   },
@@ -97,7 +100,8 @@ export const updateSlide = mutation({
     title: v.optional(v.string()),
     productId: v.optional(v.id("products")),
     order: v.optional(v.number()),
-    isActive: v.optional(v.boolean()),
+    showOnMobile: v.optional(v.boolean()),
+    showOnDesktop: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
@@ -121,8 +125,8 @@ export const deleteSlide = mutation({
   },
 });
 
-// Toggle slide active status
-export const toggleSlideActive = mutation({
+// Toggle mobile visibility
+export const toggleMobileVisibility = mutation({
   args: {
     id: v.id("hero"),
   },
@@ -131,7 +135,22 @@ export const toggleSlideActive = mutation({
     if (!slide) throw new Error("Slide not found");
 
     await ctx.db.patch(args.id, {
-      isActive: !slide.isActive,
+      showOnMobile: !(slide.showOnMobile ?? true),
+    });
+  },
+});
+
+// Toggle desktop visibility
+export const toggleDesktopVisibility = mutation({
+  args: {
+    id: v.id("hero"),
+  },
+  handler: async (ctx, args) => {
+    const slide = await ctx.db.get(args.id);
+    if (!slide) throw new Error("Slide not found");
+
+    await ctx.db.patch(args.id, {
+      showOnDesktop: !(slide.showOnDesktop ?? true),
     });
   },
 });

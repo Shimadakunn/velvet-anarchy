@@ -5,6 +5,7 @@ import StorageImage from "@/components/StorageImage";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
+import { Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -14,7 +15,8 @@ export default function HeroAdmin() {
   const createSlide = useMutation(api.hero.createSlide);
   const updateSlide = useMutation(api.hero.updateSlide);
   const deleteSlide = useMutation(api.hero.deleteSlide);
-  const toggleSlideActive = useMutation(api.hero.toggleSlideActive);
+  const toggleMobileVisibility = useMutation(api.hero.toggleMobileVisibility);
+  const toggleDesktopVisibility = useMutation(api.hero.toggleDesktopVisibility);
   const updateSlideOrders = useMutation(api.hero.updateSlideOrders);
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
 
@@ -23,16 +25,21 @@ export default function HeroAdmin() {
     image: "",
     title: "",
     productId: "",
-    isActive: true,
+    showOnMobile: true,
+    showOnDesktop: true,
   });
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">(
+    "desktop"
+  );
 
   const resetForm = () => {
     setFormData({
       image: "",
       title: "",
       productId: "",
-      isActive: true,
+      showOnMobile: true,
+      showOnDesktop: true,
     });
     setEditingId(null);
   };
@@ -91,7 +98,8 @@ export default function HeroAdmin() {
             ? (formData.productId as Id<"products">)
             : undefined,
           order: currentSlide?.order,
-          isActive: formData.isActive,
+          showOnMobile: formData.showOnMobile,
+          showOnDesktop: formData.showOnDesktop,
         });
       } else {
         // Auto-assign order as the last position
@@ -102,7 +110,8 @@ export default function HeroAdmin() {
             ? (formData.productId as Id<"products">)
             : undefined,
           order: slides ? slides.length : 0,
-          isActive: formData.isActive,
+          showOnMobile: formData.showOnMobile,
+          showOnDesktop: formData.showOnDesktop,
         });
       }
       resetForm();
@@ -118,7 +127,8 @@ export default function HeroAdmin() {
       image: slide.image,
       title: slide.title,
       productId: slide.productId || "",
-      isActive: slide.isActive,
+      showOnMobile: slide.showOnMobile ?? true,
+      showOnDesktop: slide.showOnDesktop ?? true,
     });
     setEditingId(slide._id);
   };
@@ -134,12 +144,21 @@ export default function HeroAdmin() {
     }
   };
 
-  const handleToggleActive = async (id: Id<"hero">) => {
+  const handleToggleMobile = async (id: Id<"hero">) => {
     try {
-      await toggleSlideActive({ id });
+      await toggleMobileVisibility({ id });
     } catch (error) {
-      console.error("Error toggling slide:", error);
-      alert("Failed to toggle slide");
+      console.error("Error toggling mobile visibility:", error);
+      alert("Failed to toggle mobile visibility");
+    }
+  };
+
+  const handleToggleDesktop = async (id: Id<"hero">) => {
+    try {
+      await toggleDesktopVisibility({ id });
+    } catch (error) {
+      console.error("Error toggling desktop visibility:", error);
+      alert("Failed to toggle desktop visibility");
     }
   };
 
@@ -191,126 +210,236 @@ export default function HeroAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Hero Slide Management
-          </h1>
-        </div>
-
-        {/* Create/Edit Form */}
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+    <div className="min-h-screen bg-gray-50 py-2">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Form Section */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-4">
           <h2 className="text-xl font-semibold mb-4">
-            {editingId ? "Edit Slide" : "Create New Slide"}
+            {editingId ? "Edit Slide" : "Hero Slide Management"}
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+          <form onSubmit={handleSubmit}>
+            {/* Title and Product Link */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Title</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Discover a Feerique World"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Product Link (Optional)
+                </label>
+                <select
+                  value={formData.productId}
+                  onChange={(e) =>
+                    setFormData({ ...formData, productId: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">No product link</option>
+                  {products.map((product) => (
+                    <option key={product._id} value={product._id}>
+                      {product.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">
                 Hero Image
               </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              />
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors mb-3">
+                <Upload className="w-4 h-4" />
+                <span className="text-sm">Upload Image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </label>
               {formData.image && (
-                <div className="mt-3 relative inline-block">
+                <div className="relative w-full max-w-md group">
                   <StorageImage
                     storageId={formData.image}
                     alt="Hero preview"
-                    className="w-full max-w-md h-48 object-cover rounded-lg"
+                    className="w-full h-48 object-cover rounded border-2 border-gray-200"
                   />
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, image: "" })}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600"
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
                   >
-                    &times;
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Title
+            {/* Visibility Options */}
+            <div className="mb-4 space-y-2">
+              <label className="block text-sm font-medium mb-2">
+                Visibility Options
               </label>
-              <input
-                type="text"
-                required
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="Discover a Feerique World"
-              />
+              <div className="flex gap-6">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="showOnMobile"
+                    checked={formData.showOnMobile}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        showOnMobile: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label
+                    htmlFor="showOnMobile"
+                    className="ml-2 text-sm font-medium text-gray-700"
+                  >
+                    Show on Mobile
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="showOnDesktop"
+                    checked={formData.showOnDesktop}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        showOnDesktop: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label
+                    htmlFor="showOnDesktop"
+                    className="ml-2 text-sm font-medium text-gray-700"
+                  >
+                    Show on Desktop
+                  </label>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Product Link (Optional)
-              </label>
-              <select
-                value={formData.productId}
-                onChange={(e) =>
-                  setFormData({ ...formData, productId: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              >
-                <option value="">No product link</option>
-                {products.map((product) => (
-                  <option key={product._id} value={product._id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="isActive"
-                checked={formData.isActive}
-                onChange={(e) =>
-                  setFormData({ ...formData, isActive: e.target.checked })
-                }
-                className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
-              />
-              <label
-                htmlFor="isActive"
-                className="ml-2 text-sm font-medium text-gray-700"
-              >
-                Active
-              </label>
-            </div>
-
+            {/* Action Buttons */}
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                className="px-6 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors"
               >
                 {editingId ? "Update Slide" : "Create Slide"}
               </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                {editingId ? "Cancel" : "Clear Form"}
-              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-md hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
             </div>
           </form>
         </div>
 
+        {/* Preview Section */}
+        {formData.image && (
+          <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Preview</h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setPreviewMode("mobile")}
+                  className={`px-4 py-2 rounded-md transition-colors text-sm font-medium ${
+                    previewMode === "mobile"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  Mobile
+                </button>
+                <button
+                  onClick={() => setPreviewMode("desktop")}
+                  className={`px-4 py-2 rounded-md transition-colors text-sm font-medium ${
+                    previewMode === "desktop"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  Desktop
+                </button>
+              </div>
+            </div>
+
+            {/* Preview Container */}
+            <div className="flex justify-center">
+              <div
+                className={`relative overflow-hidden bg-gray-100 ${
+                  previewMode === "mobile"
+                    ? "w-[375px] h-[667px]"
+                    : "w-full h-[500px]"
+                }`}
+              >
+                <StorageImage
+                  storageId={formData.image}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+                {/* Overlay Content */}
+                <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white [-webkit-text-stroke:2px_black] [paint-order:stroke_fill]">
+                  <h2
+                    className={`font-Meg ${
+                      previewMode === "mobile" ? "text-2xl" : "text-5xl"
+                    }`}
+                  >
+                    {formData.title || "Your Title Here"}
+                  </h2>
+                  <button
+                    className={`font-medium border-b ${
+                      previewMode === "mobile" ? "text-sm" : "text-lg"
+                    }`}
+                  >
+                    SHOP NOW
+                  </button>
+                </div>
+
+                {/* Visibility Indicator */}
+                <div className="absolute top-4 right-4 flex gap-2">
+                  {previewMode === "mobile" && !formData.showOnMobile && (
+                    <span className="bg-red-500 text-white px-3 py-1 rounded-md text-xs font-semibold">
+                      Hidden on Mobile
+                    </span>
+                  )}
+                  {previewMode === "desktop" && !formData.showOnDesktop && (
+                    <span className="bg-red-500 text-white px-3 py-1 rounded-md text-xs font-semibold">
+                      Hidden on Desktop
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Slides List */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Existing Slides
-            </h2>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Existing Slides</h2>
             {slides.length > 0 && (
               <p className="text-sm text-gray-500">
                 Drag and drop to reorder slides
@@ -322,7 +451,7 @@ export default function HeroAdmin() {
               No slides yet. Create your first slide!
             </p>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-3">
               {slides.map((slide, index) => (
                 <div
                   key={slide._id}
@@ -331,12 +460,15 @@ export default function HeroAdmin() {
                   onDragOver={(e) => handleDragOver(e, index)}
                   onDrop={(e) => handleDrop(e, index)}
                   onDragEnd={handleDragEnd}
-                  className={`bg-white p-4 rounded-lg shadow-md flex items-center gap-4 cursor-move transition-all ${
-                    !slide.isActive ? "opacity-60" : ""
+                  className={`bg-gray-50 p-4 rounded-md flex items-center gap-4 cursor-move transition-all hover:bg-gray-100 ${
+                    !(slide.showOnMobile ?? true) &&
+                    !(slide.showOnDesktop ?? true)
+                      ? "opacity-60"
+                      : ""
                   } ${draggedIndex === index ? "opacity-50 scale-95" : ""}`}
                 >
                   {/* Drag Handle */}
-                  <div className="flex flex-col gap-1 text-gray-400 cursor-grab active:cursor-grabbing">
+                  <div className="flex flex-col gap-1 text-gray-400 cursor-grab active:cursor-grabbing shrink-0">
                     <div className="flex gap-1">
                       <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                       <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
@@ -351,52 +483,89 @@ export default function HeroAdmin() {
                     </div>
                   </div>
 
-                  <div className="relative w-32 h-20 flex-shrink-0">
+                  <div className="relative w-32 h-20 shrink-0">
                     <Image
                       src={slide.imageUrl}
                       alt={slide.title}
                       fill
-                      className="object-cover rounded"
+                      className="object-cover rounded border-2 border-gray-200"
                     />
                   </div>
 
-                  <div className="flex-grow">
-                    <h3 className="font-semibold text-gray-900">
+                  <div className="grow min-w-0">
+                    <h3 className="font-semibold text-gray-900 truncate">
                       {slide.title}
                     </h3>
                     <p className="text-sm text-gray-600">
                       Order: {slide.order}
                     </p>
                     {slide.product && (
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 truncate">
                         Links to: {slide.product.name}
                       </p>
                     )}
-                    <p className="text-xs text-gray-500">
-                      Status: {slide.isActive ? "Active" : "Inactive"}
-                    </p>
+                    <div className="flex gap-1 mt-1">
+                      {(slide.showOnMobile ?? true) ? (
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                          📱 Mobile
+                        </span>
+                      ) : (
+                        <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded line-through">
+                          📱 Mobile
+                        </span>
+                      )}
+                      {(slide.showOnDesktop ?? true) ? (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                          🖥️ Desktop
+                        </span>
+                      ) : (
+                        <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded line-through">
+                          🖥️ Desktop
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 shrink-0">
                     <button
-                      onClick={() => handleToggleActive(slide._id)}
-                      className={`px-4 py-2 rounded-lg transition-colors ${
-                        slide.isActive
+                      onClick={() => handleToggleMobile(slide._id)}
+                      className={`px-3 py-2 rounded-md transition-colors text-xs font-medium ${
+                        (slide.showOnMobile ?? true)
                           ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                           : "bg-green-100 text-green-700 hover:bg-green-200"
                       }`}
+                      title={
+                        (slide.showOnMobile ?? true)
+                          ? "Hide on Mobile"
+                          : "Show on Mobile"
+                      }
                     >
-                      {slide.isActive ? "Deactivate" : "Activate"}
+                      {(slide.showOnMobile ?? true) ? "📱 Hide" : "📱 Show"}
+                    </button>
+                    <button
+                      onClick={() => handleToggleDesktop(slide._id)}
+                      className={`px-3 py-2 rounded-md transition-colors text-xs font-medium ${
+                        (slide.showOnDesktop ?? true)
+                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                          : "bg-green-100 text-green-700 hover:bg-green-200"
+                      }`}
+                      title={
+                        (slide.showOnDesktop ?? true)
+                          ? "Hide on Desktop"
+                          : "Show on Desktop"
+                      }
+                    >
+                      {(slide.showOnDesktop ?? true) ? "🖥️ Hide" : "🖥️ Show"}
                     </button>
                     <button
                       onClick={() => handleEdit(slide)}
-                      className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors"
+                      className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md hover:bg-blue-200 transition-colors text-xs font-medium"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(slide._id)}
-                      className="bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors"
+                      className="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition-colors text-xs font-medium"
                     >
                       Delete
                     </button>

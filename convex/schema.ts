@@ -96,6 +96,7 @@ export default defineSchema({
     title: v.string(),
     productId: v.optional(v.id("products")),
     order: v.number(), // For ordering slides
-    isActive: v.boolean(), // To show/hide slides
+    showOnMobile: v.optional(v.boolean()), // Show on mobile devices
+    showOnDesktop: v.optional(v.boolean()), // Show on desktop devices
   }).index("byOrder", ["order"]),
 });

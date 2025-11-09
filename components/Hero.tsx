@@ -12,6 +12,8 @@ type HeroSlide = {
     slug: string;
     name: string;
   } | null;
+  showOnMobile?: boolean;
+  showOnDesktop?: boolean;
 };
 
 type HeroProps = {
@@ -22,16 +24,38 @@ export default function Hero({ slides }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Filter slides based on device type
+  const visibleSlides = slides.filter((slide) => {
+    if (isMobile) {
+      return slide.showOnMobile !== false;
+    } else {
+      return slide.showOnDesktop !== false;
+    }
+  });
 
   const nextSlide = useCallback(() => {
-    if (!slides || slides.length === 0) return;
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, [slides]);
+    if (!visibleSlides || visibleSlides.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % visibleSlides.length);
+  }, [visibleSlides]);
 
   const prevSlide = useCallback(() => {
-    if (!slides || slides.length === 0) return;
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides]);
+    if (!visibleSlides || visibleSlides.length === 0) return;
+    setCurrentSlide(
+      (prev) => (prev - 1 + visibleSlides.length) % visibleSlides.length
+    );
+  }, [visibleSlides]);
 
   const goToSlide = useCallback((index: number) => {
     setCurrentSlide(index);
@@ -55,8 +79,8 @@ export default function Hero({ slides }: HeroProps) {
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
 
-  // If no slides, show nothing or a placeholder
-  if (slides.length === 0) {
+  // If no visible slides, show nothing or a placeholder
+  if (visibleSlides.length === 0) {
     return null;
   }
 
@@ -68,7 +92,7 @@ export default function Hero({ slides }: HeroProps) {
     >
       <div className="w-full h-[75vh] relative overflow-hidden">
         {/* Slides */}
-        {slides.map((slide, index) => (
+        {visibleSlides.map((slide, index) => (
           <div
             key={slide._id}
             className={`absolute inset-0 transition-opacity duration-700 ${
@@ -85,8 +109,8 @@ export default function Hero({ slides }: HeroProps) {
             />
 
             {/* Overlay Content */}
-            <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white [-webkit-text-stroke:_2px_black] [paint-order:_stroke_fill]">
-              {/* [-webkit-text-stroke:_2px_black] [paint-order:_stroke_fill] */}
+            <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white [-webkit-text-stroke:2px_black] [paint-order:stroke_fill]">
+              {/* [-webkit-text-stroke:2px_black] [paint-order:stroke_fill] */}
               <h2 className="font-Meg text-2xl md:text-5xl ">{slide.title}</h2>
               {slide.product ? (
                 <Link
@@ -147,7 +171,7 @@ export default function Hero({ slides }: HeroProps) {
 
         {/* Dot Indicators */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10 w-full md:w-[40vw] px-4">
-          {slides.map((_, index) => (
+          {visibleSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
@@ -157,7 +181,7 @@ export default function Hero({ slides }: HeroProps) {
               <span
                 className={`absolute left-0 top-0 h-full bg-white ${
                   index === currentSlide && shouldAnimate
-                    ? "w-full transition-[width] ease-linear duration-[5000ms]"
+                    ? "w-full transition-[width] ease-linear duration-5000"
                     : "w-0"
                 }`}
               />
