@@ -210,84 +210,79 @@ export default function HeroAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-2">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Form Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-          <h2 className="text-xl font-semibold mb-4">
-            {editingId ? "Edit Slide" : "Hero Slide Management"}
-          </h2>
-          <form onSubmit={handleSubmit}>
-            {/* Title and Product Link */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Title</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Discover a Feerique World"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Product Link (Optional)
-                </label>
-                <select
-                  value={formData.productId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, productId: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">No product link</option>
-                  {products.map((product) => (
-                    <option key={product._id} value={product._id}>
-                      {product.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Image Upload */}
-            <div className="mb-4">
+    <div className="min-h-screen bg-gray-50 py-2 space-y-4">
+      {/* Form Section */}
+      <div className="bg-white rounded-lg shadow-md max-w-7xl mx-auto p-4">
+        <h2 className="text-xl font-semibold mb-4">
+          {editingId ? "Edit Slide" : "Hero Slide Management"}
+        </h2>
+        <form onSubmit={handleSubmit}>
+          {/* Title and Product Link */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div>
               <label className="block text-sm font-medium mb-2">
                 Hero Image
               </label>
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors mb-3">
-                <Upload className="w-4 h-4" />
-                <span className="text-sm">Upload Image</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
-              {formData.image && (
-                <div className="relative w-full max-w-md group">
-                  <StorageImage
-                    storageId={formData.image}
-                    alt="Hero preview"
-                    className="w-full h-48 object-cover rounded border-2 border-gray-200"
+              {/* Upload Section */}
+              <div className="flex flex-row gap-2">
+                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                  <Upload className="w-4 h-4" />
+                  <span className="text-sm">Upload Image</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
                   />
+                </label>
+                {formData.image && (
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, image: "" })}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm"
                   >
                     <X className="w-4 h-4" />
+                    Remove Image
                   </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Title</label>
+              <input
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Discover a Feerique World"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Product Link (Optional)
+              </label>
+              <select
+                value={formData.productId}
+                onChange={(e) =>
+                  setFormData({ ...formData, productId: e.target.value })
+                }
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">No product link</option>
+                {products.map((product) => (
+                  <option key={product._id} value={product._id}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-            {/* Visibility Options */}
+          {/* Visibility Options */}
+          <div className="flex flex-row gap-4 justify-between items-end">
             <div className="mb-4 space-y-2">
               <label className="block text-sm font-medium mb-2">
                 Visibility Options
@@ -337,13 +332,7 @@ export default function HeroAdmin() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors"
-              >
-                {editingId ? "Update Slide" : "Create Slide"}
-              </button>
+            <div className=" space-x-4">
               {editingId && (
                 <button
                   type="button"
@@ -353,52 +342,64 @@ export default function HeroAdmin() {
                   Cancel
                 </button>
               )}
+              <button
+                type="submit"
+                className="px-6 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors"
+              >
+                {editingId ? "Update Slide" : "Create Slide"}
+              </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
+      </div>
 
-        {/* Preview Section */}
-        {formData.image && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Preview</h2>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setPreviewMode("mobile")}
-                  className={`px-4 py-2 rounded-md transition-colors text-sm font-medium ${
-                    previewMode === "mobile"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  Mobile
-                </button>
-                <button
-                  onClick={() => setPreviewMode("desktop")}
-                  className={`px-4 py-2 rounded-md transition-colors text-sm font-medium ${
-                    previewMode === "desktop"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  Desktop
-                </button>
-              </div>
-            </div>
-
-            {/* Preview Container */}
-            <div className="flex justify-center">
-              <div
-                className={`relative overflow-hidden bg-gray-100 ${
+      {/* Preview Section */}
+      {formData.image && (
+        <div className="flex-1 ">
+          <div className="flex items-center justify-between mb-2">
+            <span />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setPreviewMode("mobile")}
+                className={`px-3 py-1 rounded-md transition-colors text-xs font-medium ${
                   previewMode === "mobile"
-                    ? "w-[375px] h-[667px]"
-                    : "w-full h-[500px]"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                📱 Mobile
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewMode("desktop")}
+                className={`px-3 py-1 rounded-md transition-colors text-xs font-medium ${
+                  previewMode === "desktop"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                🖥️ Desktop
+              </button>
+            </div>
+          </div>
+
+          {/* Preview Container */}
+          <div className="relative overflow-hidden bg-gray-100 rounded border-2 border-gray-200 flex justify-center">
+            {/* Check if slide should be visible based on preview mode */}
+            {(previewMode === "mobile" && formData.showOnMobile) ||
+            (previewMode === "desktop" && formData.showOnDesktop) ? (
+              <div
+                className={`relative ${
+                  previewMode === "mobile"
+                    ? "w-[375px] h-[500px]"
+                    : "w-full h-[75vh]"
                 }`}
               >
                 <StorageImage
                   storageId={formData.image}
                   alt="Preview"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
                 {/* Overlay Content */}
                 <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white [-webkit-text-stroke:2px_black] [paint-order:stroke_fill]">
@@ -410,6 +411,7 @@ export default function HeroAdmin() {
                     {formData.title || "Your Title Here"}
                   </h2>
                   <button
+                    type="button"
                     className={`font-medium border-b ${
                       previewMode === "mobile" ? "text-sm" : "text-lg"
                     }`}
@@ -417,164 +419,169 @@ export default function HeroAdmin() {
                     SHOP NOW
                   </button>
                 </div>
-
-                {/* Visibility Indicator */}
-                <div className="absolute top-4 right-4 flex gap-2">
-                  {previewMode === "mobile" && !formData.showOnMobile && (
-                    <span className="bg-red-500 text-white px-3 py-1 rounded-md text-xs font-semibold">
-                      Hidden on Mobile
-                    </span>
-                  )}
-                  {previewMode === "desktop" && !formData.showOnDesktop && (
-                    <span className="bg-red-500 text-white px-3 py-1 rounded-md text-xs font-semibold">
-                      Hidden on Desktop
-                    </span>
-                  )}
+              </div>
+            ) : (
+              <div
+                className={`relative flex items-center justify-center ${
+                  previewMode === "mobile"
+                    ? "w-[375px] h-[500px]"
+                    : "w-full h-[75vh]"
+                }`}
+              >
+                <div className="text-center p-8">
+                  <div className="text-6xl mb-4">🚫</div>
+                  <p className="text-gray-600 font-semibold text-lg">
+                    This slide is hidden on{" "}
+                    {previewMode === "mobile" ? "Mobile" : "Desktop"}
+                  </p>
+                  <p className="text-gray-500 text-sm mt-2">
+                    Enable &quot;Show on{" "}
+                    {previewMode === "mobile" ? "Mobile" : "Desktop"}&quot; to
+                    preview
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Slides List */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Existing Slides</h2>
-            {slides.length > 0 && (
-              <p className="text-sm text-gray-500">
-                Drag and drop to reorder slides
-              </p>
             )}
           </div>
-          {slides.length === 0 ? (
-            <p className="text-gray-500">
-              No slides yet. Create your first slide!
+        </div>
+      )}
+
+      {/* Slides List */}
+      <div className="bg-white rounded-lg shadow-md p-4 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Existing Slides</h2>
+          {slides.length > 0 && (
+            <p className="text-sm text-gray-500">
+              Drag and drop to reorder slides
             </p>
-          ) : (
-            <div className="space-y-3">
-              {slides.map((slide, index) => (
-                <div
-                  key={slide._id}
-                  draggable
-                  onDragStart={() => handleDragStart(index)}
-                  onDragOver={(e) => handleDragOver(e, index)}
-                  onDrop={(e) => handleDrop(e, index)}
-                  onDragEnd={handleDragEnd}
-                  className={`bg-gray-50 p-4 rounded-md flex items-center gap-4 cursor-move transition-all hover:bg-gray-100 ${
-                    !(slide.showOnMobile ?? true) &&
-                    !(slide.showOnDesktop ?? true)
-                      ? "opacity-60"
-                      : ""
-                  } ${draggedIndex === index ? "opacity-50 scale-95" : ""}`}
-                >
-                  {/* Drag Handle */}
-                  <div className="flex flex-col gap-1 text-gray-400 cursor-grab active:cursor-grabbing shrink-0">
-                    <div className="flex gap-1">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                      <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                    </div>
-                    <div className="flex gap-1">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                      <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                    </div>
-                    <div className="flex gap-1">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                      <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                    </div>
-                  </div>
-
-                  <div className="relative w-32 h-20 shrink-0">
-                    <Image
-                      src={slide.imageUrl}
-                      alt={slide.title}
-                      fill
-                      className="object-cover rounded border-2 border-gray-200"
-                    />
-                  </div>
-
-                  <div className="grow min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">
-                      {slide.title}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Order: {slide.order}
-                    </p>
-                    {slide.product && (
-                      <p className="text-sm text-gray-600 truncate">
-                        Links to: {slide.product.name}
-                      </p>
-                    )}
-                    <div className="flex gap-1 mt-1">
-                      {(slide.showOnMobile ?? true) ? (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                          📱 Mobile
-                        </span>
-                      ) : (
-                        <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded line-through">
-                          📱 Mobile
-                        </span>
-                      )}
-                      {(slide.showOnDesktop ?? true) ? (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                          🖥️ Desktop
-                        </span>
-                      ) : (
-                        <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded line-through">
-                          🖥️ Desktop
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 shrink-0">
-                    <button
-                      onClick={() => handleToggleMobile(slide._id)}
-                      className={`px-3 py-2 rounded-md transition-colors text-xs font-medium ${
-                        (slide.showOnMobile ?? true)
-                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-                          : "bg-green-100 text-green-700 hover:bg-green-200"
-                      }`}
-                      title={
-                        (slide.showOnMobile ?? true)
-                          ? "Hide on Mobile"
-                          : "Show on Mobile"
-                      }
-                    >
-                      {(slide.showOnMobile ?? true) ? "📱 Hide" : "📱 Show"}
-                    </button>
-                    <button
-                      onClick={() => handleToggleDesktop(slide._id)}
-                      className={`px-3 py-2 rounded-md transition-colors text-xs font-medium ${
-                        (slide.showOnDesktop ?? true)
-                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-                          : "bg-green-100 text-green-700 hover:bg-green-200"
-                      }`}
-                      title={
-                        (slide.showOnDesktop ?? true)
-                          ? "Hide on Desktop"
-                          : "Show on Desktop"
-                      }
-                    >
-                      {(slide.showOnDesktop ?? true) ? "🖥️ Hide" : "🖥️ Show"}
-                    </button>
-                    <button
-                      onClick={() => handleEdit(slide)}
-                      className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md hover:bg-blue-200 transition-colors text-xs font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(slide._id)}
-                      className="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition-colors text-xs font-medium"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
           )}
         </div>
+        {slides.length === 0 ? (
+          <p className="text-gray-500">
+            No slides yet. Create your first slide!
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {slides.map((slide, index) => (
+              <div
+                key={slide._id}
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragEnd={handleDragEnd}
+                className={`bg-gray-50 p-4 rounded-md flex items-center gap-4 cursor-move transition-all hover:bg-gray-100 ${
+                  !(slide.showOnMobile ?? true) &&
+                  !(slide.showOnDesktop ?? true)
+                    ? "opacity-60"
+                    : ""
+                } ${draggedIndex === index ? "opacity-50 scale-95" : ""}`}
+              >
+                {/* Drag Handle */}
+                <div className="flex flex-col gap-1 text-gray-400 cursor-grab active:cursor-grabbing shrink-0">
+                  <div className="flex gap-1">
+                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  </div>
+                  <div className="flex gap-1">
+                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  </div>
+                  <div className="flex gap-1">
+                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  </div>
+                </div>
+
+                <div className="relative w-32 h-20 shrink-0">
+                  <Image
+                    src={slide.imageUrl}
+                    alt={slide.title}
+                    fill
+                    className="object-cover rounded border-2 border-gray-200"
+                  />
+                </div>
+
+                <div className="grow min-w-0">
+                  <h3 className="font-semibold text-gray-900 truncate">
+                    {slide.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">Order: {slide.order}</p>
+                  {slide.product && (
+                    <p className="text-sm text-gray-600 truncate">
+                      Links to: {slide.product.name}
+                    </p>
+                  )}
+                  <div className="flex gap-1 mt-1">
+                    {(slide.showOnMobile ?? true) ? (
+                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                        📱 Mobile
+                      </span>
+                    ) : (
+                      <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded line-through">
+                        📱 Mobile
+                      </span>
+                    )}
+                    {(slide.showOnDesktop ?? true) ? (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                        🖥️ Desktop
+                      </span>
+                    ) : (
+                      <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded line-through">
+                        🖥️ Desktop
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => handleToggleMobile(slide._id)}
+                    className={`px-3 py-2 rounded-md transition-colors text-xs font-medium ${
+                      (slide.showOnMobile ?? true)
+                        ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                        : "bg-green-100 text-green-700 hover:bg-green-200"
+                    }`}
+                    title={
+                      (slide.showOnMobile ?? true)
+                        ? "Hide on Mobile"
+                        : "Show on Mobile"
+                    }
+                  >
+                    {(slide.showOnMobile ?? true) ? "📱 Hide" : "📱 Show"}
+                  </button>
+                  <button
+                    onClick={() => handleToggleDesktop(slide._id)}
+                    className={`px-3 py-2 rounded-md transition-colors text-xs font-medium ${
+                      (slide.showOnDesktop ?? true)
+                        ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                        : "bg-green-100 text-green-700 hover:bg-green-200"
+                    }`}
+                    title={
+                      (slide.showOnDesktop ?? true)
+                        ? "Hide on Desktop"
+                        : "Show on Desktop"
+                    }
+                  >
+                    {(slide.showOnDesktop ?? true) ? "🖥️ Hide" : "🖥️ Show"}
+                  </button>
+                  <button
+                    onClick={() => handleEdit(slide)}
+                    className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md hover:bg-blue-200 transition-colors text-xs font-medium"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(slide._id)}
+                    className="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition-colors text-xs font-medium"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
