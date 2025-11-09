@@ -8,7 +8,7 @@ import "./globals.css";
 import { Provider } from "./provider";
 
 export const metadata: Metadata = {
-  title: "Velvet Anarchy",
+  title: "Vivi Nana",
   description: "Girly & Luxury Jeweleries",
 };
 

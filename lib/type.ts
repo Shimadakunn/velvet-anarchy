@@ -26,6 +26,7 @@ export type Variant = {
   value: string;
   subvalue?: string;
   image?: string;
+  variantLink?: string;
   _creationTime?: number;
 };
 

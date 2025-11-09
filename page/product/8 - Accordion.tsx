@@ -21,12 +21,13 @@ export default function Accordion({ product }: { product: Product }) {
       icon: PlaneTakeoff,
       title: "PROCESSING & SHIPPING",
       content:
-        "Add your shipping and processing information here. Include delivery times, shipping methods, and any relevant policies.",
+        "Orders are processed and dispatched within **2-4 business days**. \n Once dispatched, delivery takes **7-14 business days**. \n All shipments are tracked.",
     },
     {
       icon: RotateCcw,
       title: "30 DAY GUARANTEE",
-      content: "**",
+      content:
+        "If your product is damaged, send us an email within **7 business days** and we will issue a refund. \n Please note that due to limited stock, all items are final sale and cannot be exchanged once they are shipped/delivered.",
     },
   ];
 

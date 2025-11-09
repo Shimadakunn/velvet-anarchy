@@ -1,6 +1,15 @@
 "use client";
 
 import Loading from "@/components/Loading";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -10,12 +19,14 @@ import {
   ChevronDown,
   ChevronUp,
   Clock,
+  ExternalLink,
   Home,
   Mail,
   Navigation,
   Package,
   PackageCheck,
   PackageSearch,
+  Plus,
   RotateCcw,
   Search,
   ShoppingBag,
@@ -136,6 +147,12 @@ function OrderItem({
     item.productId ? { id: item.productId as Id<"products"> } : "skip"
   );
 
+  const selectedVariant = variants?.find((variant) => {
+    const selectedValue =
+      item.variants[variant.type as keyof typeof item.variants];
+    return variant.value === selectedValue && variant.type === "color";
+  });
+
   const variantImage = variants?.find((variant) => {
     const selectedValue =
       item.variants[variant.type as keyof typeof item.variants];
@@ -143,6 +160,7 @@ function OrderItem({
   })?.image;
 
   const imageToDisplay = variantImage || item.productImage;
+  const variantLink = selectedVariant?.variantLink;
 
   const imageUrl = useQuery(
     api.files.getUrl,
@@ -165,12 +183,25 @@ function OrderItem({
 
       <div className="flex-1 min-w-0">
         <h4 className="font-medium text-sm">{item.productName}</h4>
-        <p className="text-xs text-gray-600 mt-0.5">
-          {Object.entries(item.variants)
-            .filter(([, value]) => value) // Filter out empty/undefined values
-            .map(([, value]) => value)
-            .join(" / ")}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-xs text-gray-600 mt-0.5">
+            {Object.entries(item.variants)
+              .filter(([, value]) => value) // Filter out empty/undefined values
+              .map(([, value]) => value)
+              .join(" / ")}
+          </p>
+          {variantLink && (
+            <a
+              href={variantLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+              title="View variant product"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
+        </div>
         <p className="text-xs text-gray-500 mt-0.5">
           €{item.price.toFixed(2)} x {item.quantity}
         </p>
@@ -224,6 +255,7 @@ function OrderCard({
       postalCode: string;
       country: string;
     };
+    chinaOrderId?: string;
   };
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -231,8 +263,13 @@ function OrderCard({
   const [selectedShippingStatus, setSelectedShippingStatus] = useState(
     order.shippingStatus
   );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [chinaOrderIdInput, setChinaOrderIdInput] = useState(
+    order.chinaOrderId || ""
+  );
   const updateStatus = useMutation(api.orders.updateStatus);
   const updateShippingStatus = useMutation(api.orders.updateShippingStatus);
+  const updateChinaOrderId = useMutation(api.orders.updateChinaOrderId);
 
   const handleStatusChange = async (
     newStatus: "pending" | "shipping" | "completed" | "cancelled" | "refunded"
@@ -302,6 +339,20 @@ function OrderCard({
     }
   };
 
+  const handleSaveChinaOrderId = async () => {
+    try {
+      await updateChinaOrderId({
+        orderId: order.orderId,
+        chinaOrderId: chinaOrderIdInput,
+      });
+      toast.success("China Order ID updated successfully!");
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to update China Order ID:", error);
+      toast.error("Failed to update China Order ID");
+    }
+  };
+
   const orderDate = new Date(order._creationTime).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -313,83 +364,123 @@ function OrderCard({
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
       {/* Order Header */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <Package className="w-4 h-4 text-gray-500" />
-              <span className="font-mono text-sm font-semibold">
-                {order.orderId}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Calendar className="w-4 h-4" />
-              <span>{orderDate}</span>
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 items-end">
-            <StatusBadge status={selectedStatus} />
-            <ShippingStatusBadge status={selectedShippingStatus} />
-          </div>
+      <div className="p-4 border-b border-gray-200 flex flex-row gap-4">
+        <div className="flex items-center gap-1">
+          <Package className="w-4 h-4" />
+          <span className="text-sm font-semibold">{order.orderId}</span>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center gap-2 text-gray-700">
-            <User className="w-4 h-4 text-gray-500" />
-            <span className="font-medium">{order.customerName}</span>
+        {order.chinaOrderId ? (
+          <div className="flex items-center gap-1">
+            🇨🇳
+            <span className="text-sm font-semibold">{order.chinaOrderId}</span>
           </div>
-          <div className="flex items-center gap-2 text-gray-700">
-            <Mail className="w-4 h-4 text-gray-500" />
-            <span className="truncate">{order.customerEmail}</span>
-          </div>
+        ) : (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <button
+                className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                title="Add China Order ID"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>China Order ID</DialogTitle>
+                <DialogDescription>
+                  Add or update the China Order ID for this order.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-4">
+                <input
+                  type="text"
+                  value={chinaOrderIdInput}
+                  onChange={(e) => setChinaOrderIdInput(e.target.value)}
+                  placeholder="Enter China Order ID"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </div>
+              <DialogFooter>
+                <button
+                  onClick={() => setIsDialogOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveChinaOrderId}
+                  className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 transition-colors"
+                >
+                  Save
+                </button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+        <div className="flex items-center gap-1">
+          <ShoppingBag className="w-4 h-4" />
+          <span className="text-sm">
+            {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+          </span>
         </div>
+        <div className="flex items-center gap-1">
+          <User className="w-4 h-4" />
+          <span className="text-sm">{order.customerName}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Mail className="w-4 h-4" />
+          <span className="text-sm">{order.customerEmail}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Calendar className="w-4 h-4" />
+          <span className="text-sm">{orderDate}</span>
+        </div>
+        <div className="flex-1" />
+        <span className="text-lg font-bold">€{order.total.toFixed(2)}</span>
       </div>
 
-      {/* Order Summary */}
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">
-              {order.items.length} item{order.items.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold">€{order.total.toFixed(2)}</span>
-          </div>
-        </div>
-
-        {/* Status Update Dropdowns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+      {/* Status and Shipping Status */}
+      <div className="p-4 flex flex-row gap-4 pb-0">
+        {/* Order Status */}
+        <div className="flex-1">
+          <div className="flex flex-row justify-between items-end mb-2">
+            <label className="block text-xs font-medium text-gray-700">
               Order Status
             </label>
-            <select
-              value={selectedStatus}
-              onChange={(e) =>
-                handleStatusChange(
-                  e.target.value as
-                    | "pending"
-                    | "shipping"
-                    | "completed"
-                    | "cancelled"
-                    | "refunded"
-                )
-              }
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-            >
-              <option value="pending">Pending</option>
-              <option value="shipping">Shipping</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="refunded">Refunded</option>
-            </select>
+            <StatusBadge status={selectedStatus} />
           </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+
+          <select
+            value={selectedStatus}
+            onChange={(e) =>
+              handleStatusChange(
+                e.target.value as
+                  | "pending"
+                  | "shipping"
+                  | "completed"
+                  | "cancelled"
+                  | "refunded"
+              )
+            }
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+          >
+            <option value="pending">Pending</option>
+            <option value="shipping">Shipping</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+          </select>
+        </div>
+        <div className="w-px bg-gray-400" />
+        {/* Shipping Status */}
+        <div className="flex-1">
+          <div className="flex flex-row justify-between items-end mb-2">
+            <label className="block text-xs font-medium text-gray-700">
               Shipping Status
             </label>
+            <ShippingStatusBadge status={selectedShippingStatus} />
+          </div>
+          <div className="flex flex-row justify-between">
             <select
               value={selectedShippingStatus}
               onChange={(e) =>
@@ -403,7 +494,7 @@ function OrderCard({
                     | "delivered"
                 )
               }
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+              className=" px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             >
               <option value="pending">Pending</option>
               <option value="processing">Processing</option>
@@ -412,72 +503,88 @@ function OrderCard({
               <option value="out_for_delivery">Out for Delivery</option>
               <option value="delivered">Delivered</option>
             </select>
+            <button
+              onClick={handleSendShippingEmail}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors "
+            >
+              <Mail className="w-4 h-4" />
+              Send Shipping Status Email to Customer
+            </button>
           </div>
         </div>
-
-        {/* Send Shipping Status Email Button */}
-        <button
-          onClick={handleSendShippingEmail}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors mb-3"
-        >
-          <Mail className="w-4 h-4" />
-          Send Shipping Status Email to Customer
-        </button>
-
-        {/* Expand/Collapse Button */}
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium text-gray-700 hover:text-black transition"
-        >
-          {isExpanded ? "Hide Details" : "View Details"}
-          {isExpanded ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
-          )}
-        </button>
       </div>
+
+      {/* Expand/Collapse Button */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-center gap-2 pt-2 text-sm font-medium text-gray-700 hover:text-black transition pb-4"
+      >
+        {isExpanded ? "Hide Details" : "View Details"}
+        {isExpanded ? (
+          <ChevronUp className="w-4 h-4" />
+        ) : (
+          <ChevronDown className="w-4 h-4" />
+        )}
+      </button>
 
       {/* Expanded Details */}
       {isExpanded && (
-        <div className="border-t border-gray-200 p-4 bg-gray-50">
+        <div className="border-t border-gray-200 p-4 bg-gray-50 flex flex-row gap-4">
           {/* Shipping Address */}
           {order.shippingAddress && (
-            <div className="mb-4">
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-gray-600" />
-                  Shipping Address
-                </h4>
-                <div className="text-sm text-gray-700 space-y-1">
-                  <p className="font-medium">{order.shippingAddress.name}</p>
-                  <p>{order.shippingAddress.addressLine1}</p>
-                  {order.shippingAddress.addressLine2 && (
-                    <p>{order.shippingAddress.addressLine2}</p>
-                  )}
+            <div className="flex-1 ">
+              <h4 className="text-sm font-semibold mb-2 flex items-center gap-1">
+                <Truck className="w-4 h-4 text-gray-600" />
+                Shipping Address
+              </h4>
+              <div className="text-sm text-gray-700 space-y-1">
+                <p>
+                  <span className="font-semibold">Name:</span>{" "}
+                  {order.shippingAddress.name}
+                </p>
+                <p>
+                  <span className="font-semibold">Address Line 1:</span>{" "}
+                  {order.shippingAddress.addressLine1}
+                </p>
+                {order.shippingAddress.addressLine2 && (
                   <p>
-                    {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
-                    {order.shippingAddress.postalCode}
+                    <span className="font-semibold">Address Line 2:</span>{" "}
+                    {order.shippingAddress.addressLine2}
                   </p>
-                  <p className="uppercase">{order.shippingAddress.country}</p>
-                </div>
+                )}
+                <p>
+                  <span className="font-semibold">City:</span>{" "}
+                  {order.shippingAddress.city}
+                </p>
+                <p>
+                  <span className="font-semibold">State:</span>{" "}
+                  {order.shippingAddress.state}
+                </p>
+                <p>
+                  <span className="font-semibold">Postal Code:</span>{" "}
+                  {order.shippingAddress.postalCode}
+                </p>
+                <p>
+                  <span className="font-semibold">Country:</span>{" "}
+                  <span className="uppercase">
+                    {order.shippingAddress.country}
+                  </span>
+                </p>
               </div>
             </div>
           )}
-
-          {/* Items List */}
-          <div className="mb-4">
-            <h4 className="text-sm font-semibold mb-3">Order Items</h4>
-            <div className="space-y-2">
+          <div className="w-px bg-gray-400" />
+          <div className="flex-1">
+            {/* Items List */}
+            <h4 className="text-sm font-semibold ">Order Items</h4>
+            <div className="space-y-2 mb-1">
               {order.items.map((item, index) => (
                 <OrderItem key={index} item={item} />
               ))}
             </div>
-          </div>
 
-          {/* Price Breakdown */}
-          <div className="border-t border-gray-200 pt-4">
-            <div className="space-y-2 text-sm">
+            {/* Price Breakdown */}
+            <div className="border-t border-gray-200 text-sm space-y-1 pt-2">
               <div className="flex justify-between text-gray-700">
                 <span>Subtotal</span>
                 <span>€{order.subtotal.toFixed(2)}</span>
@@ -494,7 +601,7 @@ function OrderCard({
                 <span>Tax</span>
                 <span>€{order.tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-300">
+              <div className="flex justify-between font-bold text-base pt-1 border-t border-gray-300">
                 <span>Total</span>
                 <span>€{order.total.toFixed(2)}</span>
               </div>
@@ -534,7 +641,12 @@ export default function AdminOrdersPage() {
         cancelled: orders.filter((o) => o.status === "cancelled").length,
         refunded: orders.filter((o) => o.status === "refunded").length,
         revenue: orders
-          .filter((o) => o.status === "completed")
+          .filter(
+            (o) =>
+              o.status === "completed" ||
+              o.status === "shipping" ||
+              o.status === "pending"
+          )
           .reduce((sum, o) => sum + o.total, 0),
       }
     : null;
@@ -546,17 +658,15 @@ export default function AdminOrdersPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Order Management</h1>
-          <p className="text-gray-600">
-            View and manage all customer orders from your store
-          </p>
-        </div>
-
         {/* Statistics */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-6">
+            <div className="bg-emerald-50 rounded-lg border border-emerald-200 p-4">
+              <p className="text-xs text-emerald-800 mb-1">Revenue</p>
+              <p className="text-2xl font-bold text-emerald-900">
+                €{stats.revenue.toFixed(0)}
+              </p>
+            </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <p className="text-xs text-gray-600 mb-1">Total Orders</p>
               <p className="text-2xl font-bold">{stats.total}</p>
@@ -589,12 +699,6 @@ export default function AdminOrdersPage() {
               <p className="text-xs text-purple-800 mb-1">Refunded</p>
               <p className="text-2xl font-bold text-purple-900">
                 {stats.refunded}
-              </p>
-            </div>
-            <div className="bg-emerald-50 rounded-lg border border-emerald-200 p-4">
-              <p className="text-xs text-emerald-800 mb-1">Revenue</p>
-              <p className="text-2xl font-bold text-emerald-900">
-                €{stats.revenue.toFixed(0)}
               </p>
             </div>
           </div>

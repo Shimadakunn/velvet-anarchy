@@ -15,7 +15,7 @@ export default function TermsOfServicePage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              Welcome to Velvet Anarchy. By accessing or using our website and
+              Welcome to Vivi Nana. By accessing or using our website and
               services, you agree to be bound by these Terms of Service. Please
               read them carefully.
             </p>
@@ -134,7 +134,7 @@ export default function TermsOfServicePage() {
             </h2>
             <p className="text-gray-700 text-sm leading-relaxed">
               All content on this website, including text, graphics, logos,
-              images, and software, is the property of Velvet Anarchy and is
+              images, and software, is the property of Vivi Nana and is
               protected by copyright and trademark laws. You may not reproduce,
               distribute, or create derivative works without our explicit
               permission.
@@ -147,8 +147,8 @@ export default function TermsOfServicePage() {
               Limitation of Liability
             </h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              To the fullest extent permitted by law, Velvet Anarchy shall not
-              be liable for any indirect, incidental, special, consequential, or
+              To the fullest extent permitted by law, Vivi Nana shall not be
+              liable for any indirect, incidental, special, consequential, or
               punitive damages resulting from your use of or inability to use
               our website or products.
             </p>
@@ -158,7 +158,7 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Indemnification</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              You agree to indemnify and hold harmless Velvet Anarchy from any
+              You agree to indemnify and hold harmless Vivi Nana from any
               claims, damages, losses, or expenses arising from your use of our
               website or violation of these Terms of Service.
             </p>
@@ -179,8 +179,8 @@ export default function TermsOfServicePage() {
             <h2 className="text-2xl font-semibold mb-4">Governing Law</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
               These Terms of Service are governed by and construed in accordance
-              with the laws of the jurisdiction in which Velvet Anarchy
-              operates, without regard to conflict of law principles.
+              with the laws of the jurisdiction in which Vivi Nana operates,
+              without regard to conflict of law principles.
             </p>
           </section>
 
@@ -191,10 +191,10 @@ export default function TermsOfServicePage() {
               If you have any questions about these Terms of Service, please
               contact us at{" "}
               <a
-                href="mailto:legal@velvetanarchy.com"
+                href="mailto:legal@vivinana.com"
                 className="text-black font-semibold hover:underline underline-offset-4"
               >
-                legal@velvetanarchy.com
+                legal@vivinana.com
               </a>
             </p>
           </section>

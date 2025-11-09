@@ -15,7 +15,7 @@ import {
 } from "@/lib/type";
 import Product from "@/page/product";
 import { useMutation } from "convex/react";
-import { Trash2 } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { useState } from "react";
 
 export default function AddProductPage() {
@@ -44,6 +44,7 @@ export default function AddProductPage() {
   const [newVariantValue, setNewVariantValue] = useState("");
   const [newVariantSubvalue, setNewVariantSubvalue] = useState("");
   const [newVariantImage, setNewVariantImage] = useState<string>("");
+  const [newVariantLink, setNewVariantLink] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Review state
@@ -58,6 +59,11 @@ export default function AddProductPage() {
   const [newReviewComment, setNewReviewComment] = useState("");
   const [newReviewDate, setNewReviewDate] = useState(getRandomDateLastMonth());
   const [newReviewImages, setNewReviewImages] = useState<string[]>([]);
+
+  // Drag and drop state
+  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(
+    null
+  );
 
   // Generate slug from name
   const generateSlug = (name: string) => {
@@ -112,6 +118,36 @@ export default function AddProductPage() {
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
+  };
+
+  // Handle drag start
+  const handleDragStart = (index: number) => {
+    setDraggedImageIndex(index);
+  };
+
+  // Handle drag over
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  // Handle drop
+  const handleDrop = (dropIndex: number) => {
+    if (draggedImageIndex === null) return;
+
+    const newImages = [...product.images];
+    const draggedImage = newImages[draggedImageIndex];
+
+    // Remove from old position
+    newImages.splice(draggedImageIndex, 1);
+    // Insert at new position
+    newImages.splice(dropIndex, 0, draggedImage);
+
+    setProduct((prev) => ({
+      ...prev,
+      images: newImages,
+    }));
+
+    setDraggedImageIndex(null);
   };
 
   // Handle user image upload for review
@@ -248,6 +284,7 @@ export default function AddProductPage() {
         value: v.value,
         subvalue: v.subvalue,
         image: v.image,
+        variantLink: v.variantLink,
       }));
 
       // Call the mutation
@@ -318,12 +355,14 @@ export default function AddProductPage() {
       value: newVariantValue,
       subvalue: newVariantSubvalue || undefined,
       image: newVariantImage || undefined,
+      variantLink: newVariantLink || undefined,
     };
 
     setVariants([...variants, newVariant]);
     setNewVariantValue("");
     setNewVariantSubvalue("");
     setNewVariantImage("");
+    setNewVariantLink("");
   };
 
   // Remove variant
@@ -380,17 +419,6 @@ export default function AddProductPage() {
             <div>
               <label className="block text-sm font-medium mb-2">
                 Product Name{" "}
-                <span
-                  className="text-blue-500"
-                  onClick={() =>
-                    window.open(
-                      "https://dirtylinestudio.com/product/dirtyline-36daysoftype-2022/",
-                      "_blank"
-                    )
-                  }
-                >
-                  click here for police formatting
-                </span>
               </label>
               <input
                 type="text"
@@ -506,66 +534,84 @@ export default function AddProductPage() {
           </div>
 
           {/* Image Upload */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Images</label>
-            <div className="flex items-start gap-4">
+          <label className="block text-sm font-medium mb-2">
+            Product Images (Drag to reorder)
+          </label>
+          <div className="mb-4 flex items-start gap-2">
+            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors mb-3">
+              <Upload className="w-4 h-4" />
+              <span className="text-sm">Upload Images</span>
               <input
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="hidden"
               />
-              {product.images.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {product.images.map((img, index) => (
-                    <div key={index} className="relative w-20 h-20">
-                      <StorageImage
-                        storageId={img}
-                        alt={`Preview ${index + 1}`}
-                        className="w-full h-full object-cover rounded"
-                      />
-                      <button
-                        onClick={() => removeImage(index)}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full flex w-5 h-5 items-center justify-center pb-[2px]"
-                      >
-                        &times;
-                      </button>
+            </label>
+            {product.images.length > 0 && (
+              <div className="flex flex-wrap gap-3">
+                {product.images.map((img, index) => (
+                  <div
+                    key={index}
+                    draggable
+                    onDragStart={() => handleDragStart(index)}
+                    onDragOver={handleDragOver}
+                    onDrop={() => handleDrop(index)}
+                    className="relative w-24 h-24 cursor-move hover:opacity-75 transition-opacity group"
+                  >
+                    <StorageImage
+                      storageId={img}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover rounded border-2 border-gray-200"
+                    />
+                    <div className="absolute top-1 left-1 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded">
+                      {index + 1}
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    <button
+                      onClick={() => removeImage(index)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Size Guide Upload */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Size Guide</label>
-            <div className="flex items-start gap-4">
+          <label className="block text-sm font-medium mb-2">
+            Size Guide (Optional)
+          </label>
+          <div className="mb-4 flex items-start gap-2">
+            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors mb-3">
+              <Upload className="w-4 h-4" />
+              <span className="text-sm">Upload Size Guide</span>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleSizeGuideUpload}
-                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="hidden"
               />
-              {product.sizeGuide && (
-                <div className="relative w-20 h-20">
-                  <StorageImage
-                    storageId={product.sizeGuide}
-                    alt="Size Guide Preview"
-                    className="w-full h-full object-cover rounded"
-                  />
-                  <button
-                    onClick={() =>
-                      setProduct((prev) => ({ ...prev, sizeGuide: undefined }))
-                    }
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full flex w-5 h-5 items-center justify-center pb-[2px]"
-                  >
-                    &times;
-                  </button>
-                </div>
-              )}
-            </div>
+            </label>
+            {product.sizeGuide && (
+              <div className="relative w-24 h-24 group">
+                <StorageImage
+                  storageId={product.sizeGuide}
+                  alt="Size Guide Preview"
+                  className="w-full h-full object-cover rounded border-2 border-gray-200"
+                />
+                <button
+                  onClick={() =>
+                    setProduct((prev) => ({ ...prev, sizeGuide: undefined }))
+                  }
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Variants Section */}
@@ -573,7 +619,7 @@ export default function AddProductPage() {
             <h3 className="text-lg font-semibold">Variants</h3>
 
             {/* Add Variant Form */}
-            <div className="flex gap-2 mb-2">
+            <div className="flex gap-2">
               <select
                 value={newVariantType}
                 onChange={(e) =>
@@ -607,6 +653,16 @@ export default function AddProductPage() {
                     : "Subvalue (optional)"
                 }
               />
+              {newVariantType === "color" && (
+                <input
+                  type="text"
+                  value={newVariantLink}
+                  onChange={(e) => setNewVariantLink(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && addVariant()}
+                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Variant Link (optional, e.g., product URL)"
+                />
+              )}
               <select
                 value={newVariantImage}
                 onChange={(e) => setNewVariantImage(e.target.value)}
@@ -628,20 +684,20 @@ export default function AddProductPage() {
               </button>
             </div>
 
-            <div className="flex gap-2">
-              {/* Variants List */}
-              {variants.length > 0 &&
-                variants.map((variant) => (
+            {/* Variants List */}
+            {variants.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {variants.map((variant) => (
                   <div
                     key={variant.type + variant.value}
-                    className="flex items-center justify-between bg-foreground/30 p-2 rounded-md mr-2"
+                    className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md group hover:bg-gray-200 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       {variant.image && (
                         <StorageImage
                           storageId={variant.image}
                           alt={variant.value}
-                          className="w-8 h-8 object-cover rounded"
+                          className="w-8 h-8 object-cover rounded border border-gray-300"
                         />
                       )}
                       {variant.type === "color" && variant.subvalue && (
@@ -651,11 +707,11 @@ export default function AddProductPage() {
                         />
                       )}
                       <div>
-                        <span className="text-sm text-gray-700">
+                        <span className="text-xs text-gray-600 uppercase font-medium">
                           {variant.type}:
                         </span>{" "}
-                        {variant.value}
-                        {variant.subvalue && (
+                        <span className="text-sm">{variant.value}</span>
+                        {variant.subvalue && variant.type !== "color" && (
                           <span className="text-xs text-gray-500 ml-1">
                             ({variant.subvalue})
                           </span>
@@ -664,13 +720,14 @@ export default function AddProductPage() {
                     </div>
                     <button
                       onClick={() => removeVariant(variant.type, variant.value)}
-                      className="text-red-500 hover:text-red-700 transition-colors ml-1"
+                      className="text-red-500 hover:text-red-700 transition-colors opacity-0 group-hover:opacity-100"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
                 ))}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Reviews Section */}
@@ -715,58 +772,66 @@ export default function AddProductPage() {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Review comment"
               />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    User Profile Image
+                  <label className="block text-sm font-medium mb-2">
+                    User Profile Image (Optional)
                   </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleReviewUserImageUpload}
-                    className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                  />
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                    <Upload className="w-4 h-4" />
+                    <span className="text-sm">Upload Profile Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleReviewUserImageUpload}
+                      className="hidden"
+                    />
+                  </label>
                   {newReviewUserImage && (
-                    <div className="mt-2 relative inline-block">
+                    <div className="inline-block group">
                       <StorageImage
                         storageId={newReviewUserImage}
                         alt="User preview"
-                        className="w-16 h-16 rounded-full object-cover"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                       />
                       <button
                         onClick={() => setNewReviewUserImage("")}
-                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
                       >
-                        &times;
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Customer Product Photos (Product received by customer)
+                  <label className="block text-sm font-medium mb-2">
+                    Customer Product Photos (Optional)
                   </label>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleReviewImagesUpload}
-                    className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                  />
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                    <Upload className="w-4 h-4" />
+                    <span className="text-sm">Upload Product Photos</span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleReviewImagesUpload}
+                      className="hidden"
+                    />
+                  </label>
                   {newReviewImages.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <div className="flex flex-wrap gap-2 mt-3">
                       {newReviewImages.map((img, index) => (
-                        <div key={index} className="relative">
+                        <div key={index} className="relative group">
                           <StorageImage
                             storageId={img}
                             alt={`Review preview ${index + 1}`}
-                            className="w-16 h-16 object-cover rounded"
+                            className="w-16 h-16 object-cover rounded border-2 border-gray-200"
                           />
                           <button
                             onClick={() => removeReviewImage(index)}
-                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
                           >
-                            &times;
+                            <X className="w-4 h-4" />
                           </button>
                         </div>
                       ))}
@@ -784,46 +849,53 @@ export default function AddProductPage() {
 
             {/* Reviews List */}
             {reviews.length > 0 && (
-              <div className="space-x-3 flex">
-                {reviews.map((review, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-50 p-3 rounded-md relative flex-1"
-                  >
-                    <button
-                      onClick={() => removeReview(index)}
-                      className="absolute top-2 right-2 text-red-500 hover:text-red-700 transition-colors"
+              <div className="flex flex-wrap gap-3">
+                {[...reviews]
+                  .sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return dateB.getTime() - dateA.getTime();
+                  })
+                  .map((review, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 p-4 rounded-md relative group hover:bg-gray-100 transition-colors flex-1 min-w-[300px]"
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    <div className="flex items-start gap-3">
-                      {review.userImage ? (
-                        <StorageImage
-                          storageId={review.userImage}
-                          alt={review.userName}
-                          className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                          <span className="text-gray-600 font-semibold">
-                            {review.userName.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <div className="flex justify-between w-full">
-                          <span className="font-semibold">
-                            {review.userName}
-                          </span>
-                          <span className="text-sm text-gray-500 px-4">
-                            {review.rating}/5
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-1">
-                          {review.date}
-                        </p>
-                        <div className="flex justify-between">
-                          <p className="text-gray-700 mb-2">{review.comment}</p>
+                      <button
+                        onClick={() => removeReview(index)}
+                        className="absolute top-2 right-2 text-red-500 hover:text-red-700 transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                      <div className="flex items-start gap-3">
+                        {review.userImage ? (
+                          <StorageImage
+                            storageId={review.userImage}
+                            alt={review.userName}
+                            className="w-12 h-12 rounded-full object-cover flex-shrink-0 border-2 border-gray-200"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 border-2 border-gray-300">
+                            <span className="text-gray-600 font-semibold text-lg">
+                              {review.userName.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-semibold text-gray-900">
+                              {review.userName}
+                            </span>
+                            <span className="text-sm text-gray-500 ml-2">
+                              ⭐ {review.rating}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mb-2">
+                            {review.date}
+                          </p>
+                          <p className="text-gray-700 text-sm mb-3">
+                            {review.comment}
+                          </p>
                           {review.reviewImages &&
                             review.reviewImages.length > 0 && (
                               <div className="flex flex-wrap gap-2">
@@ -832,7 +904,7 @@ export default function AddProductPage() {
                                     key={imgIndex}
                                     storageId={img}
                                     alt={`Review image ${imgIndex + 1}`}
-                                    className="w-16 h-16 object-cover rounded border"
+                                    className="w-16 h-16 object-cover rounded border-2 border-gray-200"
                                   />
                                 ))}
                               </div>
@@ -840,8 +912,7 @@ export default function AddProductPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </div>

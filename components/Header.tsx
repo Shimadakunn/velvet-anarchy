@@ -35,11 +35,11 @@ function DesktopHeader() {
 
   return (
     <>
-      <header className="w-full py-4 border-b border-gray-300 ">
+      <header className="w-full py-4 border-b border-gray-300">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
             <h1 className="text-4xl font-Meg  mt-2 pb-1 cursor-pointer">
-              <Link href="/"> Velvet Anarchy</Link>
+              <Link href="/"> Vivi Nana</Link>
             </h1>
             <nav>
               <ul className="flex items-center gap-4">
@@ -100,7 +100,7 @@ function MobileHeader() {
 
   return (
     <>
-      <header className="w-full py-4 border-b border-gray-300">
+      <header className="w-full py-4 border-b border-gray-300 top-0 sticky bg-white/50 backdrop-blur-sm z-50">
         <div className="flex justify-between items-center px-4">
           {/* Left: Burger Menu */}
           <button onClick={() => setIsMenuOpen(true)} aria-label="Open menu">
@@ -108,8 +108,8 @@ function MobileHeader() {
           </button>
 
           {/* Center: Brand Name */}
-          <h1 className="text-xl font-Meg tracking-tighter mt-2 absolute left-1/2 font-black transform -translate-x-1/2 pb-1">
-            <Link href="/">Velvet Anarchy</Link>
+          <h1 className="text-3xl font-Meg tracking-tighter mt-2 absolute left-1/2 font-bold transform -translate-x-1/2 pb-1">
+            <Link href="/">Vivi Nana</Link>
           </h1>
 
           {/* Right: Shopping Cart */}

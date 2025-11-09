@@ -65,6 +65,7 @@ export const create = mutation({
         value: v.string(),
         subvalue: v.optional(v.string()),
         image: v.optional(v.string()),
+        variantLink: v.optional(v.string()),
       })
     ),
   },
@@ -83,6 +84,7 @@ export const create = mutation({
         value: variant.value,
         subvalue: variant.subvalue,
         image: variant.image,
+        variantLink: variant.variantLink,
       });
     }
 
@@ -112,6 +114,7 @@ export const update = mutation({
         value: v.string(),
         subvalue: v.optional(v.string()),
         image: v.optional(v.string()),
+        variantLink: v.optional(v.string()),
       })
     ),
   },
@@ -140,6 +143,7 @@ export const update = mutation({
         value: variant.value,
         subvalue: variant.subvalue,
         image: variant.image,
+        variantLink: variant.variantLink,
       });
     }
 

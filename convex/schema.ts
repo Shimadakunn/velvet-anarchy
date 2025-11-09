@@ -25,6 +25,7 @@ export default defineSchema({
     value: v.string(),
     subvalue: v.optional(v.string()),
     image: v.optional(v.string()),
+    variantLink: v.optional(v.string()),
   }).index("byProduct", ["productId"]),
 
   orders: defineTable({
@@ -74,6 +75,7 @@ export default defineSchema({
         country: v.string(),
       })
     ),
+    chinaOrderId: v.optional(v.string()),
   })
     .index("byOrderId", ["orderId"])
     .index("byEmail", ["customerEmail"]),

@@ -17,12 +17,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <h2 className="text-2xl font-Meg tracking-tighter">
-              Velvet Anarchy
-            </h2>
-            <p className="text-sm text-gray-600">
-              Where luxury meets rebellion
-            </p>
+            <h2 className="text-2xl font-Meg tracking-tighter">Vivi Nana</h2>
+            <p className="text-sm text-gray-600">Where rebellion meets girly</p>
           </div>
 
           {/* Shop Links */}
@@ -135,7 +131,7 @@ export function Footer() {
                 <Twitter size={20} />
               </a>
               <a
-                href="mailto:contact@velvetanarchy.com"
+                href="mailto:contact@vivinana.com"
                 className="text-gray-600 hover:text-black transition-colors"
                 aria-label="Email"
               >
@@ -151,7 +147,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-500">
-            © {currentYear} Velvet Anarchy. All rights reserved.
+            © {currentYear} Vivi Nana. All rights reserved.
           </p>
           <div className="">
             <PaymentBadges className="space-x-4" />

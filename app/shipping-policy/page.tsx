@@ -15,9 +15,9 @@ export default function ShippingPolicyPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              At Velvet Anarchy, we are committed to delivering your jewelry
-              safely and promptly. This Shipping Policy outlines our shipping
-              methods, costs, and delivery times.
+              At Vivi Nana, we are committed to delivering your jewelry safely
+              and promptly. This Shipping Policy outlines our shipping methods,
+              costs, and delivery times.
             </p>
           </section>
 

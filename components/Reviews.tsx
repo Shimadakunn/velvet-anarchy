@@ -1,12 +1,11 @@
 "use client";
 
-import { useIsMobile } from "@/lib/isMobile";
-import { Plus, Star, MessagesSquare, X } from "lucide-react";
-import { Review } from "@/lib/type";
-import StorageImage from "@/components/StorageImage";
-import { Button } from "@/components/ui/button";
 import AddReviewDialog from "@/components/AddReviewDialog";
+import StorageImage from "@/components/StorageImage";
 import { Id } from "@/convex/_generated/dataModel";
+import { useIsMobile } from "@/lib/isMobile";
+import { Review } from "@/lib/type";
+import { MessagesSquare, Plus, Star, X } from "lucide-react";
 import { useState } from "react";
 
 export default function Reviews({
@@ -18,6 +17,13 @@ export default function Reviews({
 }) {
   const isMobile = useIsMobile();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Sort reviews from newest to oldest based on date
+  const sortedReviews = [...reviews].sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime();
+  });
 
   if (!reviews || reviews.length === 0) {
     return (
@@ -89,7 +95,7 @@ export default function Reviews({
       </div>
 
       <div className="space-y-6">
-        {reviews.map((review, index) => (
+        {sortedReviews.map((review, index) => (
           <div key={review._id || index} className="">
             <div className="flex items-start gap-4">
               {/* User Image */}
@@ -110,7 +116,7 @@ export default function Reviews({
               {/* Review Content */}
               <div
                 className={`flex-1 pb-4 ${
-                  index !== reviews.length - 1 ? "border-b" : ""
+                  index !== sortedReviews.length - 1 ? "border-b" : ""
                 }`}
               >
                 <div className="flex items-start justify-between">

@@ -68,7 +68,6 @@ export const create = mutation({
   },
 });
 
-
 // Get order by custom order ID
 export const getByOrderId = query({
   args: { orderId: v.string() },
@@ -159,6 +158,30 @@ export const updateShippingStatus = mutation({
 
     await ctx.db.patch(order._id, {
       shippingStatus: args.shippingStatus,
+    });
+
+    return order._id;
+  },
+});
+
+// Update China Order ID
+export const updateChinaOrderId = mutation({
+  args: {
+    orderId: v.string(),
+    chinaOrderId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const order = await ctx.db
+      .query("orders")
+      .withIndex("byOrderId", (q) => q.eq("orderId", args.orderId))
+      .first();
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    await ctx.db.patch(order._id, {
+      chinaOrderId: args.chinaOrderId,
     });
 
     return order._id;

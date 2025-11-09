@@ -4,8 +4,8 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-Meg mb-4">Velvet anarchy</h1>
-          <p className="text-lg text-gray-600">Where luxury meets rebellion</p>
+          <h1 className="text-5xl font-Meg mb-4">Vivi Nana</h1>
+          <p className="text-lg text-gray-600">Where rebellion meets girly</p>
         </div>
 
         {/* Main Content */}
@@ -14,8 +14,8 @@ export default function AboutPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Our Story</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Born from a passion for unique, statement-making jewelry, Velvet
-              Anarchy represents the perfect fusion of elegance and edge. We
+              Born from a passion for unique, statement-making jewelry, Vivi
+              Nana represents the perfect fusion of elegance and edge. We
               believe that jewelry is more than just an accessory—it&apos;s a
               form of self-expression, a way to showcase your individuality and
               rebellious spirit.
@@ -33,7 +33,7 @@ export default function AboutPage() {
             <p className="text-gray-700 leading-relaxed">
               We envision a world where fashion knows no boundaries, where girly
               meets gritty, and where luxury is accessible to those who dare to
-              be different. Velvet Anarchy is committed to providing exceptional
+              be different. Vivi Nana is committed to providing exceptional
               jewelry that empowers you to express your unique style without
               compromise.
             </p>

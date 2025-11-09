@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: "Velvet Anarchy <onboarding@resend.dev>",
+      from: "Vivi Nana <onboarding@resend.dev>",
       to: [customerEmail],
       subject,
       react: (
@@ -127,4 +127,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

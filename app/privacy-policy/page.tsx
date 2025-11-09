@@ -15,8 +15,8 @@ export default function PrivacyPolicyPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              At Velvet Anarchy, we take your privacy seriously. This Privacy
-              Policy explains how we collect, use, disclose, and safeguard your
+              At Vivi Nana, we take your privacy seriously. This Privacy Policy
+              explains how we collect, use, disclose, and safeguard your
               information when you visit our website and make purchases.
             </p>
           </section>

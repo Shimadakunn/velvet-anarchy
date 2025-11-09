@@ -15,7 +15,7 @@ export default function ReturnsPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              We want you to love your Velvet Anarchy jewelry. If you are not
+              We want you to love your Vivi Nana jewelry. If you are not
               completely satisfied with your purchase, we are here to help with
               returns and exchanges.
             </p>
@@ -74,10 +74,10 @@ export default function ReturnsPage() {
                   <p className="text-gray-700 text-sm">
                     Email us at{" "}
                     <a
-                      href="mailto:returns@velvetanarchy.com"
+                      href="mailto:returns@vivinana.com"
                       className="text-black font-semibold hover:underline underline-offset-4"
                     >
-                      returns@velvetanarchy.com
+                      returns@vivinana.com
                     </a>{" "}
                     with your order number and reason for return.
                   </p>
@@ -93,8 +93,8 @@ export default function ReturnsPage() {
                     Receive Return Authorization
                   </h3>
                   <p className="text-gray-700 text-sm">
-                    We'll send you a Return Authorization (RA) number and return
-                    shipping label within 24 hours.
+                    We&apos;ll send you a Return Authorization (RA) number and
+                    return shipping label within 24 hours.
                   </p>
                 </div>
               </div>
@@ -131,17 +131,17 @@ export default function ReturnsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Exchanges</h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
-              We're happy to exchange items for a different size or style,
+              We&apos;re happy to exchange items for a different size or style,
               subject to availability. To request an exchange:
             </p>
             <ol className="list-decimal list-inside text-gray-700 text-sm space-y-1 ml-4">
               <li>Follow the return process above</li>
-              <li>Indicate in your email that you'd like an exchange</li>
-              <li>Specify which item you'd like to receive instead</li>
+              <li>Indicate in your email that you&apos;d like an exchange</li>
+              <li>Specify which item you&apos;d like to receive instead</li>
             </ol>
             <p className="text-gray-700 text-sm leading-relaxed mt-3">
-              We'll ship your exchange item once we receive and inspect your
-              return.
+              We&apos;ll ship your exchange item once we receive and inspect
+              your return.
             </p>
           </section>
 
@@ -149,9 +149,9 @@ export default function ReturnsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Refunds</h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-3">
-              Once we receive and inspect your return, we'll process your refund
-              within 5-7 business days. Refunds will be issued to the original
-              payment method.
+              Once we receive and inspect your return, we&apos;ll process your
+              refund within 5-7 business days. Refunds will be issued to the
+              original payment method.
             </p>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
               <p className="text-gray-700 text-sm mb-2">
@@ -203,10 +203,10 @@ export default function ReturnsPage() {
               If you receive a damaged or defective item, please contact us
               immediately at{" "}
               <a
-                href="mailto:support@velvetanarchy.com"
+                href="mailto:support@vivinana.com"
                 className="text-black font-semibold hover:underline underline-offset-4"
               >
-                support@velvetanarchy.com
+                support@vivinana.com
               </a>{" "}
               with:
             </p>
@@ -216,7 +216,7 @@ export default function ReturnsPage() {
               <li>Description of the issue</li>
             </ul>
             <p className="text-gray-700 text-sm leading-relaxed mt-3">
-              We'll send a replacement or issue a full refund (including
+              We&apos;ll send a replacement or issue a full refund (including
               shipping) at no cost to you.
             </p>
           </section>
@@ -226,7 +226,7 @@ export default function ReturnsPage() {
             <h2 className="text-2xl font-semibold mb-4">Wrong Item Received</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
               If you receive the wrong item, please contact us within 7 days of
-              delivery. We'll arrange for the correct item to be sent and
+              delivery. We&apos;ll arrange for the correct item to be sent and
               provide a prepaid label to return the incorrect item at no cost to
               you.
             </p>
@@ -243,7 +243,8 @@ export default function ReturnsPage() {
               >
                 contact us
               </a>
-              . We're here to make your return experience as smooth as possible.
+              . We&apos;re here to make your return experience as smooth as
+              possible.
             </p>
           </section>
         </div>
