@@ -1,7 +1,7 @@
+import { Id } from "@/convex/_generated/dataModel";
+import { Product, Review, Variant } from "@/lib/type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Product, Variant, Review } from "@/lib/type";
-import { Id } from "@/convex/_generated/dataModel";
 
 // Hero slide type based on the API response
 export type HeroSlide = {
@@ -10,7 +10,8 @@ export type HeroSlide = {
   title: string;
   productId?: Id<"products">;
   order: number;
-  isActive: boolean;
+  showOnMobile?: boolean;
+  showOnDesktop?: boolean;
   imageUrl: string;
   product: { slug: string; name: string } | null;
   _creationTime: number;
@@ -52,9 +53,18 @@ type DataStore = {
   // Getters with cache check
   getProducts: () => { data: Product[] | null; shouldRefresh: boolean };
   getHeroSlides: () => { data: HeroSlide[] | null; shouldRefresh: boolean };
-  getProductBySlug: (slug: string) => { data: Product | null; shouldRefresh: boolean };
-  getVariants: (productId: string) => { data: Variant[] | null; shouldRefresh: boolean };
-  getReviews: (productId: string) => { data: Review[] | null; shouldRefresh: boolean };
+  getProductBySlug: (slug: string) => {
+    data: Product | null;
+    shouldRefresh: boolean;
+  };
+  getVariants: (productId: string) => {
+    data: Variant[] | null;
+    shouldRefresh: boolean;
+  };
+  getReviews: (productId: string) => {
+    data: Review[] | null;
+    shouldRefresh: boolean;
+  };
   getImageUrl: (storageId: string) => string | null;
 
   // Clear cache
