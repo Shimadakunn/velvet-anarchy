@@ -37,15 +37,19 @@ export default function AddProductPage() {
     mostPopular: false,
     order: 0,
     sizeGuide: undefined,
+    cardImage: undefined,
   });
 
   const [variants, setVariants] = useState<Variant[]>([]);
   const [newVariantType, setNewVariantType] = useState<VariantType>("color");
   const [newVariantValue, setNewVariantValue] = useState("");
   const [newVariantSubvalue, setNewVariantSubvalue] = useState("");
-  const [newVariantImage, setNewVariantImage] = useState<string>("");
+  const [newVariantImages, setNewVariantImages] = useState<string[]>([]);
   const [newVariantLink, setNewVariantLink] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [draggedVariantImageIndex, setDraggedVariantImageIndex] = useState<
+    number | null
+  >(null);
 
   // Review state
   const [reviews, setReviews] = useState<
@@ -244,6 +248,64 @@ export default function AddProductPage() {
     }
   };
 
+  // Handle variant images upload
+  const handleVariantImagesUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+
+        if (!result.ok) {
+          throw new Error(`Failed to upload ${file.name}`);
+        }
+
+        const { storageId } = await result.json();
+        return storageId;
+      });
+
+      const storageIds = await Promise.all(uploadPromises);
+      setNewVariantImages([...newVariantImages, ...storageIds]);
+    } catch (error) {
+      console.error("Error uploading variant images:", error);
+      alert("Failed to upload variant images. Please try again.");
+    }
+  };
+
+  // Remove variant image
+  const removeVariantImage = (index: number) => {
+    setNewVariantImages(newVariantImages.filter((_, i) => i !== index));
+  };
+
+  // Handle variant image drag start
+  const handleVariantImageDragStart = (index: number) => {
+    setDraggedVariantImageIndex(index);
+  };
+
+  // Handle variant image drop
+  const handleVariantImageDrop = (dropIndex: number) => {
+    if (draggedVariantImageIndex === null) return;
+
+    const newImages = [...newVariantImages];
+    const draggedImage = newImages[draggedVariantImageIndex];
+
+    // Remove from old position
+    newImages.splice(draggedVariantImageIndex, 1);
+    // Insert at new position
+    newImages.splice(dropIndex, 0, draggedImage);
+
+    setNewVariantImages(newImages);
+    setDraggedVariantImageIndex(null);
+  };
+
   // Handle product field changes
   const handleFieldChange = (
     field: keyof ProductType,
@@ -283,7 +345,7 @@ export default function AddProductPage() {
         type: v.type,
         value: v.value,
         subvalue: v.subvalue,
-        image: v.image,
+        images: v.images,
         variantLink: v.variantLink,
       }));
 
@@ -302,6 +364,7 @@ export default function AddProductPage() {
         mostPopular: product.mostPopular,
         order: product.order,
         sizeGuide: product.sizeGuide,
+        cardImage: product.cardImage,
         variants: variantsData,
       });
 
@@ -354,14 +417,14 @@ export default function AddProductPage() {
       type: newVariantType,
       value: newVariantValue,
       subvalue: newVariantSubvalue || undefined,
-      image: newVariantImage || undefined,
+      images: newVariantImages.length > 0 ? newVariantImages : undefined,
       variantLink: newVariantLink || undefined,
     };
 
     setVariants([...variants, newVariant]);
     setNewVariantValue("");
     setNewVariantSubvalue("");
-    setNewVariantImage("");
+    setNewVariantImages([]);
     setNewVariantLink("");
   };
 
@@ -399,6 +462,11 @@ export default function AddProductPage() {
 
   // Get URLs for preview
   const previewUrls = useStorageUrls(product.images);
+
+  // State for preview variant selection
+  const [previewSelectedVariants, setPreviewSelectedVariants] = useState<
+    Record<VariantType, string>
+  >({} as Record<VariantType, string>);
 
   return (
     <div className="min-h-screen bg-gray-50 py-2">
@@ -607,73 +675,166 @@ export default function AddProductPage() {
             )}
           </div>
 
+          {/* Card Image Selection */}
+          <label className="block text-sm font-medium mb-2">
+            Product Card Image (Optional - defaults to first product image)
+          </label>
+          <div className="mb-4">
+            <select
+              value={product.cardImage || ""}
+              onChange={(e) =>
+                setProduct((prev) => ({
+                  ...prev,
+                  cardImage: e.target.value || undefined,
+                }))
+              }
+              className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={product.images.length === 0 && variants.length === 0}
+            >
+              <option value="">Use first product image</option>
+              <optgroup label="Product Images">
+                {product.images.map((img, index) => (
+                  <option key={`product-${img}`} value={img}>
+                    Product Image {index + 1}
+                  </option>
+                ))}
+              </optgroup>
+              {variants.some((v) => v.images && v.images.length > 0) && (
+                <optgroup label="Variant Images">
+                  {variants.map((variant) =>
+                    variant.images?.map((img, imgIndex) => (
+                      <option
+                        key={`variant-${variant.value}-${img}`}
+                        value={img}
+                      >
+                        {variant.value} - Image {imgIndex + 1}
+                      </option>
+                    ))
+                  )}
+                </optgroup>
+              )}
+            </select>
+            {product.cardImage && (
+              <div className="mt-3 relative w-24 h-24 group inline-block">
+                <StorageImage
+                  storageId={product.cardImage}
+                  alt="Card Image Preview"
+                  className="w-full h-full object-cover rounded border-2 border-gray-200"
+                />
+              </div>
+            )}
+          </div>
+
           {/* Variants Section */}
           <div className="mb-4 pt-2 border-t">
             <h3 className="text-lg font-semibold">Variants</h3>
 
             {/* Add Variant Form */}
-            <div className="flex gap-2">
-              <select
-                value={newVariantType}
-                onChange={(e) =>
-                  setNewVariantType(e.target.value as VariantType)
-                }
-                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {variantTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={newVariantValue}
-                onChange={(e) => setNewVariantValue(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && addVariant()}
-                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter variant value"
-              />
-              <input
-                type="text"
-                value={newVariantSubvalue}
-                onChange={(e) => setNewVariantSubvalue(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && addVariant()}
-                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={
-                  newVariantType === "color"
-                    ? "Hex (e.g. #FF0000)"
-                    : "Subvalue (optional)"
-                }
-              />
-              {newVariantType === "color" && (
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <select
+                  value={newVariantType}
+                  onChange={(e) =>
+                    setNewVariantType(e.target.value as VariantType)
+                  }
+                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {variantTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </option>
+                  ))}
+                </select>
                 <input
                   type="text"
-                  value={newVariantLink}
-                  onChange={(e) => setNewVariantLink(e.target.value)}
+                  value={newVariantValue}
+                  onChange={(e) => setNewVariantValue(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && addVariant()}
                   className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Variant Link (optional, e.g., product URL)"
+                  placeholder="Enter variant value"
                 />
+                <input
+                  type="text"
+                  value={newVariantSubvalue}
+                  onChange={(e) => setNewVariantSubvalue(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && addVariant()}
+                  className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={
+                    newVariantType === "color"
+                      ? "Hex (e.g. #FF0000)"
+                      : "Subvalue (optional)"
+                  }
+                />
+                {newVariantType === "color" && (
+                  <input
+                    type="text"
+                    value={newVariantLink}
+                    onChange={(e) => setNewVariantLink(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && addVariant()}
+                    className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Variant Link (optional, e.g., product URL)"
+                  />
+                )}
+              </div>
+
+              {/* Variant Images Upload Section */}
+              {newVariantType === "color" && (
+                <div className="border-t pt-3">
+                  <label className="block text-sm font-medium mb-2">
+                    Variant Images (Optional - will be shown in carousel)
+                  </label>
+                  <div className="flex items-start gap-2">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                      <Upload className="w-4 h-4" />
+                      <span className="text-sm">Upload Variant Images</span>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleVariantImagesUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    {newVariantImages.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {newVariantImages.map((img, index) => (
+                          <div
+                            key={index}
+                            draggable
+                            onDragStart={() =>
+                              handleVariantImageDragStart(index)
+                            }
+                            onDragOver={handleDragOver}
+                            onDrop={() => handleVariantImageDrop(index)}
+                            className="relative w-16 h-16 cursor-move hover:opacity-75 transition-opacity group"
+                          >
+                            <StorageImage
+                              storageId={img}
+                              alt={`Variant image ${index + 1}`}
+                              className="w-full h-full object-cover rounded border-2 border-gray-200"
+                            />
+                            <div className="absolute top-0.5 left-0.5 bg-black/60 text-white text-xs px-1 py-0.5 rounded">
+                              {index + 1}
+                            </div>
+                            <button
+                              onClick={() => removeVariantImage(index)}
+                              className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
-              <select
-                value={newVariantImage}
-                onChange={(e) => setNewVariantImage(e.target.value)}
-                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled={product.images.length === 0}
-              >
-                <option value="">No image</option>
-                {product.images.map((img, index) => (
-                  <option key={img} value={img}>
-                    Image {index + 1}
-                  </option>
-                ))}
-              </select>
+
               <button
                 onClick={addVariant}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
               >
-                Add
+                Add Variant
               </button>
             </div>
 
@@ -686,13 +847,6 @@ export default function AddProductPage() {
                     className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md group hover:bg-gray-200 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      {variant.image && (
-                        <StorageImage
-                          storageId={variant.image}
-                          alt={variant.value}
-                          className="w-8 h-8 object-cover rounded border border-gray-300"
-                        />
-                      )}
                       {variant.type === "color" && variant.subvalue && (
                         <div
                           className="w-6 h-6 rounded border border-gray-300"
@@ -707,6 +861,12 @@ export default function AddProductPage() {
                         {variant.subvalue && variant.type !== "color" && (
                           <span className="text-xs text-gray-500 ml-1">
                             ({variant.subvalue})
+                          </span>
+                        )}
+                        {variant.images && variant.images.length > 0 && (
+                          <span className="text-xs text-blue-600 ml-1">
+                            [{variant.images.length} img
+                            {variant.images.length > 1 ? "s" : ""}]
                           </span>
                         )}
                       </div>
@@ -865,10 +1025,10 @@ export default function AddProductPage() {
                           <StorageImage
                             storageId={review.userImage}
                             alt={review.userName}
-                            className="w-12 h-12 rounded-full object-cover flex-shrink-0 border-2 border-gray-200"
+                            className="w-12 h-12 rounded-full object-cover shrink-0 border-2 border-gray-200"
                           />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 border-2 border-gray-300">
+                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center shrink-0 border-2 border-gray-300">
                             <span className="text-gray-600 font-semibold text-lg">
                               {review.userName.charAt(0).toUpperCase()}
                             </span>
@@ -929,10 +1089,18 @@ export default function AddProductPage() {
               <>
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="w-full md:w-1/2">
-                    <Carroussel images={previewUrls} />
+                    <Carroussel
+                      images={previewUrls}
+                      variants={variants}
+                      selectedColorVariant={previewSelectedVariants.color}
+                    />
                   </div>
                   <div className="w-full md:w-1/2">
-                    <Product product={product} variants={variants} />
+                    <Product
+                      product={product}
+                      variants={variants}
+                      onVariantChange={setPreviewSelectedVariants}
+                    />
                   </div>
                 </div>
                 {/* Reviews Preview */}

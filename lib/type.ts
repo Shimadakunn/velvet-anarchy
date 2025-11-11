@@ -16,6 +16,7 @@ export type Product = {
   order?: number;
   isActive?: boolean;
   sizeGuide?: string;
+  cardImage?: string;
   _creationTime?: number;
 };
 
@@ -25,7 +26,7 @@ export type Variant = {
   type: VariantType;
   value: string;
   subvalue?: string;
-  image?: string;
+  images?: string[];
   variantLink?: string;
   _creationTime?: number;
 };

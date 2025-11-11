@@ -3,20 +3,28 @@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useIsMobile } from "@/lib/isMobile";
-import { Product } from "@/lib/type";
+import { Product, Variant } from "@/lib/type";
 import { useQuery } from "convex/react";
 import { CheckCheck, Flame, Package, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function ProductCard({ product }: { product: Product }) {
-  // Get the first image URL only if images exist
+  // Get the card image URL (either cardImage or first product image)
+  const imageToDisplay = product.cardImage || product.images[0];
   const imageUrl = useQuery(
     api.files.getUrl,
-    product.images.length > 0
-      ? { storageId: product.images[0] as Id<"_storage"> }
-      : "skip"
+    imageToDisplay ? { storageId: imageToDisplay as Id<"_storage"> } : "skip"
   );
+
+  // Fetch variants for this product
+  const variants = useQuery(
+    api.variants.get,
+    product._id ? { id: product._id as Id<"products"> } : "skip"
+  );
+
+  // Filter color variants
+  const colorVariants = variants?.filter((v) => v.type === "color") || [];
 
   return (
     <Link
@@ -25,7 +33,7 @@ export default function ProductCard({ product }: { product: Product }) {
     >
       {/* Product Image Container */}
       <div className="relative h-[20rem] overflow-hidden mb-4">
-        {product.images.length === 0 ? (
+        {!imageToDisplay ? (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center">
             <span className="text-gray-300 text-sm">No Image</span>
           </div>
@@ -54,6 +62,28 @@ export default function ProductCard({ product }: { product: Product }) {
         <p className="text-base font-black -translate-y-2">
           {product.price.toFixed(2)} €
         </p>
+
+        {/* Color Variants */}
+        {colorVariants.length > 0 && (
+          <div className="flex items-center gap-2 mb-2">
+            {colorVariants.slice(0, 5).map((variant, index) => (
+              <div
+                key={index}
+                className="w-6 h-6 rounded-full border-2 border-gray-300"
+                style={{
+                  backgroundColor: variant.subvalue || "#cccccc",
+                }}
+                title={variant.value}
+              />
+            ))}
+            {colorVariants.length > 5 && (
+              <span className="text-xs text-gray-500">
+                +{colorVariants.length - 5}
+              </span>
+            )}
+          </div>
+        )}
+
         <Badges product={product} />
       </div>
 

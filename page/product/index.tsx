@@ -20,9 +20,11 @@ import Accordion from "./8 - Accordion";
 export default function Product({
   product,
   variants = [],
+  onVariantChange,
 }: {
   product: ProductType;
   variants?: Variant[];
+  onVariantChange?: (variants: Record<VariantType, string>) => void;
 }) {
   // Group variants by type
   const variantsByType = useMemo(() => {
@@ -68,10 +70,16 @@ export default function Product({
   const [quantity, setQuantity] = useState<number>(1);
 
   const handleVariantChange = (type: VariantType, value: string) => {
-    setSelectedVariants((prev) => ({
-      ...prev,
+    const newVariants = {
+      ...selectedVariants,
       [type]: value,
-    }));
+    };
+    setSelectedVariants(newVariants);
+
+    // Notify parent component if callback provided
+    if (onVariantChange) {
+      onVariantChange(newVariants);
+    }
   };
 
   return (

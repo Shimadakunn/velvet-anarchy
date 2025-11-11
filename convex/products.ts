@@ -59,12 +59,13 @@ export const create = mutation({
     mostPopular: v.optional(v.boolean()),
     order: v.optional(v.number()),
     sizeGuide: v.optional(v.string()),
+    cardImage: v.optional(v.string()),
     variants: v.array(
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),
         value: v.string(),
         subvalue: v.optional(v.string()),
-        image: v.optional(v.string()),
+        images: v.optional(v.array(v.string())),
         variantLink: v.optional(v.string()),
       })
     ),
@@ -83,7 +84,7 @@ export const create = mutation({
         type: variant.type,
         value: variant.value,
         subvalue: variant.subvalue,
-        image: variant.image,
+        images: variant.images,
         variantLink: variant.variantLink,
       });
     }
@@ -108,12 +109,13 @@ export const update = mutation({
     mostPopular: v.optional(v.boolean()),
     order: v.optional(v.number()),
     sizeGuide: v.optional(v.string()),
+    cardImage: v.optional(v.string()),
     variants: v.array(
       v.object({
         type: v.union(v.literal("size"), v.literal("color")),
         value: v.string(),
         subvalue: v.optional(v.string()),
-        image: v.optional(v.string()),
+        images: v.optional(v.array(v.string())),
         variantLink: v.optional(v.string()),
       })
     ),
@@ -142,7 +144,7 @@ export const update = mutation({
         type: variant.type,
         value: variant.value,
         subvalue: variant.subvalue,
-        image: variant.image,
+        images: variant.images,
         variantLink: variant.variantLink,
       });
     }

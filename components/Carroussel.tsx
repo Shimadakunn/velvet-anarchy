@@ -1,15 +1,51 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useStorageUrls } from "@/hooks/useStorageUrls";
+import { Variant } from "@/lib/type";
 import Image from "next/image";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-export default function Carroussel({ images }: { images: string[] }) {
+export default function Carroussel({
+  images,
+  variants = [],
+  selectedColorVariant,
+}: {
+  images: string[];
+  variants?: Variant[];
+  selectedColorVariant?: string;
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const thumbnailContainerRef = useRef<HTMLDivElement>(null);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Find the selected color variant and get its images
+  const selectedVariant = useMemo(() => {
+    if (!selectedColorVariant || !variants || variants.length === 0) {
+      return null;
+    }
+    return variants.find(
+      (v) => v.type === "color" && v.value === selectedColorVariant
+    );
+  }, [variants, selectedColorVariant]);
+
+  // Get variant image URLs
+  const variantImageUrls = useStorageUrls(selectedVariant?.images || []);
+
+  // Combine variant images with product images (variant images first)
+  const displayImages = useMemo(() => {
+    if (variantImageUrls && variantImageUrls.length > 0) {
+      return [...variantImageUrls, ...images];
+    }
+    return images;
+  }, [variantImageUrls, images]);
+
+  // Reset to first image when variant changes
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [selectedColorVariant]);
 
   const goToSlide = (index: number) => {
     setDirection(index > currentIndex ? "right" : "left");
@@ -23,7 +59,7 @@ export default function Carroussel({ images }: { images: string[] }) {
   };
 
   const goToNext = () => {
-    if (currentIndex === images.length - 1) return;
+    if (currentIndex === displayImages.length - 1) return;
     setDirection("right");
     setCurrentIndex(currentIndex + 1);
   };
@@ -119,7 +155,7 @@ export default function Carroussel({ images }: { images: string[] }) {
 
         {/* Main Image Container */}
         <div className="relative flex-1 aspect-[3/4] overflow-hidden">
-          {images.map((image, index) => (
+          {displayImages.map((image, index) => (
             <div
               key={index}
               className={`absolute inset-0 transition-all duration-500 ease-in-out ${
@@ -138,7 +174,7 @@ export default function Carroussel({ images }: { images: string[] }) {
                 src={image}
                 alt={`Slide ${index + 1}`}
                 fill
-                className="object-cover"
+                className="object-contain"
                 priority={index === 0}
               />
             </div>
@@ -148,21 +184,21 @@ export default function Carroussel({ images }: { images: string[] }) {
         {/* Navigation Next Arrows */}
         <button
           onClick={goToNext}
-          disabled={currentIndex === images.length - 1}
+          disabled={currentIndex === displayImages.length - 1}
           className="absolute right-0 top-1/2 -translate-y-1/2 p-2 z-10"
           aria-label="Next slide"
         >
           <ArrowIcon
             size={4}
             direction="right"
-            disabled={currentIndex === images.length - 1}
+            disabled={currentIndex === displayImages.length - 1}
           />
         </button>
       </div>
 
       {/* Dot Indicators - Mobile Only */}
       <div className="flex md:hidden justify-center gap-3 mt-4">
-        {images.map((_, index) => (
+        {displayImages.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
@@ -195,7 +231,7 @@ export default function Carroussel({ images }: { images: string[] }) {
           className="flex gap-2 overflow-x-auto scrollbar-hide p-1 scroll-smooth"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {images.map((image, index) => (
+          {displayImages.map((image, index) => (
             <button
               key={index}
               ref={(el) => {

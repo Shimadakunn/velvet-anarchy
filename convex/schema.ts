@@ -17,6 +17,7 @@ export default defineSchema({
     order: v.optional(v.number()),
     isActive: v.optional(v.boolean()),
     sizeGuide: v.optional(v.string()),
+    cardImage: v.optional(v.string()),
   }).index("bySlug", ["slug"]),
 
   variants: defineTable({
@@ -24,7 +25,7 @@ export default defineSchema({
     type: v.union(v.literal("size"), v.literal("color")),
     value: v.string(),
     subvalue: v.optional(v.string()),
-    image: v.optional(v.string()),
+    images: v.optional(v.array(v.string())),
     variantLink: v.optional(v.string()),
   }).index("byProduct", ["productId"]),
 
