@@ -83,15 +83,14 @@ export default function Product({
   };
 
   return (
-    <div className="">
+    <div>
       <Rating product={product} />
-      <div className="mb-3" />
+      <div className="mb-1" />
+      <Badges product={product} />
+      <div className="mb-4" />
 
       <Name product={product} />
       <div className="mb-1" />
-      <Badges product={product} />
-
-      <div className="mb-4" />
       <Price price={product.price} />
       <div className="mb-2" />
 

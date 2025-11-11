@@ -32,8 +32,8 @@ function OrderItem({
   const variantImage = variants?.find((variant) => {
     const selectedValue =
       item.variants[variant.type as keyof typeof item.variants];
-    return variant.value === selectedValue && variant.image;
-  })?.image;
+    return variant.value === selectedValue && variant.images;
+  })?.images?.[0];
 
   // Use variant image if available, otherwise use product image
   const imageToDisplay = variantImage || item.productImage;
@@ -75,10 +75,8 @@ function OrderItem({
 
       {/* Price */}
       <div className="text-right">
-        <p className="font-semibold">
-          €{(item.price * item.quantity).toFixed(2)}
-        </p>
-        <p className="text-sm text-gray-500">€{item.price.toFixed(2)} each</p>
+        <p className="font-semibold">€{item.price * item.quantity}</p>
+        <p className="text-sm text-gray-500">€{item.price} each</p>
       </div>
     </div>
   );
@@ -212,24 +210,22 @@ function OrderSuccessContent() {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between text-gray-700">
                 <span>Subtotal</span>
-                <span>€{order.subtotal.toFixed(2)}</span>
+                <span>€{order.subtotal}</span>
               </div>
               <div className="flex justify-between text-gray-700">
                 <span>Shipping</span>
                 <span>
-                  {order.shipping === 0
-                    ? "FREE"
-                    : `€${order.shipping.toFixed(2)}`}
+                  {order.shipping === 0 ? "FREE" : `€${order.shipping}`}
                 </span>
               </div>
               <div className="flex justify-between text-gray-700">
                 <span>Tax</span>
-                <span>€{order.tax.toFixed(2)}</span>
+                <span>€{order.tax}</span>
               </div>
             </div>
             <div className="flex justify-between text-xl font-bold pt-4 border-t border-gray-200">
               <span>Total Paid</span>
-              <span>€{order.total.toFixed(2)}</span>
+              <span>€{order.total}</span>
             </div>
           </div>
         </div>

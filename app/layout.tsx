@@ -1,7 +1,7 @@
 import Cart from "@/components/Cart";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { helveticaNeue, meg } from "@/lib/fonts";
+import { ghost, helveticaNeue, meg, times } from "@/lib/fonts";
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${helveticaNeue.variable} ${meg.variable} relative font-medium antialiased min-h-screen flex flex-col`}
+        className={`${helveticaNeue.variable} ${meg.variable} ${times.variable} ${ghost.variable} relative font-medium antialiased min-h-screen flex flex-col`}
       >
         <Header />
         <Provider>

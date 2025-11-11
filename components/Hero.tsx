@@ -90,7 +90,7 @@ export default function Hero({ slides }: HeroProps) {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      <div className="w-full h-[75vh] relative overflow-hidden">
+      <div className="w-full h-[110vh] relative overflow-hidden">
         {/* Slides */}
         {visibleSlides.map((slide, index) => (
           <div
@@ -109,19 +109,21 @@ export default function Hero({ slides }: HeroProps) {
             />
 
             {/* Overlay Content */}
-            <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white [-webkit-text-stroke:2px_black] [paint-order:stroke_fill]">
+            <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white gap-10">
               {/* [-webkit-text-stroke:2px_black] [paint-order:stroke_fill] */}
-              <h2 className="font-Meg text-2xl md:text-5xl ">{slide.title}</h2>
+              <h2 className="text-2xl md:text-5xl uppercase tracking-tight">
+                {slide.title}
+              </h2>
               {slide.product ? (
                 <Link
                   href={`/product/${slide.product.slug}`}
-                  className=" font-medium text-sm md:text-lg border-b"
+                  className=" font-normal text-sm md:text-base hover:underline underline-offset-4 cursor-pointer"
                 >
-                  SHOP NOW
+                  Shop Now
                 </Link>
               ) : (
-                <button className=" font-medium text-sm md:text-lg border-b ">
-                  SHOP NOW
+                <button className=" font-normal text-sm md:text-base hover:underline underline-offset-4 cursor-pointer">
+                  Shop Now
                 </button>
               )}
             </div>
@@ -131,7 +133,7 @@ export default function Hero({ slides }: HeroProps) {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white/60 p-2 md:p-3 rounded-full transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-10"
+          className="absolute left-2 md:left-4 top-[45%] -translate-y-1/2 text-white p-2 md:p-3 rounded-full transition-all duration-300 opacity-100 z-10 cursor-pointer"
           aria-label="Previous slide"
         >
           <svg
@@ -151,7 +153,7 @@ export default function Hero({ slides }: HeroProps) {
 
         <button
           onClick={nextSlide}
-          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white/60 p-2 md:p-3 rounded-full transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-10"
+          className="absolute right-2 md:right-4 top-[45%] -translate-y-1/2 text-white p-2 md:p-3 rounded-full transition-all duration-300 opacity-100 z-10 cursor-pointer"
           aria-label="Next slide"
         >
           <svg
@@ -170,7 +172,7 @@ export default function Hero({ slides }: HeroProps) {
         </button>
 
         {/* Dot Indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10 w-full md:w-[40vw] px-4">
+        <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 flex gap-2 z-10 w-full md:w-[40vw] px-4">
           {visibleSlides.map((_, index) => (
             <button
               key={index}

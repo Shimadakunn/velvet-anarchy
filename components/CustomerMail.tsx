@@ -322,7 +322,7 @@ export function CustomerMail({
                         textAlign: "right",
                       }}
                     >
-                      €{(item.price * item.quantity).toFixed(2)}
+                      €{item.price * item.quantity}
                     </td>
                   </tr>
                 </table>
@@ -354,7 +354,7 @@ export function CustomerMail({
                 <tr>
                   <td style={{ color: "#666" }}>Subtotal</td>
                   <td style={{ color: "#000", textAlign: "right" }}>
-                    €{subtotal.toFixed(2)}
+                    €{subtotal}
                   </td>
                 </tr>
               </table>
@@ -362,7 +362,7 @@ export function CustomerMail({
                 <tr>
                   <td style={{ color: "#666" }}>Shipping</td>
                   <td style={{ color: "#000", textAlign: "right" }}>
-                    {shipping === 0 ? "FREE" : `€${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "FREE" : `€${shipping}`}
                   </td>
                 </tr>
               </table>
@@ -376,9 +376,7 @@ export function CustomerMail({
               >
                 <tr>
                   <td style={{ color: "#666" }}>Tax</td>
-                  <td style={{ color: "#000", textAlign: "right" }}>
-                    €{tax.toFixed(2)}
-                  </td>
+                  <td style={{ color: "#000", textAlign: "right" }}>€{tax}</td>
                 </tr>
               </table>
               <table width="100%">
@@ -400,7 +398,7 @@ export function CustomerMail({
                       textAlign: "right",
                     }}
                   >
-                    €{total.toFixed(2)}
+                    €{total}
                   </td>
                 </tr>
               </table>

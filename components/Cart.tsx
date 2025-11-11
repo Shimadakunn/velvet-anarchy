@@ -143,39 +143,37 @@ export default function Cart() {
         {items.length > 0 && (
           <div className="p-4">
             {/* Price Breakdown */}
-            <div className="space-y-2 py-3 border-y border-gray-200">
+            <div className="space-y-1 py-2 border-y border-gray-200 text-xs">
               {/* Subtotal */}
-              <div className="flex justify-between text-sm text-gray-700">
+              <div className="flex justify-between text-gray-700">
                 <span>Subtotal · {items.length} items</span>
-                <span>€{originalSubtotal.toFixed(2)}</span>
+                <span>€{originalSubtotal}</span>
               </div>
 
               {/* Discount */}
               {shouldApplyDiscount(items) && (
-                <div className="flex justify-between text-xs pl-2">
+                <div className="flex justify-between pl-2">
                   <div className="flex items-center gap-1 text-green-700">
                     <BadgeCheck size={14} />
                     <span>Discount (10% off)</span>
                   </div>
-                  <span className="text-green-700 font-semibold">
-                    -€{discountAmount.toFixed(2)}
+                  <span className="text-green-600 font-semibold">
+                    -€{discountAmount}
                   </span>
                 </div>
               )}
 
               {/* Shipping */}
-              <div className="flex justify-between text-sm text-gray-700">
+              <div className="flex justify-between text-gray-700">
                 <span>Shipping · 10-25 days</span>
                 <span className="text-green-600 font-semibold">FREE</span>
               </div>
             </div>
 
             {/* Total */}
-            <div className="flex justify-between items-end py-4">
-              <span className="text-xl font-bold">Total</span>
-              <span className="text-2xl font-extrabold tracking-tighter">
-                €{total.toFixed(2)}
-              </span>
+            <div className="flex justify-between items-end py-3 text-lg">
+              <span>Total</span>
+              <span className=" tracking-tighter">€{total}</span>
             </div>
 
             <Link href="/checkout">
@@ -234,8 +232,8 @@ function CartItemComponent({
   const variantImage = variants?.find((variant) => {
     // Check if this variant matches any of the selected variants
     const selectedValue = item.variants[variant.type];
-    return variant.value === selectedValue && variant.image;
-  })?.image;
+    return variant.value === selectedValue && variant.images;
+  })?.images?.[0];
 
   // Use variant image if available, otherwise use product image
   const imageToDisplay = variantImage || item.productImage;
@@ -265,7 +263,7 @@ function CartItemComponent({
       {/* Product Image */}
       <Link
         href={`/product/${item.productSlug}`}
-        className="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg overflow-hidden"
+        className="shrink-0 w-20 h-20 bg-gray-200 rounded-lg overflow-hidden"
       >
         {displayImageUrl ? (
           <Image
@@ -284,14 +282,14 @@ function CartItemComponent({
 
       {/* Product Info */}
       <div className="flex-1 flex flex-col justify-between">
-        <div>
+        <div className="max-w-[230px]">
           <Link
             href={`/product/${item.productSlug}`}
-            className="text-xl font-bold font-Meg hover:underline line-clamp-2"
+            className="font-normal uppercase hover:underline truncate tracking-tight block"
           >
             {item.productName}
           </Link>
-          <p className="font-semibold text-xs text-gray-600 ">
+          <p className="font-semibold text-xs text-gray-600 truncate">
             {formatVariants()}
           </p>
         </div>
@@ -319,20 +317,16 @@ function CartItemComponent({
             </button>
           </div>
 
-          <div className="flex items-center gap-2 tracking-tighter">
+          <div className="flex items-center gap-2 font-normal tracking-tight">
             {hasDiscount ? (
               <>
-                <span className="line-through text-gray-400 text-sm">
-                  €{(item.price * item.quantity).toFixed(2)}
+                <span className="line-through text-gray-400">
+                  €{item.price * item.quantity}
                 </span>
-                <span className="font-bold text-lg">
-                  €{(item.price * item.quantity * 0.9).toFixed(2)}
-                </span>
+                <span className="">€{item.price * item.quantity * 0.9}</span>
               </>
             ) : (
-              <span className="font-bold text-lg">
-                €{(item.price * item.quantity).toFixed(2)}
-              </span>
+              <span className="">€{item.price * item.quantity}</span>
             )}
           </div>
         </div>

@@ -16,7 +16,7 @@ export default function Home() {
       {heroSlides && <Hero slides={heroSlides} />}
 
       {/* Bottom decorative element */}
-      <div className="my-8 text-center">
+      <div className="my-4 text-center">
         <div className="inline-block">
           <div className="flex items-center gap-2">
             <div className="w-12 h-px bg-gray-300"></div>

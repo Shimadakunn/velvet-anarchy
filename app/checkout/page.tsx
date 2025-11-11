@@ -43,8 +43,8 @@ function CheckoutItem({
   // Find variant image if any selected variant has one
   const variantImage = variants?.find((variant) => {
     const selectedValue = item.variants[variant.type];
-    return variant.value === selectedValue && variant.image;
-  })?.image;
+    return variant.value === selectedValue && variant.images;
+  })?.images?.[0];
 
   // Use variant image if available, otherwise use product image
   const imageToDisplay = variantImage || item.productImage;
@@ -83,7 +83,7 @@ function CheckoutItem({
       <div className="flex-1 min-w-0">
         <Link
           href={`/product/${item.productSlug}`}
-          className="font-medium text-sm text-gray-900 hover:text-gray-700 block truncate"
+          className="font-medium text-sm text-gray-900 hover:text-gray-700 block truncate uppercase tracking-tight"
         >
           {item.productName}
         </Link>
@@ -96,20 +96,16 @@ function CheckoutItem({
       </div>
 
       {/* Price */}
-      <div className="text-right flex-shrink-0 mr-1 ">
+      <div className="text-right shrink-0 mr-1 tracking-tight font-normal">
         {hasDiscount ? (
-          <div className="flex flex-col items-end gap-0.5">
-            <p className="line-through text-gray-400 text-xs">
-              €{(item.price * item.quantity).toFixed(2)}
+          <div className="flex flex-col">
+            <p className="line-through text-gray-400">
+              €{item.price * item.quantity}
             </p>
-            <p className="font-semibold text-sm">
-              €{(item.price * item.quantity * 0.9).toFixed(2)}
-            </p>
+            <p>€{item.price * item.quantity * 0.9}</p>
           </div>
         ) : (
-          <p className="font-semibold text-sm">
-            €{(item.price * item.quantity).toFixed(2)}
-          </p>
+          <p>€{item.price * item.quantity}</p>
         )}
       </div>
     </div>
@@ -382,7 +378,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Discount Code */}
-              <div className="mb-6 pb-6 border-b border-gray-200">
+              <div className="mb-6">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -396,39 +392,37 @@ export default function CheckoutPage() {
               </div>
 
               {/* Price Breakdown */}
-              <div className="space-y-3 mb-4">
+              <div className="space-y-1 py-2 border-y border-gray-200 text-xs">
                 {/* Subtotal */}
-                <div className="flex justify-between text-sm text-gray-700">
+                <div className="flex justify-between text-gray-700">
                   <span>Subtotal · {items.length} items</span>
-                  <span>€{originalSubtotal.toFixed(2)}</span>
+                  <span>€{originalSubtotal}</span>
                 </div>
 
                 {/* Discount */}
                 {shouldApplyDiscount(items) && (
-                  <div className="flex justify-between text-xs pl-2">
+                  <div className="flex justify-between pl-2">
                     <div className="flex items-center gap-1 text-green-700">
                       <BadgeCheck size={14} />
                       <span>Discount (10% off)</span>
                     </div>
-                    <span className="text-green-700 font-semibold">
-                      -€{discountAmount.toFixed(2)}
+                    <span className="text-green-600 font-semibold">
+                      -€{discountAmount}
                     </span>
                   </div>
                 )}
 
                 {/* Shipping */}
-                <div className="flex justify-between text-sm text-gray-700">
+                <div className="flex justify-between text-gray-700">
                   <span>Shipping · 10-25 days</span>
                   <span className="text-green-600 font-semibold">FREE</span>
                 </div>
               </div>
 
               {/* Total */}
-              <div className="flex justify-between items-end pt-4 border-t border-gray-200">
-                <span className="text-xl font-bold">Total</span>
-                <span className="text-2xl font-extrabold tracking-tighter">
-                  €{total.toFixed(2)}
-                </span>
+              <div className="flex justify-between items-end pt-3 text-lg">
+                <span>Total</span>
+                <span className=" tracking-tighter">€{total}</span>
               </div>
             </div>
           </div>

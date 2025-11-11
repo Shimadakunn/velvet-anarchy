@@ -3,7 +3,7 @@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useIsMobile } from "@/lib/isMobile";
-import { Product, Variant } from "@/lib/type";
+import { Product } from "@/lib/type";
 import { useQuery } from "convex/react";
 import { CheckCheck, Flame, Package, Star } from "lucide-react";
 import Image from "next/image";
@@ -53,38 +53,42 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* Product Info */}
-      <div className="pb-4">
-        <Rating product={product} />
+      <div>
+        <div className="flex items-center justify-between">
+          <Rating product={product} />
+          <Badges product={product} />
+        </div>
         {/* Product Name */}
-        <h3 className="text-xl font-Meg mt-1">{product.name}</h3>
+        <h3 className="tracking-tight font-normal uppercase my-1 truncate">
+          {product.name}
+        </h3>
 
-        {/* Price */}
-        <p className="text-base font-black -translate-y-2">
-          {product.price.toFixed(2)} €
-        </p>
-
-        {/* Color Variants */}
-        {colorVariants.length > 0 && (
-          <div className="flex items-center gap-2 mb-2">
-            {colorVariants.slice(0, 5).map((variant, index) => (
-              <div
-                key={index}
-                className="w-6 h-6 rounded-full border-2 border-gray-300"
-                style={{
-                  backgroundColor: variant.subvalue || "#cccccc",
-                }}
-                title={variant.value}
-              />
-            ))}
-            {colorVariants.length > 5 && (
-              <span className="text-xs text-gray-500">
-                +{colorVariants.length - 5}
-              </span>
-            )}
-          </div>
-        )}
-
-        <Badges product={product} />
+        <div className="flex items-center justify-between mb-1">
+          {/* Color Variants */}
+          {colorVariants.length > 0 ? (
+            <div className="flex items-center gap-1">
+              {colorVariants.slice(0, 5).map((variant, index) => (
+                <div
+                  key={index}
+                  className="w-6 h-6 rounded-full border-2 border-gray-300"
+                  style={{
+                    backgroundColor: variant.subvalue || "#cccccc",
+                  }}
+                  title={variant.value}
+                />
+              ))}
+              {colorVariants.length > 5 && (
+                <span className="text-xs text-gray-500">
+                  +{colorVariants.length - 5}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div />
+          )}
+          {/* Price */}
+          <p className="text-right font-normal">€{product.price}</p>
+        </div>
       </div>
 
       {/* Most Popular Badge */}
@@ -107,18 +111,17 @@ function Badges({ product }: { product: Product }) {
   return (
     <div className="flex flex-wrap items-center gap-1 text-xs">
       {product.trending && (
-        <div className="px-2 py-1 bg-pink-100 text-pink-500  rounded-full inline-block">
-          <Flame className="w-4 h-4 inline-block mb-[3px] mr-[1px]" />
-          Trending!
+        <div className="p-1 bg-pink-100 text-pink-500  rounded-full inline-block">
+          <Flame className="w-4 h-4 inline-block mb-[2px] mr-px" />
         </div>
       )}
       <div className="px-2 py-1 bg-green-100 text-green-600 rounded-full inline-block">
         <CheckCheck className="w-4 h-4 inline-block mb-[2px] mr-[2px]" />
-        {product.sold} sold
+        {product.sold}
       </div>
       <div className="px-2 py-1 bg-red-100 text-red-600 rounded-full inline-block">
         <Package className="w-4 h-4 inline-block mb-[3px] mr-[2px]" />
-        {product.stock} left
+        {product.stock}
       </div>
     </div>
   );

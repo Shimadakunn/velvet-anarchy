@@ -1,27 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Image from "next/image";
+import { useQuery } from "convex/react";
 import {
-  Search,
-  Package,
-  Mail,
-  User,
   Calendar,
   CheckCircle,
   Clock,
-  XCircle,
-  RotateCcw,
-  Truck,
+  Home,
+  Mail,
+  MapPin,
+  Navigation,
+  Package,
   PackageCheck,
   PackageSearch,
-  Navigation,
-  Home,
-  MapPin,
+  RotateCcw,
+  Search,
+  Truck,
+  User,
+  XCircle,
 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 // Order item component
 function OrderItem({
@@ -44,8 +44,8 @@ function OrderItem({
   const variantImage = variants?.find((variant) => {
     const selectedValue =
       item.variants[variant.type as keyof typeof item.variants];
-    return variant.value === selectedValue && variant.image;
-  })?.image;
+    return variant.value === selectedValue && variant.images;
+  })?.images?.[0];
 
   const imageToDisplay = variantImage || item.productImage;
 
@@ -80,10 +80,8 @@ function OrderItem({
       </div>
 
       <div className="text-right">
-        <p className="font-semibold text-sm">
-          €{(item.price * item.quantity).toFixed(2)}
-        </p>
-        <p className="text-xs text-gray-500">€{item.price.toFixed(2)} each</p>
+        <p className="font-semibold text-sm">€{item.price * item.quantity}</p>
+        <p className="text-xs text-gray-500">€{item.price} each</p>
       </div>
     </div>
   );
@@ -475,23 +473,21 @@ export default function TrackOrderPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-gray-700">
                       <span>Subtotal</span>
-                      <span>€{order.subtotal.toFixed(2)}</span>
+                      <span>€{order.subtotal}</span>
                     </div>
                     <div className="flex justify-between text-gray-700">
                       <span>Shipping</span>
                       <span>
-                        {order.shipping === 0
-                          ? "FREE"
-                          : `€${order.shipping.toFixed(2)}`}
+                        {order.shipping === 0 ? "FREE" : `€${order.shipping}`}
                       </span>
                     </div>
                     <div className="flex justify-between text-gray-700">
                       <span>Tax</span>
-                      <span>€{order.tax.toFixed(2)}</span>
+                      <span>€{order.tax}</span>
                     </div>
                     <div className="flex justify-between text-xl font-bold pt-3 border-t border-gray-200">
                       <span>Total</span>
-                      <span>€{order.total.toFixed(2)}</span>
+                      <span>€{order.total}</span>
                     </div>
                   </div>
                 </div>

@@ -252,7 +252,7 @@ export function AdminMail({
                         textAlign: "right",
                       }}
                     >
-                      €{(item.price * item.quantity).toFixed(2)}
+                      €{item.price * item.quantity}
                     </td>
                   </tr>
                 </table>
@@ -269,7 +269,7 @@ export function AdminMail({
                 <Text
                   style={{ fontSize: "14px", color: "#666", margin: "5px 0" }}
                 >
-                  Price: €{item.price.toFixed(2)} each
+                  Price: €{item.price} each
                 </Text>
               </div>
             ))}
@@ -288,7 +288,7 @@ export function AdminMail({
               <tr>
                 <td style={{ color: "#666" }}>Subtotal</td>
                 <td style={{ color: "#000", textAlign: "right" }}>
-                  €{subtotal.toFixed(2)}
+                  €{subtotal}
                 </td>
               </tr>
             </table>
@@ -296,7 +296,7 @@ export function AdminMail({
               <tr>
                 <td style={{ color: "#666" }}>Shipping</td>
                 <td style={{ color: "#000", textAlign: "right" }}>
-                  {shipping === 0 ? "FREE" : `€${shipping.toFixed(2)}`}
+                  {shipping === 0 ? "FREE" : `€${shipping}`}
                 </td>
               </tr>
             </table>
@@ -310,9 +310,7 @@ export function AdminMail({
             >
               <tr>
                 <td style={{ color: "#666" }}>Tax</td>
-                <td style={{ color: "#000", textAlign: "right" }}>
-                  €{tax.toFixed(2)}
-                </td>
+                <td style={{ color: "#000", textAlign: "right" }}>€{tax}</td>
               </tr>
             </table>
             <table width="100%">
@@ -334,7 +332,7 @@ export function AdminMail({
                     textAlign: "right",
                   }}
                 >
-                  €{total.toFixed(2)}
+                  €{total}
                 </td>
               </tr>
             </table>

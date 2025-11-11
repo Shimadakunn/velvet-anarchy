@@ -156,8 +156,8 @@ function OrderItem({
   const variantImage = variants?.find((variant) => {
     const selectedValue =
       item.variants[variant.type as keyof typeof item.variants];
-    return variant.value === selectedValue && variant.image;
-  })?.image;
+    return variant.value === selectedValue && variant.images;
+  })?.images?.[0];
 
   const imageToDisplay = variantImage || item.productImage;
   const variantLink = selectedVariant?.variantLink;
@@ -203,14 +203,12 @@ function OrderItem({
           )}
         </div>
         <p className="text-xs text-gray-500 mt-0.5">
-          €{item.price.toFixed(2)} x {item.quantity}
+          €{item.price} x {item.quantity}
         </p>
       </div>
 
       <div className="text-right">
-        <p className="font-semibold text-sm">
-          €{(item.price * item.quantity).toFixed(2)}
-        </p>
+        <p className="font-semibold text-sm">€{item.price * item.quantity}</p>
       </div>
     </div>
   );
@@ -436,7 +434,7 @@ function OrderCard({
           <span className="text-sm">{orderDate}</span>
         </div>
         <div className="flex-1" />
-        <span className="text-lg font-bold">€{order.total.toFixed(2)}</span>
+        <span className="text-lg font-bold">€{order.total}</span>
       </div>
 
       {/* Status and Shipping Status */}
@@ -587,23 +585,21 @@ function OrderCard({
             <div className="border-t border-gray-200 text-sm space-y-1 pt-2">
               <div className="flex justify-between text-gray-700">
                 <span>Subtotal</span>
-                <span>€{order.subtotal.toFixed(2)}</span>
+                <span>€{order.subtotal}</span>
               </div>
               <div className="flex justify-between text-gray-700">
                 <span>Shipping</span>
                 <span>
-                  {order.shipping === 0
-                    ? "FREE"
-                    : `€${order.shipping.toFixed(2)}`}
+                  {order.shipping === 0 ? "FREE" : `€${order.shipping}`}
                 </span>
               </div>
               <div className="flex justify-between text-gray-700">
                 <span>Tax</span>
-                <span>€{order.tax.toFixed(2)}</span>
+                <span>€{order.tax}</span>
               </div>
               <div className="flex justify-between font-bold text-base pt-1 border-t border-gray-300">
                 <span>Total</span>
-                <span>€{order.total.toFixed(2)}</span>
+                <span>€{order.total}</span>
               </div>
             </div>
           </div>
@@ -664,7 +660,7 @@ export default function AdminOrdersPage() {
             <div className="bg-emerald-50 rounded-lg border border-emerald-200 p-4">
               <p className="text-xs text-emerald-800 mb-1">Revenue</p>
               <p className="text-2xl font-bold text-emerald-900">
-                €{stats.revenue.toFixed(0)}
+                €{stats.revenue}
               </p>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">

@@ -1,21 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "convex/react";
+import ProductCard from "@/components/ProductCard";
+import StorageImage from "@/components/StorageImage";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Product } from "@/lib/type";
-import StorageImage from "@/components/StorageImage";
-import ProductCard from "@/components/ProductCard";
+import { useMutation, useQuery } from "convex/react";
 import {
-  GripVertical,
-  Star,
-  Flame,
   Edit,
-  Trash2,
   Eye,
   EyeOff,
+  Flame,
+  GripVertical,
+  Star,
+  Trash2,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function ProductsAdminPage() {
   const products = useQuery(api.products.list);
@@ -224,7 +224,7 @@ export default function ProductsAdminPage() {
                       {product.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {product.price.toFixed(2)} € • {product.stock} in stock
+                      {product.price} € • {product.stock} in stock
                     </p>
                   </div>
 
