@@ -5,7 +5,7 @@ import StorageImage from "@/components/StorageImage";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import { Upload, X } from "lucide-react";
+import { Menu, ShoppingCart, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -392,19 +392,56 @@ export default function HeroAdmin() {
               <div
                 className={`relative ${
                   previewMode === "mobile"
-                    ? "w-[375px] h-[500px]"
-                    : "w-full h-[75vh]"
+                    ? "w-[375px] h-[110vh]"
+                    : "w-full h-[110vh]"
                 }`}
               >
+                {/* Header Preview */}
+                <div className="absolute top-0 left-0 right-0 w-full py-6 z-10">
+                  <div className="flex justify-between items-center mx-auto max-w-6xl px-4">
+                    {/* Left: Burger Menu */}
+                    <button aria-label="Menu" className="cursor-pointer">
+                      <Menu
+                        size={24}
+                        strokeWidth={2.25}
+                        className="text-white"
+                      />
+                    </button>
+
+                    {/* Center: Brand Name */}
+                    <h1
+                      className={`font-Ghost tracking-tight absolute left-1/2 transform -translate-x-1/2 mb-2 transition-all duration-300 ease-in-out text-white ${
+                        previewMode === "mobile"
+                          ? "mt-8 text-6xl"
+                          : "mt-8 md:mt-12 text-6xl md:text-7xl"
+                      }`}
+                    >
+                      VelvetAnarchy
+                    </h1>
+
+                    {/* Right: Shopping Cart */}
+                    <button
+                      className="relative cursor-pointer"
+                      aria-label="Shopping cart"
+                    >
+                      <ShoppingCart
+                        size={24}
+                        strokeWidth={2.25}
+                        className="text-white"
+                      />
+                    </button>
+                  </div>
+                </div>
+
                 <StorageImage
                   storageId={formData.image}
                   alt="Preview"
                   className="w-full h-full object-cover object-center"
                 />
-                {/* Overlay Content */}
-                <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white [-webkit-text-stroke:2px_black] [paint-order:stroke_fill]">
+                {/* Overlay Content - Matching Hero.tsx */}
+                <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 flex flex-col items-center justify-center w-full text-white gap-10">
                   <h2
-                    className={`font-Meg ${
+                    className={`uppercase tracking-tight ${
                       previewMode === "mobile" ? "text-2xl" : "text-5xl"
                     }`}
                   >
@@ -412,11 +449,11 @@ export default function HeroAdmin() {
                   </h2>
                   <button
                     type="button"
-                    className={`font-medium border-b ${
-                      previewMode === "mobile" ? "text-sm" : "text-lg"
+                    className={`font-normal hover:underline underline-offset-4 cursor-pointer ${
+                      previewMode === "mobile" ? "text-sm" : "text-base"
                     }`}
                   >
-                    SHOP NOW
+                    Shop Now
                   </button>
                 </div>
               </div>
@@ -424,8 +461,8 @@ export default function HeroAdmin() {
               <div
                 className={`relative flex items-center justify-center ${
                   previewMode === "mobile"
-                    ? "w-[375px] h-[500px]"
-                    : "w-full h-[75vh]"
+                    ? "w-[375px] h-[110vh]"
+                    : "w-full h-[110vh]"
                 }`}
               >
                 <div className="text-center p-8">
