@@ -1,7 +1,7 @@
 "use client";
 
 import ProductCard from "@/components/ProductCard";
-import StorageImage from "@/components/StorageImage";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Product } from "@/lib/type";
@@ -9,6 +9,7 @@ import { useMutation, useQuery } from "convex/react";
 import {
   Edit,
   Eye,
+  Plus,
   EyeOff,
   Flame,
   GripVertical,
@@ -16,6 +17,37 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+
+function ProductImageThumbnail({ product }: { product: Product }) {
+  // Get the card image URL (either cardImage or first product image)
+  const imageToDisplay = product.cardImage || product.images[0];
+  const imageUrl = useQuery(
+    api.files.getUrl,
+    imageToDisplay ? { storageId: imageToDisplay as Id<"_storage"> } : "skip"
+  );
+
+  return (
+    <div className="shrink-0 w-16 h-16 bg-white rounded-md overflow-hidden">
+      {!imageToDisplay ? (
+        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+          <span className="text-gray-300 text-xs">No Image</span>
+        </div>
+      ) : imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={product.name}
+          width={64}
+          height={64}
+          className="w-full h-full object-contain"
+        />
+      ) : (
+        <div className="w-full h-full bg-gray-100 animate-pulse"></div>
+      )}
+    </div>
+  );
+}
 
 export default function ProductsAdminPage() {
   const products = useQuery(api.products.list);
@@ -167,8 +199,14 @@ export default function ProductsAdminPage() {
       <div className="max-w-7xl mx-auto px-4">
         {/* Product Management Section */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="mb-6">
+          <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">Manage Products</h1>
+            <Button className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md">
+              <Link href="/add">
+                <Plus className="w-4 h-4 mr-2 inline-block" />
+                Add New Product
+              </Link>
+            </Button>
           </div>
 
           <p className="text-gray-600 mb-4">
@@ -194,29 +232,17 @@ export default function ProductsAdminPage() {
                   }`}
                 >
                   {/* Drag Handle */}
-                  <div className="flex-shrink-0 text-gray-400">
+                  <div className="shrink-0 text-gray-400">
                     <GripVertical className="w-6 h-6" />
                   </div>
 
                   {/* Order Number */}
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
+                  <div className="shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
                     {index + 1}
                   </div>
 
                   {/* Product Image */}
-                  <div className="flex-shrink-0 w-16 h-16 bg-white rounded-md overflow-hidden">
-                    {product.images.length > 0 ? (
-                      <StorageImage
-                        storageId={product.images[0]}
-                        alt={product.name}
-                        className="w-full h-full object-contain"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-300 text-xs">No Image</span>
-                      </div>
-                    )}
-                  </div>
+                  <ProductImageThumbnail product={product} />
 
                   {/* Product Info */}
                   <div className="flex-1">
@@ -229,7 +255,7 @@ export default function ProductsAdminPage() {
                   </div>
 
                   {/* Checkboxes Container */}
-                  <div className="flex-shrink-0 flex flex-col gap-2">
+                  <div className="shrink-0 flex flex-col gap-2">
                     {/* Most Popular Checkbox */}
                     <div className="flex items-center gap-2">
                       <input
@@ -278,7 +304,7 @@ export default function ProductsAdminPage() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex-shrink-0 flex gap-2">
+                  <div className="shrink-0 flex gap-2">
                     {/* Toggle Active/Deactivate */}
                     <button
                       onClick={() =>

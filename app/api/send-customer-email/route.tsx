@@ -85,11 +85,13 @@ export async function POST(request: NextRequest) {
       delivered: "Order Delivered",
     };
 
-    const subject = `${statusLabels[shippingStatus] || "Order Update"} - #${orderId}`;
+    const subject = `${
+      statusLabels[shippingStatus] || "Order Update"
+    } - #${orderId}`;
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: "Vivi Nana <onboarding@resend.dev>",
+      from: "Velvet Anarchy <onboarding@resend.dev>",
       to: [customerEmail],
       subject,
       react: (

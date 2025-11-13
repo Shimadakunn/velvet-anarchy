@@ -6,7 +6,7 @@ export default function ReturnsPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-Meg  mb-4">Returns & Exchanges</h1>
+          <h1 className="text-5xl mb-4">Returns & Exchanges</h1>
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
         </div>
 
@@ -15,7 +15,7 @@ export default function ReturnsPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              We want you to love your Vivi Nana jewelry. If you are not
+              We want you to love your Velvet Anarchy jewelry. If you are not
               completely satisfied with your purchase, we are here to help with
               returns and exchanges.
             </p>

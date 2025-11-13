@@ -6,7 +6,7 @@ export default function PrivacyPolicyPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-Meg  mb-4">Privacy Policy</h1>
+          <h1 className="text-5xl  mb-4">Privacy Policy</h1>
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
         </div>
 
@@ -15,8 +15,8 @@ export default function PrivacyPolicyPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              At Vivi Nana, we take your privacy seriously. This Privacy Policy
-              explains how we collect, use, disclose, and safeguard your
+              At Velvet Anarchy, we take your privacy seriously. This Privacy
+              Policy explains how we collect, use, disclose, and safeguard your
               information when you visit our website and make purchases.
             </p>
           </section>

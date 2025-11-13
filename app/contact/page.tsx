@@ -39,7 +39,7 @@ export default function ContactPage() {
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-Meg mb-4">Get In Touch</h1>
+          <h1 className="text-5xl mb-4">Get In Touch</h1>
           <p className="text-lg text-gray-600">
             Have a question? We are here to help
           </p>

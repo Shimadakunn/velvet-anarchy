@@ -31,16 +31,6 @@ export const helveticaNeue = localFont({
   variable: "--font-helvetica-neue",
 });
 
-export const meg = localFont({
-  src: "../public/fonts/Meg.otf",
-  variable: "--font-meg",
-});
-
-export const times = localFont({
-  src: "../public/fonts/Times.ttf",
-  variable: "--font-times",
-});
-
 export const ghost = localFont({
   src: "../public/fonts/Ghost.ttf",
   variable: "--font-ghost",
