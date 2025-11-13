@@ -103,7 +103,7 @@ export function Header() {
         <div className="flex flex-col h-full">
           {/* Close Button */}
           <div className="flex justify-between items-center p-4 border-b border-gray-300 ">
-            <h2 className="text-3xl tracking-tight font-Meg uppercase">Menu</h2>
+            <h2 className="text-3xl tracking-tight uppercase">Menu</h2>
             <button
               onClick={() => setIsMenuOpen(false)}
               className="p-2 cursor-pointer"
@@ -117,28 +117,45 @@ export function Header() {
           <nav className="flex-1 p-4">
             <ul className="flex flex-col gap-4 uppercase tracking-tight font-normal">
               <li
-                className={`cursor-pointer hover:underline underline-offset-4 ${pathname === "/" ? "underline" : ""}`}
+                className={`cursor-pointer hover:underline underline-offset-4 ${
+                  pathname === "/" ? "underline" : ""
+                }`}
               >
                 <Link href="/" onClick={() => setIsMenuOpen(false)}>
                   Home
                 </Link>
               </li>
               <li
-                className={`cursor-pointer hover:underline underline-offset-4 ${pathname === "/track" ? "underline" : ""}`}
+                className={`cursor-pointer hover:underline underline-offset-4 ${
+                  pathname === "/productss" ? "underline" : ""
+                }`}
+              >
+                <Link href="/productss" onClick={() => setIsMenuOpen(false)}>
+                  Products
+                </Link>
+              </li>
+              <li
+                className={`cursor-pointer hover:underline underline-offset-4 ${
+                  pathname === "/track" ? "underline" : ""
+                }`}
               >
                 <Link href="/track" onClick={() => setIsMenuOpen(false)}>
                   Order Tracking
                 </Link>
               </li>
               <li
-                className={`cursor-pointer hover:underline underline-offset-4 ${pathname === "/about" ? "underline" : ""}`}
+                className={`cursor-pointer hover:underline underline-offset-4 ${
+                  pathname === "/about" ? "underline" : ""
+                }`}
               >
                 <Link href="/about" onClick={() => setIsMenuOpen(false)}>
                   About
                 </Link>
               </li>
               <li
-                className={`cursor-pointer hover:underline underline-offset-4 ${pathname === "/contact" ? "underline" : ""}`}
+                className={`cursor-pointer hover:underline underline-offset-4 ${
+                  pathname === "/contact" ? "underline" : ""
+                }`}
               >
                 <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
                   Contact

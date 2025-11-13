@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     // Send email to admin using Resend
     const { data, error } = await resend.emails.send({
-      from: "Vivi Nana <onboarding@resend.dev>",
+      from: "Velvet Anarchy <onboarding@resend.dev>",
       to: [adminEmail],
       subject: `New Order - #${orderId}`,
       react: (

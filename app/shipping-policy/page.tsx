@@ -6,7 +6,7 @@ export default function ShippingPolicyPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-Meg  mb-4">Shipping Policy</h1>
+          <h1 className="text-5xl mb-4">Shipping Policy</h1>
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
         </div>
 
@@ -15,9 +15,9 @@ export default function ShippingPolicyPage() {
           {/* Introduction */}
           <section>
             <p className="text-gray-700 leading-relaxed">
-              At Vivi Nana, we are committed to delivering your jewelry safely
-              and promptly. This Shipping Policy outlines our shipping methods,
-              costs, and delivery times.
+              At Velvet Anarchy, we are committed to delivering your jewelry
+              safely and promptly. This Shipping Policy outlines our shipping
+              methods, costs, and delivery times.
             </p>
           </section>
 

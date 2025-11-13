@@ -4,7 +4,7 @@ import Hero from "@/components/Hero";
 import ProductCard from "@/components/ProductCard";
 import { useDataStore } from "@/store/dataStore";
 
-export default function Home() {
+export default function ProductsPage() {
   const { getProducts, getHeroSlides } = useDataStore();
 
   // Get data from cache only - fetching happens globally in Footer
@@ -12,9 +12,7 @@ export default function Home() {
   const { data: heroSlides } = getHeroSlides();
 
   return (
-    <div className="mb-8">
-      {heroSlides && <Hero slides={heroSlides} />}
-
+    <div className="min-h-screen mb-8">
       {/* Bottom decorative element */}
       <div className="my-4 text-center">
         <div className="inline-block">
