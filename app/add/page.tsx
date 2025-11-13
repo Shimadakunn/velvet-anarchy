@@ -641,88 +641,92 @@ export default function AddProductPage() {
             )}
           </div>
 
-          {/* Size Guide Upload */}
-          <label className="block text-sm font-medium mb-2">
-            Size Guide (Optional)
-          </label>
-          <div className="mb-4 flex items-start gap-2">
-            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors mb-3">
-              <Upload className="w-4 h-4" />
-              <span className="text-sm">Upload Size Guide</span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleSizeGuideUpload}
-                className="hidden"
-              />
-            </label>
-            {product.sizeGuide && (
-              <div className="relative w-24 h-24 group">
-                <StorageImage
-                  storageId={product.sizeGuide}
-                  alt="Size Guide Preview"
-                  className="w-full h-full object-cover rounded border-2 border-gray-200"
-                />
-                <button
-                  onClick={() =>
-                    setProduct((prev) => ({ ...prev, sizeGuide: undefined }))
-                  }
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Size Guide Upload */}
 
-          {/* Card Image Selection */}
-          <label className="block text-sm font-medium mb-2">
-            Product Card Image (Optional - defaults to first product image)
-          </label>
-          <div className="mb-4">
-            <select
-              value={product.cardImage || ""}
-              onChange={(e) =>
-                setProduct((prev) => ({
-                  ...prev,
-                  cardImage: e.target.value || undefined,
-                }))
-              }
-              className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={product.images.length === 0 && variants.length === 0}
-            >
-              <option value="">Use first product image</option>
-              <optgroup label="Product Images">
-                {product.images.map((img, index) => (
-                  <option key={`product-${img}`} value={img}>
-                    Product Image {index + 1}
-                  </option>
-                ))}
-              </optgroup>
-              {variants.some((v) => v.images && v.images.length > 0) && (
-                <optgroup label="Variant Images">
-                  {variants.map((variant) =>
-                    variant.images?.map((img, imgIndex) => (
-                      <option
-                        key={`variant-${variant.value}-${img}`}
-                        value={img}
-                      >
-                        {variant.value} - Image {imgIndex + 1}
-                      </option>
-                    ))
-                  )}
-                </optgroup>
-              )}
-            </select>
-            {product.cardImage && (
-              <div className="mt-3 relative w-24 h-24 group inline-block">
-                <StorageImage
-                  storageId={product.cardImage}
-                  alt="Card Image Preview"
-                  className="w-full h-full object-cover rounded border-2 border-gray-200"
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">
+                Size Guide (Optional)
+              </label>
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors mb-3">
+                <Upload className="w-4 h-4" />
+                <span className="text-sm">Upload Size Guide</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleSizeGuideUpload}
+                  className="hidden"
                 />
-              </div>
-            )}
+              </label>
+              {product.sizeGuide && (
+                <div className="relative w-24 h-24 group">
+                  <StorageImage
+                    storageId={product.sizeGuide}
+                    alt="Size Guide Preview"
+                    className="w-full h-full object-cover rounded border-2 border-gray-200"
+                  />
+                  <button
+                    onClick={() =>
+                      setProduct((prev) => ({ ...prev, sizeGuide: undefined }))
+                    }
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Card Image Selection */}
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">
+                Product Card Image (Optional - defaults to first product image)
+              </label>
+              <select
+                value={product.cardImage || ""}
+                onChange={(e) =>
+                  setProduct((prev) => ({
+                    ...prev,
+                    cardImage: e.target.value || undefined,
+                  }))
+                }
+                className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={product.images.length === 0 && variants.length === 0}
+              >
+                <option value="">Use first product image</option>
+                <optgroup label="Product Images">
+                  {product.images.map((img, index) => (
+                    <option key={`product-${img}`} value={img}>
+                      Product Image {index + 1}
+                    </option>
+                  ))}
+                </optgroup>
+                {variants.some((v) => v.images && v.images.length > 0) && (
+                  <optgroup label="Variant Images">
+                    {variants.map((variant) =>
+                      variant.images?.map((img, imgIndex) => (
+                        <option
+                          key={`variant-${variant.value}-${img}`}
+                          value={img}
+                        >
+                          {variant.value} - Image {imgIndex + 1}
+                        </option>
+                      ))
+                    )}
+                  </optgroup>
+                )}
+              </select>
+              {product.cardImage && (
+                <div className="relative w-24 h-24 group">
+                  <StorageImage
+                    storageId={product.cardImage}
+                    alt="Card Image Preview"
+                    className="w-full h-full object-cover rounded border-2 border-gray-200"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Variants Section */}
